@@ -15950,6 +15950,8 @@ with pkgs;
 
   seafile-client = libsForQt5.callPackage ../applications/networking/seafile-client { };
 
+  seafile-server = callPackage ../servers/seafile-server { };
+
   seeks = callPackage ../tools/networking/p2p/seeks {
     protobuf = protobuf2_5;
   };
