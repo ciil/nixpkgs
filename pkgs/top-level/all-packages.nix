@@ -836,6 +836,8 @@ with pkgs;
 
   ccnet = callPackage ../tools/networking/ccnet { };
 
+  ccnet-server = callPackage ../servers/ccnet-server { };
+
   cfdyndns = callPackage ../applications/networking/dyndns/cfdyndns { };
 
   ckbcomp = callPackage ../tools/X11/ckbcomp { };
