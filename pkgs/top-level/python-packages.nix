@@ -8556,6 +8556,28 @@ in {
     };
   };
 
+  seahub = buildPythonPackage rec {
+    name = "seahub-${version}";
+    version = "6.1.2";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "haiwen";
+      repo = "seahub";
+      rev = "v${version}-server";
+      sha256 = "06gdjywvkb2nqqvcdp2ks60fq15hpi0j0hbfk68na4p5kslk0xrb";
+    };
+
+    propagatedBuildInputs = with self; [ django six ];
+
+    meta = with stdenv.lib; {
+      homepage = https://github.com/haiwen/seafile-server;
+      description = "The seafile server, an open source cloud storage system with features on privacy protection and teamwork.";
+      license = licenses.agpl3;
+      platforms = platforms.linux;
+      maintainers = with maintainers; [ ciil ];
+    };
+  };
+
   svg-path = buildPythonPackage rec {
     name = "svg.path-${version}";
     version = "2.0b1";

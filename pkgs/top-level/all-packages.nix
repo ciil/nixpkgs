@@ -15956,6 +15956,8 @@ with pkgs;
 
   seafile-server = callPackage ../servers/seafile-server { };
 
+  seahub = python3.pkgs.seahub;
+
   seeks = callPackage ../tools/networking/p2p/seeks {
     protobuf = protobuf2_5;
   };
