@@ -2436,7 +2436,6 @@ with pkgs;
   haveged = callPackage ../tools/security/haveged { };
 
   habitat = callPackage ../applications/networking/cluster/habitat { };
-  habitat-sh = callPackage ../applications/networking/cluster/habitat/chroot-env.nix { };
 
   hardlink = callPackage ../tools/system/hardlink { };
 
@@ -3166,9 +3165,7 @@ with pkgs;
 
   memtest86 = callPackage ../tools/misc/memtest86 { };
 
-  memtest86plus = callPackage ../tools/misc/memtest86+ {
-    stdenv = overrideCC stdenv gcc5;
-  };
+  memtest86plus = callPackage ../tools/misc/memtest86+ { };
 
   meo = callPackage ../tools/security/meo {
     boost = boost155;
@@ -7403,8 +7400,6 @@ with pkgs;
     hurd = gnu.hurdCross;
     inherit (gnu) mig;
   };
-
-  gdbGuile = lowPrio (gdb.override { inherit guile; });
 
   gdb-multitarget = lowPrio (gdb.override { multitarget = true; });
 
@@ -17987,8 +17982,6 @@ with pkgs;
     liblapack = liblapack_3_5_0WithoutAtlas;
     withLapack = false;
   };
-
-  atlasWithLapack = atlas.override { withLapack = true; };
 
   blas = callPackage ../development/libraries/science/math/blas { };
 
