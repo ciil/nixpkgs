@@ -565,6 +565,8 @@ with pkgs;
     gconf = gnome2.GConf;
  };
 
+ enchive = callPackage ../tools/security/enchive { };
+
   enpass = callPackage ../tools/security/enpass { };
 
   ezstream = callPackage ../tools/audio/ezstream { };
@@ -1136,6 +1138,8 @@ with pkgs;
   socklog = callPackage ../tools/system/socklog { };
 
   staccato = callPackage ../tools/text/staccato { };
+
+  stagit = callPackage ../development/tools/stagit { };
 
   syscall_limiter = callPackage ../os-specific/linux/syscall_limiter {};
 
@@ -2215,10 +2219,10 @@ with pkgs;
   gnupg20 = callPackage ../tools/security/gnupg/20.nix {
     pinentry = if stdenv.isDarwin then pinentry_mac else pinentry;
   };
-  gnupg21 = callPackage ../tools/security/gnupg/21.nix {
+  gnupg22 = callPackage ../tools/security/gnupg/22.nix {
     pinentry = if stdenv.isDarwin then pinentry_mac else pinentry;
   };
-  gnupg = gnupg21;
+  gnupg = gnupg22;
 
   gnuplot = callPackage ../tools/graphics/gnuplot { qt = qt4; };
 
@@ -2993,6 +2997,8 @@ with pkgs;
 
   libfann = callPackage ../development/libraries/libfann { };
 
+  libipfix = callPackage ../development/libraries/libipfix { };
+
   libircclient = callPackage ../development/libraries/libircclient { };
 
   libite = callPackage ../development/libraries/libite { };
@@ -3388,6 +3394,8 @@ with pkgs;
   networkmanager098 = callPackage ../tools/networking/network-manager/0.9.8 { };
 
   networkmanager = callPackage ../tools/networking/network-manager { };
+
+  networkmanager_iodine = callPackage ../tools/networking/network-manager/iodine.nix { };
 
   networkmanager_openvpn = callPackage ../tools/networking/network-manager/openvpn.nix { };
 
@@ -7303,6 +7311,8 @@ with pkgs;
   sbt-with-scala-native = callPackage ../development/tools/build-managers/sbt/scala-native.nix { };
   simpleBuildTool = sbt;
 
+  shallot = callPackage ../tools/misc/shallot { };
+
   shards = callPackage ../development/tools/build-managers/shards { };
 
   shellcheck = haskell.lib.justStaticExecutables haskellPackages.ShellCheck;
@@ -7325,6 +7335,10 @@ with pkgs;
   };
 
   smc = callPackage ../tools/misc/smc { };
+
+  snowman_qt4 = callPackage ../development/tools/analysis/snowman { };
+  snowman_qt5 = qt5.callPackage ../development/tools/analysis/snowman { qt4 = null; };
+  snowman = snowman_qt5;
 
   sparse = callPackage ../development/tools/analysis/sparse { };
 
@@ -7813,8 +7827,6 @@ with pkgs;
   far2l = callPackage ../applications/misc/far2l { };
 
   farbfeld = callPackage ../development/libraries/farbfeld { };
-
-  farsight2 = callPackage ../development/libraries/farsight2 { };
 
   farstream = callPackage ../development/libraries/farstream {
     inherit (gst_all_1)
@@ -8438,7 +8450,6 @@ with pkgs;
   ip2location-c = callPackage ../development/libraries/ip2location-c { };
 
   irrlicht = callPackage ../development/libraries/irrlicht { };
-  irrlicht3843 = callPackage ../development/libraries/irrlicht/irrlicht3843.nix { };
 
   isocodes = callPackage ../development/libraries/iso-codes { };
 
@@ -11542,7 +11553,10 @@ with pkgs;
     inherit (darwin.apple_sdk.frameworks) AppKit Carbon Cocoa;
   };
 
-  radicale = callPackage ../servers/radicale { };
+  radicale1 = callPackage ../servers/radicale/1.x.nix { };
+  radicale2 = callPackage ../servers/radicale/default.nix { };
+
+  radicale = radicale2;
 
   rake = callPackage ../development/tools/build-managers/rake { };
 
@@ -11820,6 +11834,7 @@ with pkgs;
 
   conky = callPackage ../os-specific/linux/conky ({
     lua = lua5_1; # conky can use 5.2, but toluapp can not
+    libXNVCtrl = linuxPackages.nvidia_x11.settings.libXNVCtrl;
   } // config.conky or {});
 
   conntrack_tools = callPackage ../os-specific/linux/conntrack-tools { };
@@ -12244,8 +12259,6 @@ with pkgs;
     ena = callPackage ../os-specific/linux/ena {};
 
     v4l2loopback = callPackage ../os-specific/linux/v4l2loopback { };
-
-    frandom = callPackage ../os-specific/linux/frandom { };
 
     fusionio-vsl = callPackage ../os-specific/linux/fusionio/vsl.nix { };
 
@@ -13679,10 +13692,6 @@ with pkgs;
 
   communi = libsForQt5.callPackage ../applications/networking/irc/communi { };
 
-  compiz = callPackage ../applications/window-managers/compiz {
-    inherit (gnome2) GConf ORBit2 metacity;
-  };
-
   confclerk = callPackage ../applications/misc/confclerk { };
 
   copyq = callPackage ../applications/misc/copyq { };
@@ -13808,10 +13817,11 @@ with pkgs;
   };
 
   inherit (callPackage ../applications/virtualization/docker { })
-    docker_17_06;
+    docker_17_06
+    docker_17_07;
 
   docker = docker_17_06;
-  docker-edge = docker_17_06;
+  docker-edge = docker_17_07;
 
   docker-proxy = callPackage ../applications/virtualization/docker/proxy.nix { };
 
@@ -14952,9 +14962,7 @@ with pkgs;
 
   kipi-plugins = libsForQt5.callPackage ../applications/graphics/kipi-plugins { };
 
-  kiwix = callPackage ../applications/misc/kiwix {
-    stdenv = overrideCC stdenv gcc49;
-  };
+  kiwix = callPackage ../applications/misc/kiwix { };
 
   kmplayer = kde4.callPackage ../applications/video/kmplayer { };
 
@@ -18406,8 +18414,8 @@ with pkgs;
 
   pcalc = callPackage ../applications/science/math/pcalc { };
 
-  pspp = callPackage ../applications/science/math/pssp {
-    inherit (gnome2) libglade gtksourceview;
+  pspp = callPackage ../applications/science/math/pspp {
+    inherit (gnome3) gtksourceview;
   };
 
   singular = callPackage ../applications/science/math/singular {};
@@ -19233,6 +19241,8 @@ with pkgs;
   dart = callPackage ../development/interpreters/dart { };
 
   httrack = callPackage ../tools/backup/httrack { };
+
+  httraqt = libsForQt5.callPackage ../tools/backup/httrack/qt.nix { };
 
   mg = callPackage ../applications/editors/mg { };
 

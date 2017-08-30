@@ -550,7 +550,6 @@
   ./services/security/fail2ban.nix
   ./services/security/fprintd.nix
   ./services/security/fprot.nix
-  ./services/security/frandom.nix
   ./services/security/haka.nix
   ./services/security/haveged.nix
   ./services/security/hologram-server.nix
@@ -631,7 +630,6 @@
   ./services/x11/redshift.nix
   ./services/x11/urxvtd.nix
   ./services/x11/window-managers/awesome.nix
-  #./services/x11/window-managers/compiz.nix
   ./services/x11/window-managers/default.nix
   ./services/x11/window-managers/fluxbox.nix
   ./services/x11/window-managers/icewm.nix
