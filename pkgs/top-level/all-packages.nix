@@ -94,7 +94,7 @@ with pkgs;
   cmark = callPackage ../development/libraries/cmark { };
 
   dhallToNix = callPackage ../build-support/dhall-to-nix.nix {
-    inherit (haskellPackages) dhall-nix;
+    inherit dhall-nix;
   };
 
   diffPlugins = (callPackage ../build-support/plugins.nix {}).diffPlugins;
@@ -796,10 +796,10 @@ with pkgs;
     enableSharedExecutables = false;
     executableToolDepends = [ makeWrapper ];
     postInstall = ''
-      exe=$out/libexec/${drv.pname}-${drv.version}/${drv.pname}
-      install -D $out/bin/${drv.pname} $exe
-      rm -rf $out/{bin,lib,share}
-      makeWrapper $exe $out/bin/${drv.pname} \
+      exe=$libexec/bin/${drv.pname}-${drv.version}/${drv.pname}
+      install -D $bin/bin/${drv.pname} $exe
+      rm -rf $bin/bin $out/lib $out/share
+      makeWrapper $exe $bin/bin/${drv.pname} \
         --prefix PATH ":" "${nix}/bin" \
         --prefix PATH ":" "${nix-prefetch-scripts}/bin"
       mkdir -p $out/share/bash-completion/completions
@@ -811,7 +811,7 @@ with pkgs;
     executableToolDepends = [ makeWrapper ];
     postInstall = ''
       wrapProgram $out/bin/stack2nix \
-        --prefix PATH ":" "${git}/bin:${cabal2nix}/bin:${cabal-install}/bin:${stack}/bin"
+        ${lib.makeBinPath [ git cabal2nix cabal-install stack ]}
     '';
   });
 
@@ -4458,6 +4458,8 @@ with pkgs;
     w3m = w3m-batch;
   };
 
+  netalyzr = callPackage ../tools/networking/netalyzr { };
+
   swaks = callPackage ../tools/networking/swaks { };
 
   swiften = callPackage ../development/libraries/swiften { };
@@ -6209,6 +6211,16 @@ with pkgs;
   clojure = callPackage ../development/interpreters/clojure { };
 
   clooj = callPackage ../development/interpreters/clojure/clooj.nix { };
+
+  dhall = haskell.lib.justStaticExecutables haskellPackages.dhall;
+
+  dhall-nix = haskell.lib.justStaticExecutables haskellPackages.dhall-nix;
+
+  dhall-bash = haskell.lib.justStaticExecutables haskellPackages.dhall-bash;
+
+  dhall-json = haskell.lib.justStaticExecutables haskellPackages.dhall-json;
+
+  dhall-text = haskell.lib.justStaticExecutables haskellPackages.dhall-text;
 
   beam = callPackage ./beam-packages.nix { };
 
@@ -9109,7 +9121,9 @@ with pkgs;
 
   libmatchbox = callPackage ../development/libraries/libmatchbox { };
 
-  libmatheval = callPackage ../development/libraries/libmatheval { };
+  libmatheval = callPackage ../development/libraries/libmatheval {
+    guile = guile_2_0;
+  };
 
   libmatthew_java = callPackage ../development/libraries/java/libmatthew-java { };
 
