@@ -3,7 +3,7 @@ R, qt5, libuuid, hunspellDicts, unzip, ant, jdk, gnumake, makeWrapper, pandoc
 }:
 
 let
-  version = "1.1.351";
+  version = "1.1.360";
   ginVer = "1.5";
   gwtVer = "2.7.0";
 in
@@ -14,7 +14,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "https://github.com/rstudio/rstudio/archive/v${version}.tar.gz";
-    sha256 = "0dpzmkq7jkdndidmmgdcr849q33ypmzkqwx22fraaqcy7w4f0pcn";
+    sha256 = "11wmv7jvrbrc3jipmkqmipq556xlzbw4kv95s2mydzxc4j8im9nd";
   };
 
   # Hack RStudio to only use the input R.
