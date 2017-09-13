@@ -435,6 +435,7 @@ in {
     meta = {
       homepage = https://github.com/pazz/alot;
       description = "Terminal MUA using notmuch mail";
+      platforms = platforms.linux;
       maintainers = with maintainers; [ garbas profpatsch ];
     };
   };
@@ -666,6 +667,12 @@ in {
   audiotools = buildPythonPackage rec {
     name = "audiotools-${version}";
     version = "3.1.1";
+
+    buildInputs = optionals stdenv.isDarwin (with pkgs.darwin.apple_sdk.frameworks; [
+      AudioToolbox
+      AudioUnit
+      CoreServices
+    ]);
 
     src = pkgs.fetchurl {
       url = "https://github.com/tuffy/python-audio-tools/archive/v${version}.tar.gz";
@@ -6715,32 +6722,7 @@ in {
     };
   };
 
-  jupyter_console = buildPythonPackage rec {
-    version = "5.0.0";
-    name = "jupyter_console-${version}";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/j/jupyter_console/${name}.tar.gz";
-      sha256 = "7ddfc8cc49921b0ed852500928922e637f9188358c94b5c76339a5a8f9ac4c11";
-    };
-
-    buildInputs = with self; [ nose ];
-    propagatedBuildInputs = with self; [
-      jupyter_client
-      ipython
-      ipykernel
-    ];
-
-    # ValueError: underlying buffer has been detached
-    doCheck = false;
-
-    meta = {
-      description = "Jupyter terminal console";
-      homepage = "http://jupyter.org/";
-      license = licenses.bsd3;
-      platforms = platforms.all;
-    };
-  };
+  jupyter_console = callPackage ../development/python-modules/jupyter_console { };
 
   jupyterlab = buildPythonPackage rec {
     name = "jupyterlab-${version}";
@@ -7889,31 +7871,7 @@ in {
     };
   };
 
-  joblib = buildPythonPackage rec {
-    pname = "joblib";
-    name = "${pname}-${version}";
-    version = "0.10.3";
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/${builtins.substring 0 1 pname}/${pname}/${name}.tar.gz";
-      sha256 = "29b2965a9efbc90a5fe66a389ae35ac5b5b0c1feabfc7cab7fd5d19f429a071d";
-    };
-
-    buildInputs = with self; [ nose sphinx numpydoc ];
-
-    # Failing test on Python 3.x and Darwin
-    postPatch = '''' + optionalString (isPy3k || stdenv.isDarwin) ''
-      sed -i -e '70,84d' joblib/test/test_format_stack.py
-      # test_nested_parallel_warnings: ValueError: Non-zero return code: -9.
-      # Not sure why but it's nix-specific. Try removing for new joblib releases.
-      rm joblib/test/test_parallel.py
-    '';
-
-    meta = {
-      description = "Lightweight pipelining: using Python functions as pipeline jobs";
-      homepage = http://pythonhosted.org/joblib/;
-      license = licenses.bsd3;
-    };
-  };
+  joblib = callPackage ../development/python-modules/joblib { };
 
   safe = buildPythonPackage rec {
     version = "0.4";
@@ -18184,21 +18142,17 @@ in {
 
   pyopenssl = buildPythonPackage rec {
     name = "pyopenssl-${version}";
-    version = "17.0.0";
+    version = "17.2.0";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/p/pyOpenSSL/pyOpenSSL-${version}.tar.gz";
-      sha256 = "1pdg1gpmkzj8yasg6cmkhcivxcdp4c12nif88y4qvsxq5ffzxas8";
-    };
-
-    patches = pkgs.fetchpatch {
-      url = "https://github.com/pyca/pyopenssl/commit/"
-          + "a40898b5f1d472f9449a344f703fa7f90cddc21d.patch";
-      sha256 = "0bdfrhfvdfxhfknn46s4db23i3hww6ami2r1l5rfrri0pn8b8mh7";
+      sha256 = "0d283g4zi0hr9papd24mjl70mi15gyzq6fx618rizi87dgipqqax";
     };
 
     preCheck = ''
       sed -i 's/test_set_default_verify_paths/noop/' tests/test_ssl.py
+      # https://github.com/pyca/pyopenssl/issues/692
+      sed -i 's/test_fallback_default_verify_paths/noop/' tests/test_ssl.py
     '';
 
     checkPhase = ''
@@ -18212,7 +18166,7 @@ in {
     # for one example, but I've also seen ContextTests.test_set_verify_callback_exception fail.
     doCheck = !stdenv.isDarwin;
 
-    buildInputs = [ pkgs.openssl self.pytest pkgs.glibcLocales ];
+    buildInputs = [ pkgs.openssl self.pytest pkgs.glibcLocales self.pretend self.flaky ];
     propagatedBuildInputs = [ self.cryptography self.pyasn1 self.idna ];
   };
 
@@ -26879,6 +26833,7 @@ EOF
       description = "Modular Machine Learning Library for Python";
       license = licenses.bsd3;
       maintainers = with maintainers; [ NikolaMandic ];
+      broken = true; # See https://github.com/NixOS/nixpkgs/pull/29198
     };
   };
 
