@@ -80,14 +80,10 @@ let
         else throw "Unsupported kind ${kind}");
     in fetcher (builtins.removeAttrs attrs ["format"]) );
 
-  # This should become part of stdenv!
-  sharedLibraryExtension = if stdenv.isDarwin then ".dylib" else ".so";
-
 in {
 
   inherit python bootstrapped-pip pythonAtLeast pythonOlder isPy26 isPy27 isPy33 isPy34 isPy35 isPy36 isPyPy isPy3k mkPythonDerivation buildPythonPackage buildPythonApplication;
   inherit fetchPypi callPackage;
-  inherit sharedLibraryExtension;
 
   # helpers
 
@@ -103,7 +99,9 @@ in {
 
   acoustics = callPackage ../development/python-modules/acoustics { };
 
-  "3to2" = callPackage ../development/python-modules/3to2 { };
+  py3to2 = callPackage ../development/python-modules/3to2 { };
+  # Left for backwards compatibility
+  "3to2" = self.py3to2;
 
   aenum = callPackage ../development/python-modules/aenum { };
 
@@ -1708,29 +1706,7 @@ in {
 
   csvkit =  callPackage ../development/python-modules/csvkit { };
 
-  cx_Freeze = buildPythonPackage rec {
-    name = "cx_freeze-${version}";
-    version = "4.3.4";
-
-    # build failures
-    disabled = isPyPy || isPy35;
-
-    # timestamp need to come after 1980 for zipfiles and nix store is set to epoch
-    prePatch = ''
-      substituteInPlace cx_Freeze/freezer.py --replace "os.stat(module.file).st_mtime" "time.time()"
-    '';
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/c/cx_Freeze/cx_Freeze-${version}.tar.gz";
-      sha256 = "1qhv0gq3ggr06k8cvzphma29zfqdajkx2yfzbw89s4vy23xbpis0";
-    };
-
-    meta = {
-      description = "A set of scripts and modules for freezing Python scripts into executables";
-      homepage = "http://cx-freeze.sourceforge.net/";
-      license = licenses.psfl;
-    };
-  };
+  cx_Freeze = callPackage ../development/python-modules/cx_freeze {};
 
   cvxopt = buildPythonPackage rec {
     name = "${pname}-${version}";
@@ -3067,6 +3043,13 @@ in {
       sha256 = "11wcni2xmfmy001rj62q2pwf305vvngkrfm5c4zlwvgbvlsrvnnw";
     };
 
+    patches = [
+      (pkgs.fetchpatch {
+          url = "https://github.com/stefanofontanelli/ColanderAlchemy/commit/b45fe35f2936a5ccb705e9344075191e550af6c9.patch";
+          sha256 = "1kf278wjq49zd6fhpp55vdcawzdd107767shzfck522sv8gr6qvx";
+      })
+    ];
+
     buildInputs = with self; [ unittest2 ];
     propagatedBuildInputs = with self; [ colander sqlalchemy ];
 
@@ -3258,27 +3241,7 @@ in {
     };
   };
 
-  credstash = buildPythonPackage rec {
-    pname    = "credstash";
-    version = "1.13.2";
-    name = "${pname}-${version}";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/${builtins.substring 0 1 pname}/${pname}/${name}.tar.gz";
-      sha256 = "b6283e565e3e441e8f74efcca54ece9697db16ce2e930fb5b6f7c0ab929c377e";
-    };
-
-    propagatedBuildInputs = with self; [ cryptography boto3 pyyaml docutils ];
-
-    # No tests in archive
-    doCheck = false;
-
-    meta = {
-      description = "A utility for managing secrets in the cloud using AWS KMS and DynamoDB";
-      homepage = https://github.com/LuminalOSS/credstash;
-      license = licenses.asl20;
-    };
-  };
+  credstash = callPackage ../development/python-modules/credstash { };
 
   cython = callPackage ../development/python-modules/Cython { };
 
@@ -3641,27 +3604,7 @@ in {
     };
   };
 
-  MDP = buildPythonPackage rec {
-    version = "3.5";
-    name = "MDP-${version}";
-
-    src = pkgs.fetchurl {
-      url = "https://pypi.python.org/packages/source/M/MDP/${name}.tar.gz";
-      sha256 = "0aw1zxmyvx6gfmmnixbqmdaah28jl7rmqkzhxv53091asc23iw9k";
-    };
-
-    buildInputs = with self; [ pytest_29 ];
-    propagatedBuildInputs = with self; [ future numpy ];
-
-    doCheck = true;
-
-    meta = {
-      description = "Library for building complex data processing software by combining widely used machine learning algorithms";
-      homepage = http://mdp-toolkit.sourceforge.net;
-      license = licenses.bsd3;
-      maintainers = with maintainers; [ nico202 ];
-    };
-  };
+  MDP = callPackage ../development/python-modules/mdp {};
 
   minidb = buildPythonPackage rec {
     name = "minidb-2.0.1";
@@ -6929,6 +6872,7 @@ in {
       description = "Library for parsing MediaWiki articles and converting them to different output formats";
       homepage = "http://pediapress.com/code/";
       license = licenses.bsd3;
+      broken = true; # Requires different versions of packages
     };
   };
 
@@ -11647,7 +11591,7 @@ in {
     propagatedBuildInputs = with self; [ pkgs.file ];
 
     patchPhase = ''
-      substituteInPlace magic.py --replace "ctypes.util.find_library('magic')" "'${pkgs.file}/lib/libmagic.${if stdenv.isDarwin then "dylib" else "so"}'"
+      substituteInPlace magic.py --replace "ctypes.util.find_library('magic')" "'${pkgs.file}/lib/libmagic${stdenv.hostPlatform.extensions.sharedLibrary}'"
     '';
 
     doCheck = false;
@@ -11669,7 +11613,7 @@ in {
     src = pkgs.file.src;
 
     patchPhase = ''
-      substituteInPlace python/magic.py --replace "find_library('magic')" "'${pkgs.file}/lib/libmagic.${if stdenv.isDarwin then "dylib" else "so"}'"
+      substituteInPlace python/magic.py --replace "find_library('magic')" "'${pkgs.file}/lib/libmagic${stdenv.hostPlatform.extensions.sharedLibrary}'"
     '';
 
     buildInputs = with self; [ pkgs.file ];
@@ -16344,22 +16288,7 @@ in {
     };
   };
 
-  ptpython = buildPythonPackage rec {
-    name = "ptpython-0.35";
-    propagatedBuildInputs = with self;
-        [ wcwidth six prompt_toolkit docopt jedi pygments];
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/ptpython/${name}.tar.gz";
-      sha256 = "e0d380fbccb03ed33a7f33d96988e66fbd286bc813c9ceea84a1b3b5615a5660";
-    };
-
-    meta = {
-      description = "An advanced Python REPL";
-      license = licenses.bsd3;
-      maintainers = with maintainers; [ mlieberman85 ];
-      platforms = platforms.all;
-    };
-  };
+  ptpython = callPackage ../development/python-modules/ptpython {};
 
   publicsuffix = buildPythonPackage rec {
     name = "publicsuffix-${version}";
@@ -20299,12 +20228,17 @@ in {
 
   sqlmap = callPackage ../development/python-modules/sqlmap { };
   pgpdump = self.buildPythonPackage rec {
-    name = "pgpdump-1.5";
+    pname = "pgpdump";
+    version = "1.5";
+    name = "${pname}-${version}";
 
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/pgpdump/pgpdump-1.5.tar.gz";
-      sha256 = "1c4700857bf7ba735b08cfe4101aa3a4f5fd839657af249c17b2697c20829668";
+    src = fetchPypi {
+      inherit pname version;
+      sha256 = "0s4nh8h7qsdj2yf29bspjs1zvxd4lcd11r6g11dp7fppgf2h0iqw";
     };
+
+    # Disabling check because of: https://github.com/toofishes/python-pgpdump/issues/18
+    doCheck = false;
 
     meta = {
       description = "Python library for parsing PGP packets";
@@ -20549,7 +20483,7 @@ in {
     version = "2.1.1";
 
     src = pkgs.fetchurl {
-      url = " mirror://pypi/p/python-daemon/${name}.tar.gz";
+      url = "mirror://pypi/p/python-daemon/${name}.tar.gz";
       sha256 = "17v80qb98p1gv4j9mq6wb55cv7hc4j1hzw5y2f4s5hrpxs3w3a2q";
     };
 
@@ -24184,11 +24118,8 @@ EOF
 
     # Fix the USB backend library lookup
     postPatch =
-      let
-        # This should really be in the stdenv somewhere
-        soext = if stdenv.isLinux then "so" else if stdenv.isDarwin then "dylib" else throw "Unsupported platform";
-      in ''
-        libusb=${pkgs.libusb1.out}/lib/libusb-1.0.${soext}
+      ''
+        libusb=${pkgs.libusb1.out}/lib/libusb-1.0${stdenv.hostPlatform.extensions.sharedLibrary}
         test -f $libusb || { echo "ERROR: $libusb doesn't exist, please update/fix this build expression."; exit 1; }
         sed -i -e "s|find_library=None|find_library=lambda _:\"$libusb\"|" usb/backend/libusb1.py
       '';
@@ -24552,29 +24483,7 @@ EOF
     };
   };
 
-  ws4py = buildPythonPackage rec {
-    name = "${pname}-${version}";
-    pname = "ws4py";
-    version = "0.4.2";
-
-    src = fetchPypi {
-      inherit pname version;
-      sha256 = "0zr3254ky6r7q15l3dhdczfa8i723055zdkqssjifsgcwvirriks";
-    };
-
-    buildInputs = with self; [ pytest mock ];
-    propagatedBuildInputs = with self; [ asyncio cherrypy gevent tornado ];
-
-    checkPhase = ''
-      pytest test
-    '';
-
-    meta = {
-      homepage = https://ws4py.readthedocs.org;
-      description = "A WebSocket package for Python";
-      maintainers = with maintainers; [ rickynils ];
-    };
-  };
+  ws4py = callPackage ../development/python-modules/ws4py {};
 
   gdata = buildPythonPackage rec {
     name = "gdata-${version}";

@@ -362,6 +362,8 @@ with pkgs;
 
   a2ps = callPackage ../tools/text/a2ps { };
 
+  abcmidi = callPackage ../tools/audio/abcmidi { };
+
   abduco = callPackage ../tools/misc/abduco { };
 
   acbuild = callPackage ../applications/misc/acbuild { };
@@ -1702,7 +1704,14 @@ with pkgs;
 
   disper = callPackage ../tools/misc/disper { };
 
-  dmd_2_067_1 = callPackage ../development/compilers/dmd/2.067.1.nix { };
+  dmd_2_067_1 = callPackage ../development/compilers/dmd/2.067.1.nix {
+    stdenv = if stdenv.hostPlatform.isDarwin then
+               stdenv
+             else
+               # Doesn't build with gcc6 on linux
+               overrideCC stdenv gcc5;
+  };
+
   dmd = callPackage ../development/compilers/dmd {
     bootstrapDmd = dmd_2_067_1;
   };
@@ -1983,6 +1992,10 @@ with pkgs;
   findutils = callPackage ../tools/misc/findutils { };
 
   finger_bsd = callPackage ../tools/networking/bsd-finger { };
+
+  iprange = callPackage ../applications/networking/firehol/iprange.nix {};
+
+  firehol = callPackage ../applications/networking/firehol {};
 
   fio = callPackage ../tools/system/fio { };
 
@@ -2824,6 +2837,8 @@ with pkgs;
   kst = libsForQt5.callPackage ../tools/graphics/kst { gsl = gsl_1; };
 
   kytea = callPackage ../tools/text/kytea { };
+
+  ldc = callPackage ../development/compilers/ldc { };
 
   lbreakout2 = callPackage ../games/lbreakout2 { };
 
@@ -4195,6 +4210,8 @@ with pkgs;
 
   rzip = callPackage ../tools/compression/rzip { };
 
+  s-tui = callPackage ../tools/system/s-tui { };
+
   s3backer = callPackage ../tools/filesystems/s3backer { };
 
   s3fs = callPackage ../tools/filesystems/s3fs { };
@@ -4651,6 +4668,8 @@ with pkgs;
   ttylog = callPackage ../tools/misc/ttylog { };
 
   turses = callPackage ../applications/networking/instant-messengers/turses { };
+
+  oysttyer = callPackage ../applications/networking/instant-messengers/oysttyer { };
 
   twitterBootstrap = callPackage ../development/web/twitter-bootstrap {};
   twitterBootstrap3 = callPackage ../development/web/twitter-bootstrap/v3.nix {};
@@ -5310,7 +5329,7 @@ with pkgs;
   #Use this instead of stdenv to build with clang
   clangStdenv = if stdenv.isDarwin then stdenv else lowPrio llvmPackages.stdenv;
   clang-sierraHack-stdenv = overrideCC stdenv clang-sierraHack;
-  libcxxStdenv = lowPrio llvmPackages.libcxxStdenv;
+  libcxxStdenv = if stdenv.isDarwin then stdenv else lowPrio llvmPackages.libcxxStdenv;
 
   clean = callPackage ../development/compilers/clean { };
 
@@ -7125,7 +7144,7 @@ with pkgs;
   };
 
   include-what-you-use = callPackage ../development/tools/analysis/include-what-you-use {
-    llvmPackages = llvmPackages_38;
+    llvmPackages = llvmPackages_4;
   };
 
   indent = callPackage ../development/tools/misc/indent { };
@@ -11283,7 +11302,7 @@ with pkgs;
 
   fingerd_bsd = callPackage ../servers/fingerd/bsd-fingerd { };
 
-  firebird = callPackage ../servers/firebird { icu = null; };
+  firebird = callPackage ../servers/firebird { icu = null; stdenv = overrideCC stdenv gcc5; };
   firebirdSuper = callPackage ../servers/firebird { superServer = true; };
 
   fleet = callPackage ../servers/fleet { };
@@ -13457,6 +13476,7 @@ with pkgs;
   };
 
   atom = callPackage ../applications/editors/atom { };
+  atom-beta = callPackage ../applications/editors/atom/beta.nix { };
 
   aseprite = callPackage ../applications/editors/aseprite { };
 
@@ -13606,6 +13626,8 @@ with pkgs;
   };
 
   bluejeans = callPackage ../applications/networking/browsers/mozilla-plugins/bluejeans { };
+
+  bombono = callPackage ../applications/video/bombono {};
 
   bomi = libsForQt5.callPackage ../applications/video/bomi {
     youtube-dl = pythonPackages.youtube-dl;
@@ -14951,8 +14973,6 @@ with pkgs;
   kadu = kde4.callPackage ../applications/networking/instant-messengers/kadu { };
 
   kanboard = callPackage ../applications/misc/kanboard { };
-
-  kde-telepathy = kde4.callPackage ../applications/networking/instant-messengers/telepathy/kde {};
 
   kdeApplications =
     let
@@ -17844,7 +17864,7 @@ with pkgs;
 
   ### DESKTOP ENVIRONMENTS
 
-  clearlooks-phenix = callPackage ../misc/themes/gtk3/clearlooks-phenix { };
+  clearlooks-phenix = callPackage ../misc/themes/clearlooks-phenix { };
 
   enlightenment = recurseIntoAttrs (callPackage ../desktops/enlightenment {
     callPackage = newScope pkgs.enlightenment;
@@ -18649,6 +18669,8 @@ with pkgs;
 
   e17gtk = callPackage ../misc/themes/e17gtk { };
 
+  epson-alc1100 = callPackage ../misc/drivers/epson-alc1100 { };
+
   epson-escpr = callPackage ../misc/drivers/epson-escpr { };
 
   epson_201207w = callPackage ../misc/drivers/epson_201207w { };
@@ -19382,10 +19404,14 @@ with pkgs;
   # `recurseIntoAttrs` for sake of hydra, not nix-env
   tests = recurseIntoAttrs {
     cc-wrapper = callPackage ../test/cc-wrapper { };
-    cc-wrapper-clang = callPackage ../test/cc-wrapper { stdenv = clangStdenv; };
-    cc-wrapper-libcxx = callPackage ../test/cc-wrapper { stdenv = libcxxStdenv; };
+    cc-wrapper-clang = callPackage ../test/cc-wrapper { stdenv = llvmPackages.stdenv; };
+    cc-wrapper-libcxx = callPackage ../test/cc-wrapper { stdenv = llvmPackages.libcxxStdenv; };
+    cc-wrapper-clang-39 = callPackage ../test/cc-wrapper { stdenv = llvmPackages_39.stdenv; };
+    cc-wrapper-libcxx-39 = callPackage ../test/cc-wrapper { stdenv = llvmPackages_39.libcxxStdenv; };
     stdenv-inputs = callPackage ../test/stdenv-inputs { };
 
     macOSSierraShared = callPackage ../test/macos-sierra-shared {};
   };
+
+  duti = callPackage ../os-specific/darwin/duti {};
 }
