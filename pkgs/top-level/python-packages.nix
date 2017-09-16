@@ -205,8 +205,6 @@ in {
 
   ntlm-auth = callPackage ../development/python-modules/ntlm-auth { };
 
-  pitz = callPackage ../applications/misc/pitz { };
-
   plantuml = callPackage ../tools/misc/plantuml { };
 
   Pmw = callPackage ../development/python-modules/Pmw { };
@@ -2676,6 +2674,8 @@ in {
     };
   };
 
+  cld2-cffi = callPackage ../development/python-modules/cld2-cffi {};
+
   clf = buildPythonPackage rec {
     name = "clf-${version}";
     version = "0.5.2";
@@ -2801,23 +2801,6 @@ in {
   };
 
   cligj = callPackage ../development/python-modules/cligj { };
-
-  clepy = buildPythonPackage rec {
-    name = "clepy-0.3.20";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/c/clepy/${name}.tar.gz";
-      sha256 = "16vibfxms5z4ld8gbkra6dkhqm2cc3jnn0fwp7mw70nlwxnmm51c";
-    };
-
-    buildInputs = with self; [ self.mock self.nose self.decorator ];
-
-    meta = {
-      homepage = http://code.google.com/p/clepy/;
-      description = "Utilities created by the Cleveland Python users group";
-    };
-  };
-
 
   clientform = buildPythonPackage (rec {
     name = "clientform-0.2.10";
@@ -3644,6 +3627,25 @@ in {
     };
   };
 
+  mxnet = buildPythonPackage rec {
+    inherit (pkgs.mxnet) name version src meta;
+
+    buildInputs = [ pkgs.mxnet ];
+    propagatedBuildInputs = with self; [ requests numpy graphviz ];
+
+    LD_LIBRARY_PATH = makeLibraryPath [ pkgs.mxnet ];
+
+    doCheck = !isPy3k;
+
+    preConfigure = ''
+      cd python
+    '';
+
+    postInstall = ''
+      rm -rf $out/mxnet
+      ln -s ${pkgs.mxnet}/lib/libmxnet.so $out/${python.sitePackages}/mxnet
+    '';
+  };
 
   pkginfo = buildPythonPackage rec {
     version = "1.3.2";
@@ -6143,23 +6145,7 @@ in {
 
   };
 
-  hglib = buildPythonPackage rec {
-    version = "1.7";
-    name = "hglib-${version}";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/python-hglib/python-hglib-${version}.tar.gz";
-      sha256 = "0dc087d15b774cda82d3c8096fb0e514caeb2ddb60eed38e9056b16e279ba3c5";
-    };
-
-    meta = {
-      description = "Mercurial Python library";
-      homepage = "http://selenic.com/repo/python-hglib";
-      license = licenses.mit;
-      maintainers = with maintainers; [ dfoxfranke ];
-      platforms = platforms.all;
-    };
-  };
+  hglib = callPackage ../development/python-modules/hglib {};
 
   humanize = buildPythonPackage rec {
     version = "0.5.1";
@@ -6267,6 +6253,8 @@ in {
       maintainers = with maintainers; [ matthiasbeyer ];
     };
   };
+
+  ijson = callPackage ../development/python-modules/ijson/default.nix {};
 
   imagesize = buildPythonPackage rec {
     name = "imagesize-${version}";
@@ -7374,6 +7362,8 @@ in {
     inherit (pkgs.stdenv) mkDerivation;
     inherit pythonOlder;
   };
+
+  pyphen = callPackage ../development/python-modules/pyphen {};
 
   pypoppler = buildPythonPackage rec {
     name = "pypoppler-${version}";
@@ -10268,27 +10258,7 @@ in {
 
   hmmlearn = callPackage ../development/python-modules/hmmlearn { };
 
-  hcs_utils = buildPythonPackage rec {
-    name = "hcs_utils-1.5";
-
-    src = pkgs.fetchurl {
-      url    = "mirror://pypi/h/hcs_utils/${name}.tar.gz";
-      sha256 = "1d2za9crkgzildx610w3zif2i8phcqhh6n8nzg3yvy2mg0s18mkl";
-    };
-
-    LC_ALL="en_US.UTF-8";
-
-    buildInputs = with self; [ six pkgs.glibcLocales ];
-
-    meta = {
-      description = "Library collecting some useful snippets";
-      homepage    = https://pypi.python.org/pypi/hcs_utils/1.3;
-      license     = licenses.isc;
-      maintainers = with maintainers; [ lovek323 ];
-      platforms   = platforms.unix;
-    };
-  };
-
+  hcs_utils = callPackage ../development/python-modules/hcs_utils { };
 
   hetzner = buildPythonPackage rec {
     name = "hetzner-${version}";
@@ -12332,27 +12302,7 @@ in {
 
   moretools = callPackage ../development/python-modules/moretools { };
 
-  moto = buildPythonPackage rec {
-    version = "0.4.25";
-    name    = "moto-${version}";
-    src = pkgs.fetchurl {
-      url    = "http://pypi.python.org/packages/df/9e/0b22ac0abf61711c86ae75a0548825e19cc123b522ff3508cbc43924969d/moto-0.4.25.tar.gz";
-      sha256 = "1gqm7h6bm5xkspd07bnjwdr2q6cvpxkayx0hkgk8fhkawbg0fqq7";
-    };
-
-    propagatedBuildInputs = with self; [
-      # Main dependencies
-      jinja2 werkzeug flask requests six boto httpretty xmltodict
-      # For tests
-      nose sure boto3 freezegun
-    ];
-
-    checkPhase = "nosetests";
-
-    # TODO: make this true; I think lots of the tests want network access but we can probably run the others
-    doCheck = false;
-  };
-
+  moto = callPackage ../development/python-modules/moto {};
 
   mox = buildPythonPackage rec {
     name = "mox-0.5.3";
@@ -13190,36 +13140,7 @@ in {
     };
   };
 
-  nilearn = buildPythonPackage rec {
-    version = "0.2.5";
-    name = "nilearn-${version}";
-
-    # package seems to attempt Python 3 compatibility, but throws UnicodeDecodeError when building:
-    disabled = isPy3k;
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/n/nilearn/${name}.tar.gz";
-      sha256 = "1lmkrzr5x2yp129v2fvckrbdzf2kpcivdg9cacl519l3mb0acdv9";
-    };
-
-    checkPhase = "nosetests --exclude with_expand_user nilearn/tests";
-
-    buildInputs = with self; [ nose ];
-
-    propagatedBuildInputs = with self; [
-      matplotlib
-      nibabel
-      numpy
-      scikitlearn
-      scipy
-    ];
-
-    meta = {
-      homepage = http://nilearn.github.io;
-      description = "A module for statistical learning on neuroimaging data";
-      license = licenses.bsd3;
-    };
-  };
+  nilearn = callPackage ../development/python-modules/nilearn {};
 
   nipy = buildPythonPackage rec {
     version = "0.4.0";
@@ -14237,7 +14158,7 @@ in {
        oslo-serialization oslo-utils iso8601 oslo-log oslo-i18n webob
      ];
      buildInputs = with self; [
-       oslo-middleware cachetools oslo-service futurist anyjson oslosphinx
+       oslo-middleware cachetools_1 oslo-service futurist anyjson oslosphinx
        testtools oslotest
      ];
 
@@ -14246,20 +14167,8 @@ in {
      };
    };
 
-   cachetools = buildPythonPackage rec {
-     name = "cachetools-${version}";
-     version = "1.1.3";
-     disabled = isPyPy;  # a test fails
-
-     src = pkgs.fetchurl {
-       url = "mirror://pypi/c/cachetools/${name}.tar.gz";
-       sha256 = "0js7qx5pa8ibr8487lcf0x3a7w0xml0wa17snd6hjs0857kqhn20";
-     };
-
-     meta = with stdenv.lib; {
-       homepage = "https://github.com/tkem/cachetools";
-     };
-   };
+   cachetools_1 = callPackage ../development/python-modules/cachetools/1.nix {};
+   cachetools = callPackage ../development/python-modules/cachetools {};
 
    futurist = buildPythonPackage rec {
      name = "futurist-${version}";
@@ -14295,7 +14204,7 @@ in {
     propagatedBuildInputs = with self; [
       pbr oslo-config oslo-context oslo-log oslo-utils oslo-serialization
       oslo-i18n stevedore six eventlet greenlet webob pyyaml kombu_3 trollius
-      aioeventlet cachetools oslo-middleware futurist redis oslo-service
+      aioeventlet cachetools_1 oslo-middleware futurist redis oslo-service
       eventlet pyzmq
     ];
 
@@ -14702,7 +14611,7 @@ in {
     };
 
     propagatedBuildInputs = with self; [
-      pbr futures enum34 debtcollector cachetools oslo-serialization oslo-utils
+      pbr futures enum34 debtcollector cachetools_1 oslo-serialization oslo-utils
       jsonschema monotonic stevedore networkx futurist pbr automaton fasteners
     ];
     buildInputs = with self; [
@@ -18477,44 +18386,6 @@ in {
   };
 
   pywinrm = callPackage ../development/python-modules/pywinrm { };
-
-  PyXAPI = stdenv.mkDerivation rec {
-    name = "PyXAPI-0.1";
-
-    src = pkgs.fetchurl {
-      url = "http://www.pps.univ-paris-diderot.fr/~ylg/PyXAPI/${name}.tar.gz";
-      sha256 = "19lblwfq24bgsgfy7hhqkxdf4bxl40chcxdlpma7a0wfa0ngbn26";
-    };
-
-    buildInputs = [ self.python ];
-
-    installPhase = ''
-      mkdir -p "$out/lib/${python.libPrefix}/site-packages"
-
-      export PYTHONPATH="$out/lib/${python.libPrefix}/site-packages:$PYTHONPATH"
-
-      ${python}/bin/${python.executable} setup.py install \
-        --install-lib=$out/lib/${python.libPrefix}/site-packages \
-        --prefix="$out"
-    '';
-
-    meta = with stdenv.lib; {
-      description = "Python socket module extension & RFC3542 IPv6 Advanced Sockets API";
-      longDescription = ''
-        PyXAPI consists of two modules: `socket_ext' and `rfc3542'.
-        `socket_ext' extends the Python module `socket'. `socket' objects have
-        two new methods: `recvmsg' and `sendmsg'. It defines `ancillary data'
-        objects and some functions related to. `socket_ext' module also provides
-        functions to manage interfaces indexes defined in RFC3494 and not
-        available from standard Python module `socket'.
-        `rfc3542' is a full implementation of RFC3542 (Advanced Sockets
-        Application Program Interface (API) for IPv6).
-      '';
-      homepage = http://www.pps.univ-paris-diderot.fr/~ylg/PyXAPI/;
-      license = licenses.gpl2Plus;
-      maintainers = with maintainers; [ nckx ];
-    };
-  };
 
   pyxattr = buildPythonPackage (rec {
     name = "pyxattr-0.5.1";
@@ -24087,26 +23958,7 @@ EOF
   };
 
 
-  unidecode = buildPythonPackage rec {
-    name = "Unidecode-0.04.18";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/U/Unidecode/${name}.tar.gz";
-      sha256 = "12hhblqy1ajvidm38im4171x4arg83pfmziyn53nizp29p3m14gi";
-    };
-
-    LC_ALL="en_US.UTF-8";
-
-    buildInputs = [ pkgs.glibcLocales ];
-
-    meta = {
-      homepage = http://pypi.python.org/pypi/Unidecode/;
-      description = "ASCII transliterations of Unicode text";
-      license = licenses.gpl2;
-      maintainers = with maintainers; [ domenkozar ];
-    };
-  };
-
+  unidecode = callPackage ../development/python-modules/unidecode {};
 
   pyusb = buildPythonPackage rec {
     name = "pyusb-1.0.0";
@@ -27223,6 +27075,12 @@ EOF
   thinc = callPackage ../development/python-modules/thinc { };
 
   spacy = callPackage ../development/python-modules/spacy { };
+
+  spacy_models = callPackage ../development/python-modules/spacy/models.nix { };
+
+  textacy = callPackage ../development/python-modules/textacy { };
+
+  pyemd  = callPackage ../development/python-modules/pyemd { };
 
   behave = callPackage ../development/python-modules/behave { };
 

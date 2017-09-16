@@ -69,7 +69,7 @@ with pkgs;
   ### BUILD SUPPORT
 
   autoreconfHook = makeSetupHook
-    { substitutions = { inherit autoconf automake gettext libtool; }; }
+    { deps = [ autoconf automake gettext libtool ]; }
     ../build-support/setup-hooks/autoreconf.sh;
 
   ensureNewerSourcesHook = { year }: makeSetupHook {}
@@ -1823,21 +1823,9 @@ with pkgs;
 
   emscripten = callPackage ../development/compilers/emscripten { };
 
-  emscriptenfastcomp-unwrapped = callPackage ../development/compilers/emscripten-fastcomp { };
-  emscriptenfastcomp-wrapped = wrapCCWith stdenv.cc.libc ''
-    # hardening flags break WASM support
-    cat > $out/nix-support/add-hardening.sh
-  '' emscriptenfastcomp-unwrapped;
-  emscriptenfastcomp = symlinkJoin {
-    name = "emscriptenfastcomp";
-    paths = [ emscriptenfastcomp-wrapped emscriptenfastcomp-unwrapped ];
-    preferLocalBuild = false;
-    allowSubstitutes = true;
-    postBuild = ''
-      # replace unwrapped clang-3.9 binary by wrapper
-      ln -sf $out/bin/clang $out/bin/clang-[0-9]*
-    '';
-  };
+  emscriptenfastcompPackages = callPackage ../development/compilers/emscripten-fastcomp { };
+
+  emscriptenfastcomp = emscriptenfastcompPackages.emscriptenfastcomp;
 
   emscriptenPackages = recurseIntoAttrs (callPackage ./emscripten-packages.nix { });
 
@@ -3807,6 +3795,8 @@ with pkgs;
 
   pdf2svg = callPackage ../tools/graphics/pdf2svg { };
 
+  fmodex = callPackage ../games/zandronum/fmod.nix { };
+
   pdfmod = callPackage ../applications/misc/pdfmod { };
 
   jbig2enc = callPackage ../tools/graphics/jbig2enc { };
@@ -4577,6 +4567,8 @@ with pkgs;
   tiny8086 = callPackage ../applications/virtualization/8086tiny { };
 
   tldr = callPackage ../tools/misc/tldr { };
+
+  tldr-hs = haskellPackages.tldr;
 
   tlspool = callPackage ../tools/networking/tlspool { };
 
@@ -6584,7 +6576,7 @@ with pkgs;
     ruby_2_1_10
     ruby_2_2_7
     ruby_2_3_4
-    ruby_2_4_1;
+    ruby_2_4_2;
 
   # Ruby aliases
   ruby = ruby_2_3;
@@ -6592,7 +6584,7 @@ with pkgs;
   ruby_2_1 = ruby_2_1_10;
   ruby_2_2 = ruby_2_2_7;
   ruby_2_3 = ruby_2_3_4;
-  ruby_2_4 = ruby_2_4_1;
+  ruby_2_4 = ruby_2_4_2;
 
   scsh = callPackage ../development/interpreters/scsh { };
 
@@ -8198,7 +8190,9 @@ with pkgs;
 
   glui = callPackage ../development/libraries/glui {};
 
-  gmime = callPackage ../development/libraries/gmime { };
+  gmime2 = callPackage ../development/libraries/gmime/2.nix { };
+  gmime3 = callPackage ../development/libraries/gmime/3.nix { };
+  gmime = gmime2;
 
   gmm = callPackage ../development/libraries/gmm { };
 
@@ -10496,8 +10490,6 @@ with pkgs;
 
   sqlite3_analyzer = lowPrio (callPackage ../development/libraries/sqlite/sqlite3_analyzer.nix { });
 
-  sqlite-amalgamation = callPackage ../development/libraries/sqlite-amalgamation { };
-
   sqlite-interactive = appendToName "interactive" (sqlite.override { interactive = true; }).bin;
 
   sqlcipher = lowPrio (callPackage ../development/libraries/sqlcipher {
@@ -12388,10 +12380,12 @@ with pkgs;
 
     sch_cake = callPackage ../os-specific/linux/sch_cake { };
 
-    spl = callPackage ../os-specific/linux/spl {
+    inherit (callPackage ../os-specific/linux/spl {
       configFile = "kernel";
       inherit kernel;
-    };
+    }) splStable splUnstable;
+
+    spl = splStable;
 
     sysdig = callPackage ../os-specific/linux/sysdig {};
 
@@ -12415,10 +12409,12 @@ with pkgs;
 
     x86_energy_perf_policy = callPackage ../os-specific/linux/x86_energy_perf_policy { };
 
-    zfs = callPackage ../os-specific/linux/zfs {
+    inherit (callPackage ../os-specific/linux/zfs {
       configFile = "kernel";
       inherit kernel spl;
-    };
+     }) zfsStable zfsUnstable;
+
+     zfs = zfsStable;
   });
 
   # The current default kernel / kernel modules.
@@ -12716,9 +12712,9 @@ with pkgs;
 
   statifier = callPackage ../os-specific/linux/statifier { };
 
-  spl = callPackage ../os-specific/linux/spl {
+  inherit (callPackage ../os-specific/linux/spl {
     configFile = "user";
-  };
+  }) splStable splUnstable;
 
   sysdig = callPackage ../os-specific/linux/sysdig {
     kernel = null;
@@ -12922,9 +12918,11 @@ with pkgs;
 
   zd1211fw = callPackage ../os-specific/linux/firmware/zd1211 { };
 
-  zfs = callPackage ../os-specific/linux/zfs {
+  inherit (callPackage ../os-specific/linux/zfs {
     configFile = "user";
-  };
+  }) zfsStable zfsUnstable;
+
+  zfs = zfsStable;
 
   ### DATA
 
@@ -15589,7 +15587,9 @@ with pkgs;
 
   notepadqq = libsForQt56.callPackage ../applications/editors/notepadqq { };
 
-  notmuch = callPackage ../applications/networking/mailreaders/notmuch { };
+  notmuch = callPackage ../applications/networking/mailreaders/notmuch {
+    gmime = gmime3;
+  };
 
   notmuch-mutt = callPackage ../applications/networking/mailreaders/notmuch/mutt.nix { };
 
@@ -17836,15 +17836,11 @@ with pkgs;
 
   xsokoban = callPackage ../games/xsokoban { };
 
-  zandronum = callPackage ../games/zandronum {
-    cmake = cmake_2_8;
-  };
+  zandronum = callPackage ../games/zandronum { };
 
   zandronum-server = zandronum.override {
     serverOnly = true;
   };
-
-  zandronum-bin = hiPrio (callPackage ../games/zandronum/bin.nix { });
 
   zangband = callPackage ../games/zangband { };
 
@@ -18479,6 +18475,8 @@ with pkgs;
     ecl = ecl_16_1_2;
     sbcl = null;
   };
+
+  mxnet = callPackage ../applications/science/math/mxnet { };
 
   wxmaxima = callPackage ../applications/science/math/wxmaxima { wxGTK = wxGTK30; };
 
