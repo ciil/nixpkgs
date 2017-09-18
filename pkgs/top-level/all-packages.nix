@@ -362,6 +362,8 @@ with pkgs;
 
   a2ps = callPackage ../tools/text/a2ps { };
 
+  abcm2ps = callPackage ../tools/audio/abcm2ps { };
+
   abcmidi = callPackage ../tools/audio/abcmidi { };
 
   abduco = callPackage ../tools/misc/abduco { };
@@ -2051,6 +2053,8 @@ with pkgs;
     inherit (darwin.apple_sdk.frameworks) CoreServices;
   };
 
+  fpart = callPackage ../tools/misc/fpart { };
+
   fping = callPackage ../tools/networking/fping {};
 
   fpm = callPackage ../tools/package-management/fpm { };
@@ -3499,6 +3503,8 @@ with pkgs;
     wxGTK = wxGTK30;
   };
 
+  niff = callPackage ../tools/package-management/niff { };
+
   nifskope = callPackage ../tools/graphics/nifskope { };
 
   nilfs-utils = callPackage ../tools/filesystems/nilfs-utils {};
@@ -3630,7 +3636,9 @@ with pkgs;
 
   openresolv = callPackage ../tools/networking/openresolv { };
 
-  opensc = callPackage ../tools/security/opensc { };
+  opensc = callPackage ../tools/security/opensc {
+    inherit (darwin.apple_sdk.frameworks) Carbon;
+  };
 
   openssh =
     callPackage ../tools/networking/openssh {
@@ -4531,6 +4539,8 @@ with pkgs;
 
   telegraf = callPackage ../servers/monitoring/telegraf { };
 
+  telepresence = callPackage ../tools/networking/telepresence { };
+
   texmacs = callPackage ../applications/editors/texmacs {
     tex = texlive.combined.scheme-small;
     extraFonts = true;
@@ -5370,6 +5380,13 @@ with pkgs;
   gcc = gcc6;
   gcc-unwrapped = gcc.cc;
 
+  gccStdenv = if (!stdenv.isDarwin) then stdenv else stdenv.override {
+    allowedRequisites = null;
+    cc = gcc;
+    # Include unwrapped binaries like AS, etc. and remove libcxx/libcxxabi
+    extraBuildInputs = [ stdenv.cc.cc ];
+  };
+
   wrapCCMulti = cc:
     if system == "x86_64-linux" then lowPrio (
       let
@@ -5857,7 +5874,7 @@ with pkgs;
 
   jikes = callPackage ../development/compilers/jikes { };
 
-  julia = callPackage ../development/compilers/julia {
+  julia_04 = callPackage ../development/compilers/julia {
     gmp = gmp6;
     openblas = openblasCompat;
     inherit (darwin.apple_sdk.frameworks) CoreServices ApplicationServices;
@@ -5871,12 +5888,21 @@ with pkgs;
     llvm = llvm_38;
   };
 
+  julia_06 = callPackage ../development/compilers/julia/0.6.nix {
+    gmp = gmp6;
+    openblas = openblasCompat;
+    inherit (darwin.apple_sdk.frameworks) CoreServices ApplicationServices;
+    llvm = llvm_39;
+  };
+
   julia-git = lowPrio (callPackage ../development/compilers/julia/git.nix {
     gmp = gmp6;
     openblas = openblasCompat;
     inherit (darwin.apple_sdk.frameworks) CoreServices ApplicationServices;
     llvm = llvm_39;
   });
+
+  julia = julia_06;
 
   kotlin = callPackage ../development/compilers/kotlin { };
 
@@ -9910,6 +9936,7 @@ with pkgs;
   };
 
   opensubdiv = callPackage ../development/libraries/opensubdiv {
+    stdenv_gcc5 = overrideCC stdenv gcc5;
     cmake = cmake_2_8;
   };
 
@@ -10143,7 +10170,7 @@ with pkgs;
     ### KDE APPLICATIONS
 
     inherit (kdeApplications.override { libsForQt5 = self; })
-      kholidays libkdcraw libkexiv2 libkipi libkomparediff2;
+      kholidays libkdcraw libkexiv2 libkipi libkomparediff2 libksane;
 
     ### LIBRARIES
 
@@ -11353,6 +11380,7 @@ with pkgs;
 
   mattermost = callPackage ../servers/mattermost { };
   matterircd = callPackage ../servers/mattermost/matterircd.nix { };
+  matterbridge = callPackage ../servers/matterbridge { };
 
   mediatomb = callPackage ../servers/mediatomb { };
 
@@ -13616,6 +13644,7 @@ with pkgs;
   bleachbit = callPackage ../applications/misc/bleachbit { };
 
   blender = callPackage  ../applications/misc/blender {
+    stdenv_gcc5 = overrideCC stdenv gcc5;
     python = python35;
   };
 
@@ -15668,10 +15697,7 @@ with pkgs;
 
   osquery = callPackage ../tools/system/osquery { };
 
-  palemoon = callPackage ../applications/networking/browsers/palemoon {
-    # https://forum.palemoon.org/viewtopic.php?f=57&t=15296#p111146
-    stdenv = overrideCC stdenv gcc49;
-  };
+  palemoon = callPackage ../applications/networking/browsers/palemoon { };
 
   pamix = callPackage ../applications/audio/pamix { };
 
@@ -16264,6 +16290,8 @@ with pkgs;
   shntool = callPackage ../applications/audio/shntool { };
 
   sipp = callPackage ../development/tools/misc/sipp { };
+
+  skanlite = libsForQt5.callPackage ../applications/office/skanlite { };
 
   sonic-visualiser = libsForQt5.callPackage ../applications/audio/sonic-visualiser {
     inherit (pkgs.vamp) vampSDK;
@@ -18330,6 +18358,8 @@ with pkgs;
 
   tini = callPackage ../applications/virtualization/tini {};
 
+  ifstat-legacy = callPackage ../tools/networking/ifstat-legacy { };
+
   isabelle = callPackage ../applications/science/logic/isabelle {
     polyml = polyml56;
     java = if stdenv.isLinux then jre else jdk;
@@ -19402,6 +19432,7 @@ with pkgs;
   # `recurseIntoAttrs` for sake of hydra, not nix-env
   tests = recurseIntoAttrs {
     cc-wrapper = callPackage ../test/cc-wrapper { };
+    cc-wrapper-gcc = callPackage ../test/cc-wrapper { stdenv = gccStdenv; };
     cc-wrapper-clang = callPackage ../test/cc-wrapper { stdenv = llvmPackages.stdenv; };
     cc-wrapper-libcxx = callPackage ../test/cc-wrapper { stdenv = llvmPackages.libcxxStdenv; };
     cc-wrapper-clang-39 = callPackage ../test/cc-wrapper { stdenv = llvmPackages_39.stdenv; };

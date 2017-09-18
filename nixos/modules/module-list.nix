@@ -301,10 +301,12 @@
   ./services/misc/gitlab.nix
   ./services/misc/gitolite.nix
   ./services/misc/gogs.nix
+  ./services/misc/gollum.nix
   ./services/misc/gpsd.nix
   #./services/misc/ihaskell.nix
   ./services/misc/irkerd.nix
   ./services/misc/jackett.nix
+  ./services/misc/logkeys.nix
   ./services/misc/leaps.nix
   ./services/misc/mantisbt.nix
   ./services/misc/mathics.nix
@@ -460,6 +462,7 @@
   ./services/networking/lldpd.nix
   ./services/networking/logmein-hamachi.nix
   ./services/networking/mailpile.nix
+  ./services/networking/matterbridge.nix
   ./services/networking/mjpg-streamer.nix
   ./services/networking/minidlna.nix
   ./services/networking/miniupnpd.nix
@@ -510,6 +513,7 @@
   ./services/networking/smokeping.nix
   ./services/networking/softether.nix
   ./services/networking/spiped.nix
+  ./services/networking/squid.nix
   ./services/networking/sslh.nix
   ./services/networking/ssh/lshd.nix
   ./services/networking/ssh/sshd.nix

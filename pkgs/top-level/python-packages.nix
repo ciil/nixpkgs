@@ -133,6 +133,8 @@ in {
 
   # packages defined elsewhere
 
+  backports_csv = callPackage ../development/python-modules/backports_csv {};
+
   bap = callPackage ../development/python-modules/bap {
     bap = pkgs.ocamlPackages_4_02.bap;
   };
@@ -321,30 +323,7 @@ in {
 
   aiohttp = callPackage ../development/python-modules/aiohttp { };
 
-  aiohttp-cors = buildPythonPackage rec {
-    name = "${pname}-${version}";
-    pname = "aiohttp-cors";
-    # 0.5.3 is the current version but gns3-server requires 0.5.1
-    version = "0.5.1";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/a/${pname}/${name}.tar.gz";
-      sha256 = "0szma27ri25fq4nwwvs36myddggw3jz4pyzmq63yz4xpw0jjdxck";
-    };
-
-    # Requires network access
-    doCheck = false;
-
-    propagatedBuildInputs = with self; [ aiohttp ]
-      ++ optional (pythonOlder "3.5") typing;
-
-    meta = {
-      description = "CORS support for aiohttp";
-      homepage = "https://github.com/aio-libs/aiohttp-cors";
-      license = licenses.asl20;
-      maintainers = with maintainers; [ primeos ];
-    };
-  };
+  aiohttp-cors = callPackage ../development/python-modules/aiohttp/cors.nix { };
 
   alabaster = callPackage ../development/python-modules/alabaster {};
 
@@ -2574,6 +2553,8 @@ in {
     };
   };
 
+  cccolutils = callPackage ../development/python-modules/cccolutils/default.nix {};
+
   CDDB = buildPythonPackage rec {
     name = "CDDB-1.4";
 
@@ -3511,6 +3492,8 @@ in {
     enablePython = true;
     pythonPackages = self;
   };
+
+  openidc-client = callPackage ../development/python-modules/openidc-client/default.nix {};
 
   openstackclient = buildPythonPackage rec {
     name = "openstackclient-${version}";
@@ -4903,22 +4886,7 @@ in {
 
   dill = callPackage ../development/python-modules/dill { };
 
-  discogs_client = buildPythonPackage rec {
-    name = "discogs-client-2.0.2";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/d/discogs-client/${name}.tar.gz";
-      sha256 = "0a3616a818dd9fa61a61c3d9731d176e9123130d1b1b97a6beee63b4c72306b7";
-    };
-
-    propagatedBuildInputs = with self; [ oauth2 requests ];
-
-    meta = {
-      description = "Official Python API client for Discogs";
-      license = licenses.bsd2;
-      homepage = "https://github.com/discogs/discogs_client";
-    };
-  };
+  discogs_client = callPackage ../development/python-modules/discogs_client { };
 
   dns = callPackage ../development/python-modules/dns { };
 
@@ -5558,33 +5526,7 @@ in {
     buildInputs = with self; [ fudge_9 nose ];
   };
 
-  fedora_cert = buildPythonPackage rec {
-    name = "fedora-cert-0.5.9.2";
-    meta.maintainers = with maintainers; [ mornfall ];
-    format = "other";
-
-    src = pkgs.fetchurl {
-      url = "https://fedorahosted.org/releases/f/e/fedora-packager/fedora-packager-0.5.9.2.tar.bz2";
-      sha256 = "105swvzshgn3g6bjwk67xd8pslnhpxwa63mdsw6cl4c7cjp2blx9";
-    };
-
-    propagatedBuildInputs = with self; [ python_fedora pyopenssl ];
-    postInstall = "mv $out/bin/fedpkg $out/bin/fedora-cert-fedpkg";
-    doCheck = false;
-  };
-
-  fedpkg = buildPythonPackage (rec {
-    name = "fedpkg-1.14";
-    meta.maintainers = with maintainers; [ mornfall ];
-
-    src = pkgs.fetchurl {
-      url = "https://fedorahosted.org/releases/f/e/fedpkg/${name}.tar.bz2";
-      sha256 = "0rj60525f2sv34g5llafnkmpvbwrfbmfajxjc14ldwzymp8clc02";
-    };
-
-    patches = [ ../development/python-modules/fedpkg-buildfix.diff ];
-    propagatedBuildInputs = with self; [ rpkg offtrac urlgrabber fedora_cert ];
-  });
+  fedpkg = callPackage ../development/python-modules/fedpkg { };
 
   flit = callPackage ../development/python-modules/flit { };
 
@@ -6401,27 +6343,7 @@ in {
     };
   };
 
-  internetarchive = let ver = "0.8.3"; in buildPythonPackage rec {
-    name = "internetarchive-${ver}";
-
-    src = pkgs.fetchurl {
-      url = "https://github.com/jjjake/internetarchive/archive/v${ver}.tar.gz";
-      sha256 = "0j3l13zvbx50j66l6pnf8y8y8m6gk1sc3yssvfd2scvmv4gnmm8n";
-    };
-
-    # It is hardcoded to specific versions, I don't know why.
-    preConfigure = ''
-        sed 's/==/>=/' -i setup.py
-    '';
-
-    buildInputs = with self; [ pytest ];
-    propagatedBuildInputs = with self; [ six clint pyyaml docopt requests jsonpatch args ];
-
-    meta = with stdenv.lib; {
-      description = "A python wrapper for the various Internet Archive APIs";
-      homepage = "https://github.com/jjjake/internetarchive";
-    };
-  };
+  internetarchive = callPackage ../development/python-modules/internetarchive {};
 
   jsbeautifier = callPackage ../development/python-modules/jsbeautifier {};
 
@@ -7177,45 +7099,6 @@ in {
   };
 
   phpserialize = callPackage ../development/python-modules/phpserialize { };
-
-  pies = buildPythonPackage rec {
-    name = "pies-2.6.5";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/pies/${name}.tar.gz";
-      sha256 = "d8d6ae4faa0a7da5d634ad8c6ca4bb22b70ad53bb7ecd91af23d490fcd2a88e8";
-    };
-
-    deps = if !isPy3k then [ self.pies2overrides self.enum34 ]
-           else if isPy33 then [ self.enum34 ]
-           else [];
-
-    propagatedBuildInputs = deps;
-
-    meta = {
-      description = "The simplest way to write one program that runs on both Python 2 and Python 3";
-      homepage = https://github.com/timothycrosley/pies;
-      license = licenses.mit;
-    };
-  };
-
-  pies2overrides = buildPythonPackage rec {
-    name = "pies2overrides-2.6.5";
-    disabled = isPy3k;
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/pies2overrides/${name}.tar.gz";
-      sha256 = "2a91445afc7f692bdbabfbf00d3defb1d47ad7825eb568a6464359758ab35763";
-    };
-
-    propagatedBuildInputs = with self; [ ipaddress ];
-
-    meta = {
-      description = "Defines override classes that should be included with pies only if running on Python2";
-      homepage = https://github.com/timothycrosley/pies;
-      license = licenses.mit;
-    };
-  };
 
   plotly = callPackage ../development/python-modules/plotly { };
 
@@ -8066,6 +7949,8 @@ in {
       license = licenses.mit;
     };
   };
+
+  schema = callPackage ../development/python-modules/schema {};
 
   svg-path = buildPythonPackage rec {
     name = "svg.path-${version}";
@@ -10650,22 +10535,7 @@ in {
     };
   };
 
-  interruptingcow = buildPythonPackage rec {
-    name = "interruptingcow-${version}";
-    version = "0.6";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/i/interruptingcow/${name}.tar.gz";
-      sha256 = "1cv4pm2h0f87n9w4r3l1f96skwmng95sawn7j00ns0rdp1zshr9d";
-    };
-
-    meta = {
-      description = "A watchdog that interrupts long running code";
-      homepage = https://bitbucket.org/evzijst/interruptingcow;
-      license = licenses.mit;
-      maintainers = with maintainers; [ benley ];
-    };
-  };
+  interruptingcow = callPackage ../development/python-modules/interruptingcow {};
 
   iptools = buildPythonPackage rec {
     version = "0.6.1";
@@ -17600,24 +17470,7 @@ in {
     };
   };
 
-  python_fedora = buildPythonPackage (rec {
-    version = "0.5.5";
-    name = "python-fedora-${version}";
-    meta.maintainers = with maintainers; [ mornfall ];
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/python-fedora/${name}.tar.gz";
-      sha256 = "15m8lvbb5q4rg508i4ah8my872qrq5xjwgcgca4d3kzjv2x6fhim";
-    };
-    propagatedBuildInputs = with self; [ kitchen requests bunch paver six munch urllib3
-      beautifulsoup4 ];
-    doCheck = false;
-
-    # https://github.com/fedora-infra/python-fedora/issues/140
-    preBuild = ''
-      sed -i '4,15d' setup.py
-    '';
-  });
+  python_fedora = callPackage ../development/python-modules/python_fedora/default.nix {};
 
   python-simple-hipchat = callPackage ../development/python-modules/python-simple-hipchat {};
   python_simple_hipchat = self.python-simple-hipchat;
@@ -19291,22 +19144,7 @@ in {
     };
   };
 
-  rpkg = buildPythonPackage (rec {
-    name = "rpkg-1.14";
-    disabled = !isPy27; # error: invalid command 'bdist_wheel'
-    meta.maintainers = with maintainers; [ mornfall ];
-
-    src = pkgs.fetchurl {
-      url = "https://fedorahosted.org/releases/r/p/rpkg/rpkg-1.14.tar.gz";
-      sha256 = "0d053hdjz87aym1sfm6c4cxmzmy5g0gkrmrczly86skj957r77a7";
-    };
-
-    patches = [ ../development/python-modules/rpkg-buildfix.diff ];
-
-    propagatedBuildInputs = with self; [ pycurl koji GitPython pkgs.git
-      rpm pyopenssl ];
-
-  });
+  rpkg = callPackage ../development/python-modules/rpkg/default.nix {};
 
   rply = buildPythonPackage rec {
     name = "rply-${version}";
@@ -19328,6 +19166,8 @@ in {
   };
 
   rpm = (pkgs.rpm.override{inherit python;});
+
+  rpmfluff = callPackage ../development/python-modules/rpmfluff {};
 
   rpy2 = buildPythonPackage rec {
     name = "rpy2-2.8.2";
@@ -22388,28 +22228,7 @@ in {
     };
   };
 
-  urlgrabber =  buildPythonPackage rec {
-    name = "urlgrabber-3.9.1";
-    disabled = isPy3k;
-
-    src = pkgs.fetchurl {
-      url = "http://urlgrabber.baseurl.org/download/${name}.tar.gz";
-      sha256 = "4437076c8708e5754ea04540e46c7f4f233734ee3590bb8a96389264fb0650d0";
-    };
-
-    # error: invalid command 'test'
-    doCheck = false;
-
-    propagatedBuildInputs = with self; [ pycurl ];
-
-    meta = {
-      homepage = "urlgrabber.baseurl.org";
-      license = licenses.lgpl2Plus;
-      description = "Python module for downloading files";
-      maintainers = with maintainers; [ qknight ];
-    };
-  };
-
+  urlgrabber = callPackage ../development/python-modules/urlgrabber {};
 
   urwid = buildPythonPackage (rec {
     name = "urwid-1.3.1";
@@ -25311,65 +25130,7 @@ EOF
     };
   };
 
-  trollius = buildPythonPackage rec {
-    version = "1.0.4";
-    name = "trollius-${version}";
-    disabled = isPy34;
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/t/trollius/${name}.tar.gz";
-      sha256 = "8884cae4ec6a2d593abcffd5e700626ad4618f42b11beb2b75998f2e8247de76";
-    };
-
-    buildInputs = with self; [ mock ]
-      ++ optional isPy26 unittest2;
-
-    propagatedBuildInputs = with self; []
-      ++ optional isPy26 ordereddict
-      ++ optional (isPy26 || isPy27 || isPyPy) futures;
-
-    # Some of the tests fail on darwin with `error: AF_UNIX path too long'
-    # because of the *long* path names for sockets
-    patchPhase = optionalString stdenv.isDarwin ''
-      sed -i -e "s|test_create_ssl_unix_connection|skip_test_create_ssl_unix_connection|" tests/test_events.py
-      sed -i -e "s|test_create_unix_connection|skip_test_create_unix_connection|" tests/test_events.py
-      sed -i -e "s|test_create_unix_connection|skip_test_create_unix_connection|" tests/test_events.py
-      sed -i -e "s|test_create_unix_connection|skip_test_create_unix_connection|" tests/test_events.py
-      sed -i -e "s|test_create_unix_server_existing_path_nonsock|skip_test_create_unix_server_existing_path_nonsock|" tests/test_unix_events.py
-      sed -i -e "s|test_create_unix_server_existing_path_sock|skip_test_create_unix_server_existing_path_sock|" tests/test_unix_events.py
-      sed -i -e "s|test_create_unix_server_ssl_verified|skip_test_create_unix_server_ssl_verified|" tests/test_events.py
-      sed -i -e "s|test_create_unix_server_ssl_verified|skip_test_create_unix_server_ssl_verified|" tests/test_events.py
-      sed -i -e "s|test_create_unix_server_ssl_verified|skip_test_create_unix_server_ssl_verified|" tests/test_events.py
-      sed -i -e "s|test_create_unix_server_ssl_verify_failed|skip_test_create_unix_server_ssl_verify_failed|" tests/test_events.py
-      sed -i -e "s|test_create_unix_server_ssl_verify_failed|skip_test_create_unix_server_ssl_verify_failed|" tests/test_events.py
-      sed -i -e "s|test_create_unix_server_ssl_verify_failed|skip_test_create_unix_server_ssl_verify_failed|" tests/test_events.py
-      sed -i -e "s|test_create_unix_server_ssl|skip_test_create_unix_server_ssl|" tests/test_events.py
-      sed -i -e "s|test_create_unix_server_ssl|skip_test_create_unix_server_ssl|" tests/test_events.py
-      sed -i -e "s|test_create_unix_server_ssl|skip_test_create_unix_server_ssl|" tests/test_events.py
-      sed -i -e "s|test_create_unix_server|skip_test_create_unix_server|" tests/test_events.py
-      sed -i -e "s|test_create_unix_server|skip_test_create_unix_server|" tests/test_events.py
-      sed -i -e "s|test_create_unix_server|skip_test_create_unix_server|" tests/test_events.py
-      sed -i -e "s|test_open_unix_connection_error|skip_test_open_unix_connection_error|" tests/test_streams.py
-      sed -i -e "s|test_open_unix_connection_no_loop_ssl|skip_test_open_unix_connection_no_loop_ssl|" tests/test_streams.py
-      sed -i -e "s|test_open_unix_connection|skip_test_open_unix_connection|" tests/test_streams.py
-      sed -i -e "s|test_pause_reading|skip_test_pause_reading|" tests/test_subprocess.py
-      sed -i -e "s|test_read_pty_output|skip_test_read_pty_output|" tests/test_events.py
-      sed -i -e "s|test_start_unix_server|skip_test_start_unix_server|" tests/test_streams.py
-      sed -i -e "s|test_unix_sock_client_ops|skip_test_unix_sock_client_ops|" tests/test_events.py
-      sed -i -e "s|test_unix_sock_client_ops|skip_test_unix_sock_client_ops|" tests/test_events.py
-      sed -i -e "s|test_unix_sock_client_ops|skip_test_unix_sock_client_ops|" tests/test_events.py
-      sed -i -e "s|test_write_pty|skip_test_write_pty|" tests/test_events.py
-    '' + optionalString isPy26 ''
-      sed -i -e "s|test_env_var_debug|skip_test_env_var_debug|" tests/test_tasks.py
-    '';
-
-    meta = {
-      description = "Port of the Tulip project (asyncio module, PEP 3156) on Python 2";
-      homepage = "https://bitbucket.org/enovance/trollius";
-      license = licenses.asl20;
-      maintainers = with maintainers; [ garbas ];
-    };
-  };
+  trollius = callPackage ../development/python-modules/trollius {};
 
   neovim = buildPythonPackage rec {
     version = "0.1.13";
