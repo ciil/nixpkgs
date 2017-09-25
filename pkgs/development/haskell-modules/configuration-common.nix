@@ -720,6 +720,9 @@ self: super: {
   # It makes no sense to have intero-nix-shim in Hackage, so we publish it here only.
   intero-nix-shim = self.callPackage ../tools/haskell/intero-nix-shim {};
 
+  # vaultenv is not available from Hackage.
+  vaultenv = self.callPackage ../tools/haskell/vaultenv { };
+
   # https://github.com/Philonous/hs-stun/pull/1
   # Remove if a version > 0.1.0.1 ever gets released.
   stunclient = overrideCabal super.stunclient (drv: {
@@ -953,5 +956,12 @@ self: super: {
     cryptonite = super.cryptonite_0_24;
     protolude = super.protolude_0_2;
   };
+
+  # This tool needs the latest hackage-db version. Using the latest version of
+  # optparse-applicative allows us to generate completions for fish and zsh.
+  cabal2nix = super.cabal2nix.overrideScope (self: super: {
+    hackage-db = self.hackage-db_2_0;
+    optparse-applicative = self.optparse-applicative_0_14_0_0;
+  });
 
 }

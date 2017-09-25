@@ -5713,10 +5713,10 @@ let self = _self // overrides; _self = with self; {
   };
 
   FileSlurper = buildPerlPackage rec {
-    name = "File-Slurper-0.009";
+    name = "File-Slurper-0.010";
     src = fetchurl {
       url = "mirror://cpan/authors/id/L/LE/LEONT/${name}.tar.gz";
-      sha256 = "3eab340deff6ba5456e7d1156b9cfcc387e1243acfc156ff92b75b3f2e120b91";
+      sha256 = "a393364648c9d6be938e8a68c3094c5f8a37b19d3159141ec81ba49559343c16";
     };
     buildInputs = [ TestWarnings ];
     meta = {
@@ -11874,11 +11874,11 @@ let self = _self // overrides; _self = with self; {
     };
   };
 
-  ScopeUpper = buildPerlPackage {
-    name = "Scope-Upper-0.24";
+  ScopeUpper = buildPerlPackage rec {
+    name = "Scope-Upper-0.29";
     src = fetchurl {
-      url = mirror://cpan/authors/id/V/VP/VPIT/Scope-Upper-0.24.tar.gz;
-      sha256 = "159jcwliyb7j80858pi052hkmhgy4cdbjha419kmhhqc9s1rhd5g";
+      url = "mirror://cpan/authors/id/V/VP/VPIT/${name}.tar.gz";
+      sha256 = "4b07360a243ce0ccaacfdfa98ae38ef2686aa908fcf4ef3d669105ac36759e0a";
     };
     meta = {
       homepage = http://search.cpan.org/dist/Scope-Upper/;
@@ -15675,14 +15675,19 @@ let self = _self // overrides; _self = with self; {
   };
 
   XMLLibXML = buildPerlPackage rec {
-    name = "XML-LibXML-2.0122";
+    name = "XML-LibXML-2.0129";
     src = fetchurl {
       url = "mirror://cpan/authors/id/S/SH/SHLOMIF/${name}.tar.gz";
-      sha256 = "0llgkgifcw7zz7r7f2jiqryi5axymmd3fwzp4aa5gk6j37w66xkn";
+      sha256 = "0rmk6vysfgcn8434wyydd56midgshly37wx7c50ch038l2djd82w";
     };
     SKIP_SAX_INSTALL = 1;
     buildInputs = [ pkgs.libxml2 ];
     propagatedBuildInputs = [ XMLSAX ];
+
+    # https://rt.cpan.org/Public/Bug/Display.html?id=122958
+    preCheck = ''
+      rm t/32xpc_variables.t t/48_reader_undef_warning_on_empty_str_rt106830.t
+    '';
   };
 
   XMLLibXMLSimple = buildPerlPackage {
