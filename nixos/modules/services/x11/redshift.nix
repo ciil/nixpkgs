@@ -34,6 +34,16 @@ in {
       '';
     };
 
+    provider = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = ''
+        Instead of manually setting latitude and longitude,
+        use a service, for example geoclue2. If set, overrides
+        any manually given latitudinal and longitudinal values.
+      '';
+    };
+
     temperature = {
       day = mkOption {
         type = types.int;
@@ -100,7 +110,7 @@ in {
       serviceConfig = {
         ExecStart = ''
           ${cfg.package}/bin/redshift \
-            -l ${cfg.latitude}:${cfg.longitude} \
+            -l ${if (cfg.provider!=null) then "${cfg.provider}" else "${cfg.latitude}:${cfg.longitude}"} \
             -t ${toString cfg.temperature.day}:${toString cfg.temperature.night} \
             -b ${toString cfg.brightness.day}:${toString cfg.brightness.night} \
             ${lib.strings.concatStringsSep " " cfg.extraOptions}
