@@ -22,7 +22,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [
-    anthy glib gobjectIntrospection gtk3 ibus pyEnv
+    anthy glib gobjectIntrospection gtk3 ibus (python3.withPackages (ps: [ps.pygobject3]))
   ];
 
   nativeBuildInputs = [ intltool pkgconfig python3.pkgs.wrapPython ];
