@@ -55,6 +55,13 @@ with pkgs;
 
   stringsWithDeps = lib.stringsWithDeps;
 
+  ### Evaluating the entire NixPkgs naively will fail, make failure fast
+  AAAAAASomeThingsFailToEvaluate = throw ''
+    Please be informed that this pseudo-package is not the only part of
+    NixPkgs that fails to evaulate. You should not evaluate entire NixPkgs
+    without some special measures to handle failing packages, like those taken
+    by Hydra.
+  '';
 
   ### Nixpkgs maintainer tools
 
@@ -3258,7 +3265,9 @@ with pkgs;
 
   mednafen-server = callPackage ../misc/emulators/mednafen/server.nix { };
 
-  mednaffe = callPackage ../misc/emulators/mednaffe/default.nix { };
+  mednaffe = callPackage ../misc/emulators/mednaffe/default.nix {
+    gtk2 = null;
+  };
 
   megacli = callPackage ../tools/misc/megacli { };
 
@@ -4193,7 +4202,7 @@ with pkgs;
 
   rockbox_utility = libsForQt5.callPackage ../tools/misc/rockbox-utility { };
 
-  rosegarden = callPackage ../applications/audio/rosegarden { };
+  rosegarden = libsForQt5.callPackage ../applications/audio/rosegarden { };
 
   rowhammer-test = callPackage ../tools/system/rowhammer-test { };
 
@@ -4771,6 +4780,8 @@ with pkgs;
   vcsh = callPackage ../applications/version-management/vcsh {
     inherit (perlPackages) ShellCommand TestMost;
   };
+
+  vcstool = callPackage ../development/tools/vcstool { };
 
   verilator = callPackage ../applications/science/electronics/verilator {};
 
@@ -6649,7 +6660,7 @@ with pkgs;
     ruby_2_0_0
     ruby_2_1_10
     ruby_2_2_7
-    ruby_2_3_4
+    ruby_2_3_5
     ruby_2_4_2;
 
   # Ruby aliases
@@ -6657,7 +6668,7 @@ with pkgs;
   ruby_2_0 = ruby_2_0_0;
   ruby_2_1 = ruby_2_1_10;
   ruby_2_2 = ruby_2_2_7;
-  ruby_2_3 = ruby_2_3_4;
+  ruby_2_3 = ruby_2_3_5;
   ruby_2_4 = ruby_2_4_2;
 
   scsh = callPackage ../development/interpreters/scsh { };
@@ -7304,6 +7315,8 @@ with pkgs;
   minizinc = callPackage ../development/tools/minizinc { };
 
   mk = callPackage ../development/tools/build-managers/mk { };
+
+  mkdocs = callPackage ../development/tools/documentation/mkdocs { };
 
   moby = callPackage ../development/tools/misc/moby { };
 
@@ -10719,6 +10732,8 @@ with pkgs;
   torch-hdf5 = callPackage ../development/libraries/torch-hdf5 {};
 
   tremor = callPackage ../development/libraries/tremor { };
+
+  twolame = callPackage ../development/libraries/twolame { };
 
   udns = callPackage ../development/libraries/udns { };
 
@@ -14361,7 +14376,7 @@ with pkgs;
 
   fmsynth = callPackage ../applications/audio/fmsynth { };
 
-  focuswriter = callPackage ../applications/editors/focuswriter { };
+  focuswriter = libsForQt5.callPackage ../applications/editors/focuswriter { };
 
   font-manager = callPackage ../applications/misc/font-manager { };
 
@@ -15369,7 +15384,7 @@ with pkgs;
 
   mercurialFull = appendToName "full" (pkgs.mercurial.override { guiSupport = true; });
 
-  merkaartor = callPackage ../applications/misc/merkaartor { };
+  merkaartor = libsForQt5.callPackage ../applications/misc/merkaartor { };
 
   meshlab = callPackage ../applications/graphics/meshlab { };
 
@@ -16006,6 +16021,8 @@ with pkgs;
 
   qjackctl = libsForQt5.callPackage ../applications/audio/qjackctl { };
 
+  qmapshack = libsForQt5.callPackage ../applications/misc/qmapshack { };
+
   qmetro = callPackage ../applications/misc/qmetro { };
 
   qmidinet = callPackage ../applications/audio/qmidinet { };
@@ -16077,6 +16094,8 @@ with pkgs;
     withGstPlugins = true;
     gst-plugins-bad = null;
   };
+
+  falkon = libsForQt5.callPackage ../applications/networking/browsers/falkon { };
 
   qutebrowser = libsForQt5.callPackage ../applications/networking/browsers/qutebrowser {
     inherit (python3Packages) buildPythonApplication pyqt5 jinja2 pygments pyyaml pypeg2 cssutils pyopengl;
@@ -18074,6 +18093,8 @@ with pkgs;
 
   orion = callPackage ../misc/themes/orion {};
 
+  deepin-gtk-theme = callPackage ../misc/themes/deepin { };
+
   albatross = callPackage ../misc/themes/albatross { };
 
   gtk_engines = callPackage ../misc/themes/gtk2/gtk-engines { };
@@ -18452,6 +18473,9 @@ with pkgs;
   gappa = callPackage ../applications/science/logic/gappa { };
 
   gfan = callPackage ../applications/science/math/gfan {};
+
+  giac = callPackage ../applications/science/math/giac { };
+  giac-with-xcas = giac.override { enableGUI = true; };
 
   ginac = callPackage ../applications/science/math/ginac { };
 
@@ -19095,7 +19119,7 @@ with pkgs;
 
   pjsip = callPackage ../applications/networking/pjsip { };
 
-  PPSSPP = callPackage ../misc/emulators/ppsspp { SDL = SDL2; };
+  ppsspp = libsForQt5.callPackage ../misc/emulators/ppsspp { };
 
   pt = callPackage ../applications/misc/pt { };
 
