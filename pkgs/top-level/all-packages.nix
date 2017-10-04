@@ -55,10 +55,10 @@ with pkgs;
 
   stringsWithDeps = lib.stringsWithDeps;
 
-  ### Evaluating the entire NixPkgs naively will fail, make failure fast
+  ### Evaluating the entire Nixpkgs naively will fail, make failure fast
   AAAAAASomeThingsFailToEvaluate = throw ''
     Please be informed that this pseudo-package is not the only part of
-    NixPkgs that fails to evaulate. You should not evaluate entire NixPkgs
+    Nixpkgs that fails to evaluate. You should not evaluate entire Nixpkgs
     without some special measures to handle failing packages, like those taken
     by Hydra.
   '';
@@ -1953,6 +1953,8 @@ with pkgs;
 
     unikey = callPackage ../tools/inputmethods/fcitx-engines/fcitx-unikey { };
 
+    rime = callPackage ../tools/inputmethods/fcitx-engines/fcitx-rime { };
+
     m17n = callPackage ../tools/inputmethods/fcitx-engines/fcitx-m17n { };
 
     mozc = callPackage ../tools/inputmethods/fcitx-engines/fcitx-mozc rec {
@@ -2697,6 +2699,7 @@ with pkgs;
   iperf = iperf3;
 
   ipfs = callPackage ../applications/networking/ipfs { };
+  ipfs-migrator = callPackage ../applications/networking/ipfs-migrator { };
 
   ipmitool = callPackage ../tools/system/ipmitool {
     static = false;
@@ -2827,6 +2830,8 @@ with pkgs;
   klick = callPackage ../applications/audio/klick { };
 
   knockknock = callPackage ../tools/security/knockknock { };
+
+  kore = callPackage ../development/web/kore { };
 
   partition-manager = libsForQt5.callPackage ../tools/misc/partition-manager { };
 
@@ -3873,6 +3878,10 @@ with pkgs;
     gtk2 = null;
   };
 
+  pinentry_gnome = pinentry_ncurses.override {
+    gcr = gnome3.gcr;
+  };
+
   pinentry_qt4 = pinentry_ncurses.override {
     inherit qt4;
   };
@@ -4650,6 +4659,7 @@ with pkgs;
   tor-browser-bundle = callPackage ../applications/networking/browsers/tor-browser-bundle {
     stdenv = stdenvNoCC;
     tor-browser-unwrapped = firefoxPackages.tor-browser;
+    inherit (python27Packages) obfsproxy;
   };
 
   touchegg = callPackage ../tools/inputmethods/touchegg { };
@@ -4752,6 +4762,8 @@ with pkgs;
   untex = callPackage ../tools/text/untex { };
 
   upx = callPackage ../tools/compression/upx { };
+
+  uqmi = callPackage ../tools/networking/uqmi { };
 
   uriparser = callPackage ../development/libraries/uriparser {};
 
@@ -5340,6 +5352,7 @@ with pkgs;
     useMacosReexportHack = true;
   };
 
+  clang_5  = llvmPackages_5.clang;
   clang_4  = llvmPackages_4.clang;
   clang_39 = llvmPackages_39.clang;
   clang_38 = llvmPackages_38.clang;
@@ -5397,7 +5410,9 @@ with pkgs;
     '';
   });
 
-  crystal = callPackage ../development/compilers/crystal { };
+  crystal = callPackage ../development/compilers/crystal {
+    llvm = llvm_4;
+  };
 
   devpi-client = callPackage ../development/tools/devpi-client {};
 
@@ -5987,13 +6002,17 @@ with pkgs;
 
   lizardfs = callPackage ../tools/filesystems/lizardfs { };
 
-  lld = llvmPackages_4.lld;
+  lld = llvmPackages.lld;
+  lld_4 = llvmPackages_4.lld;
+  lld_5 = llvmPackages_5.lld;
 
   lldb = llvmPackages.lldb;
   lldb_4 = llvmPackages_4.lldb;
+  lldb_5 = llvmPackages_5.lldb;
 
   llvm = llvmPackages.llvm;
 
+  llvm_5  = llvmPackages_5.llvm;
   llvm_4  = llvmPackages_4.llvm;
   llvm_39 = llvmPackages_39.llvm;
   llvm_38 = llvmPackages_38.llvm;
@@ -6034,6 +6053,10 @@ with pkgs;
     libxml2 = libxml2.override { pythonSupport = false; };
     python2 = callPackage ../development/interpreters/python/cpython/2.7/boot.nix { inherit (darwin) CF configd; };
   });
+
+  llvmPackages_5 = callPackage ../development/compilers/llvm/5 {
+    inherit (stdenvAdapters) overrideCC;
+  };
 
   manticore = callPackage ../development/compilers/manticore { };
 
@@ -7591,7 +7614,7 @@ with pkgs;
   universal-ctags = callPackage ../development/tools/misc/universal-ctags { };
 
   vagrant = callPackage ../development/tools/vagrant {
-    ruby = ruby_2_2;
+    ruby = ruby_2_3;
   };
 
   bashdb = callPackage ../development/tools/misc/bashdb { };
@@ -9198,6 +9221,8 @@ with pkgs;
 
   librevisa = callPackage ../development/libraries/librevisa { };
 
+  librime = callPackage ../development/libraries/librime {};
+
   libsamplerate = callPackage ../development/libraries/libsamplerate {
     inherit (darwin.apple_sdk.frameworks) ApplicationServices Carbon CoreServices;
   };
@@ -9524,6 +9549,8 @@ with pkgs;
 
   libu2f-server = callPackage ../development/libraries/libu2f-server { };
 
+  libubox = callPackage ../development/libraries/libubox { };
+
   libuecc = callPackage ../development/libraries/libuecc { };
 
   libui = callPackage ../development/libraries/libui { };
@@ -9725,6 +9752,8 @@ with pkgs;
   lzo = callPackage ../development/libraries/lzo { };
 
   mapnik = callPackage ../development/libraries/mapnik { };
+
+  marisa = callPackage ../development/libraries/marisa {};
 
   matio = callPackage ../development/libraries/matio { };
 
@@ -13056,6 +13085,8 @@ with pkgs;
 
   bgnet = callPackage ../data/documentation/bgnet { };
 
+  brise = callPackage ../data/misc/brise { };
+
   inherit (kdeFrameworks) breeze-icons;
 
   cacert = callPackage ../data/misc/cacert { };
@@ -14428,6 +14459,10 @@ with pkgs;
   inherit (ocamlPackages) google-drive-ocamlfuse;
 
   google-musicmanager = callPackage ../applications/audio/google-musicmanager { };
+
+  googler = callPackage ../applications/misc/googler {
+    python = python3;
+  };
 
   gopher = callPackage ../applications/networking/gopher/gopher { };
 
@@ -19589,6 +19624,8 @@ with pkgs;
     cc-wrapper-libcxx = callPackage ../test/cc-wrapper { stdenv = llvmPackages.libcxxStdenv; };
     cc-wrapper-clang-39 = callPackage ../test/cc-wrapper { stdenv = llvmPackages_39.stdenv; };
     cc-wrapper-libcxx-39 = callPackage ../test/cc-wrapper { stdenv = llvmPackages_39.libcxxStdenv; };
+    cc-wrapper-clang-5 = callPackage ../test/cc-wrapper { stdenv = llvmPackages_5.stdenv; };
+    cc-wrapper-libcxx-5 = callPackage ../test/cc-wrapper { stdenv = llvmPackages_5.libcxxStdenv; };
     stdenv-inputs = callPackage ../test/stdenv-inputs { };
 
     macOSSierraShared = callPackage ../test/macos-sierra-shared {};

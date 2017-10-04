@@ -136,6 +136,7 @@
   dancek = "Hannu Hartikainen <hannu.hartikainen@gmail.com>";
   danielfullmer = "Daniel Fullmer <danielrf12@gmail.com>";
   dasuxullebt = "Christoph-Simon Senjak <christoph.senjak@googlemail.com>";
+  david50407 = "David Kuo <me@davy.tw>";
   davidak = "David Kleuker <post@davidak.de>";
   davidrusu = "David Rusu <davidrusu.me@gmail.com>";
   davorb = "Davor Babic <davor@davor.se>";
@@ -287,6 +288,7 @@
   joelmo = "Joel Moberg <joel.moberg@gmail.com>";
   joelteon = "Joel Taylor <me@joelt.io>";
   johbo = "Johannes Bornhold <johannes@bornhold.name>";
+  johnmh = "John M. Harris, Jr. <johnmh@openblox.org>";
   johnramsden = "John Ramsden <johnramsden@riseup.net>";
   joko = "Ioannis Koutras <ioannis.koutras@gmail.com>";
   jonafato = "Jon Banafato <jon@jonafato.com>";
@@ -383,7 +385,6 @@
   mikefaille = "Michaël Faille <michael@faille.io>";
   miltador = "Vasiliy Solovey <miltador@yandex.ua>";
   mimadrid = "Miguel Madrid <mimadrid@ucm.es>";
-  mingchuan = "Ming Chuan <ming@culpring.com>";
   mirdhyn = "Merlin Gaillard <mirdhyn@gmail.com>";
   mirrexagon = "Andrew Abbott <mirrexagon@mirrexagon.com>";
   mjanczyk = "Marcin Janczyk <m@dragonvr.pl>";
@@ -549,6 +550,7 @@
   shell = "Shell Turner <cam.turn@gmail.com>";
   shlevy = "Shea Levy <shea@shealevy.com>";
   siddharthist = "Langston Barrett <langston.barrett@gmail.com>";
+  sifmelcara = "Ming Chuan <ming@culpring.com>";
   sigma = "Yann Hodique <yann.hodique@gmail.com>";
   simonvandel = "Simon Vandel Sillesen <simon.vandel@gmail.com>";
   sivteck = "Sivaram Balakrishnan <sivaram1992@gmail.com>";
@@ -573,6 +575,7 @@
   sternenseemann = "Lukas Epple <post@lukasepple.de>";
   stesie = "Stefan Siegl <stesie@brokenpipe.de>";
   steveej = "Stefan Junker <mail@stefanjunker.de>";
+  stumoss = "Stuart Moss <samoss@gmail.com>";
   SuprDewd = "Bjarki Ágúst Guðmundsson <suprdewd@gmail.com>";
   swarren83 = "Shawn Warren <shawn.w.warren@gmail.com>";
   swflint = "Samuel W. Flint <swflint@flintfam.org>";
