@@ -256,6 +256,10 @@ in {
     pythonPackages = self;
   };
 
+  pyqt56 = pkgs.libsForQt56.callPackage ../development/python-modules/pyqt/5.x.nix {
+    pythonPackages = self;
+  };
+
   pyqt5 = pkgs.libsForQt5.callPackage ../development/python-modules/pyqt/5.x.nix {
     pythonPackages = self;
   };
@@ -277,6 +281,8 @@ in {
   python-sql = callPackage ../development/python-modules/python-sql { };
 
   python-stdnum = callPackage ../development/python-modules/python-stdnum { };
+
+  python-utils = callPackage ../development/python-modules/python-utils { };
 
   pytimeparse =  callPackage ../development/python-modules/pytimeparse { };
 
@@ -13342,6 +13348,8 @@ in {
     };
   };
 
+  numpy-stl = callPackage ../development/python-modules/numpy-stl { };
+
   numtraits = buildPythonPackage rec {
     pname = "numtraits";
     version = "0.2";
@@ -18302,22 +18310,6 @@ in {
     meta = {
       description = "An Open Source Python library for generating PDFs and graphics";
       homepage = http://www.reportlab.com/;
-    };
-  };
-
-  # Remove before release of 17.09
-  requests_1 = buildPythonPackage rec {
-    name = "requests-1.2.3";
-    disabled = !pythonOlder "3.4";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/r/requests/${name}.tar.gz";
-      sha256 = "156bf3ec27ba9ec7e0cf8fbe02808718099d218de403eb64a714d73ba1a29ab1";
-    };
-
-    meta = {
-      description = "An Apache2 licensed HTTP library, written in Python, for human beings";
-      homepage = http://docs.python-requests.org/en/latest/;
     };
   };
 
@@ -26536,7 +26528,10 @@ EOF
 
   twilio = callPackage ../development/python-modules/twilio { };
 
-  uranium = callPackage ../development/python-modules/uranium { };
+  uranium = callPackage ../development/python-modules/uranium {
+    # https://github.com/Ultimaker/Cura/issues/2596
+    pyqt5 = self.pyqt56;
+  };
 
   vine = callPackage ../development/python-modules/vine { };
 
