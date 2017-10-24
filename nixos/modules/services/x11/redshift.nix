@@ -47,16 +47,6 @@ in {
       '';
     };
 
-    provider = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = ''
-        Instead of manually setting latitude and longitude,
-        use a service, for example geoclue2. If set, overrides
-        any manually given latitudinal and longitudinal values.
-      '';
-    };
-
     temperature = {
       day = mkOption {
         type = types.int;
