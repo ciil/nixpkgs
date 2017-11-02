@@ -674,28 +674,7 @@ in {
     };
   };
 
-  autopep8 = buildPythonPackage (rec {
-    name = "autopep8-1.0.4";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/a/autopep8/${name}.tar.gz";
-      sha256 = "17lydqm8y9a5qadp6iifxrb5mb0g9fr1vxn5qy1fjpyhazxaw8n1";
-    };
-
-    propagatedBuildInputs = with self; [ pep8 ];
-
-    # One test fails:
-    # FAIL: test_recursive_should_not_crash_on_unicode_filename (test.test_autopep8.CommandLineTests)
-    doCheck = false;
-
-    meta = {
-      description = "A tool that automatically formats Python code to conform to the PEP 8 style guide";
-      homepage = https://pypi.python.org/pypi/autopep8/;
-      license = licenses.mit;
-      platforms = platforms.all;
-      maintainers = with maintainers; [ bjornfor ];
-    };
-  });
+  autopep8 = callPackage ../development/python-modules/autopep8 { };
 
   av = buildPythonPackage rec {
     name = "av-${version}";
@@ -2033,33 +2012,7 @@ in {
     };
   };
 
-
-  blockdiag = buildPythonPackage rec {
-    name = "blockdiag-${version}";
-    version = "1.5.3";
-
-    src = pkgs.fetchurl {
-      url = "https://bitbucket.org/blockdiag/blockdiag/get/${version}.tar.bz2";
-      sha256 = "0r0qbmv0ijnqidsgm2rqs162y9aixmnkmzgnzgk52hiy7ydm4k8f";
-    };
-
-    buildInputs = with self; [ pep8 nose unittest2 docutils ];
-
-    propagatedBuildInputs = with self; [ pillow webcolors funcparserlib ];
-
-    # One test fails:
-    #   ...
-    #   FAIL: test_auto_font_detection (blockdiag.tests.test_boot_params.TestBootParams)
-    doCheck = false;
-
-    meta = {
-      description = "Generate block-diagram image from spec-text file (similar to Graphviz)";
-      homepage = http://blockdiag.com/;
-      license = licenses.asl20;
-      platforms = platforms.unix;
-      maintainers = with maintainers; [ bjornfor ];
-    };
-  };
+  blockdiag = callPackage ../development/python-modules/blockdiag { };
 
   bpython = callPackage ../development/python-modules/bpython {};
 
@@ -2750,12 +2703,12 @@ in {
   };
 
   click-log = buildPythonPackage rec {
-    version = "0.1.3";
+    version = "0.2.1";
     name = "click-log-${version}";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/c/click-log/${name}.tar.gz";
-      sha256 = "0kdd1vminxpcfczxl2kkf285n0dr1gxh2cdbx1p6vkj7b7bci3gx";
+      sha256 = "1r1x85023cslb2pwldd089jjk573mk3w78cnashs77wrx7yz8fj9";
     };
 
     propagatedBuildInputs = with self; [ click ];
@@ -3091,33 +3044,7 @@ in {
 
   confluent-kafka = callPackage ../development/python-modules/confluent-kafka {};
 
-
-  construct = buildPythonPackage rec {
-    name = "construct-${version}";
-    version = "2.8.10";
-
-    src = pkgs.fetchFromGitHub {
-      owner = "construct";
-      repo = "construct";
-      rev = "v${version}";
-      sha256 = "1xfmmc5pihn3ql9f7blrciy06y2bwczqvkbcpvh96dmgqwc3wys3";
-    };
-
-    propagatedBuildInputs = with self; [ six ];
-
-    # Tests fail with the following error on Python 3.5+
-    # TypeError: not all arguments converted during string formatting
-    doCheck = pythonOlder "3.5";
-
-    meta = {
-      description = "Powerful declarative parser (and builder) for binary data";
-      homepage = http://construct.readthedocs.org/;
-      license = licenses.mit;
-      platforms = platforms.linux;
-      maintainers = with maintainers; [ bjornfor ];
-    };
-  };
-
+  construct = callPackage ../development/python-modules/construct {};
 
   consul = buildPythonPackage (rec {
     name = "python-consul-0.7.0";
@@ -3716,28 +3643,7 @@ in {
 
   cffi = callPackage ../development/python-modules/cffi { };
 
-  pycollada = buildPythonPackage rec {
-    name = "pycollada-0.4.1";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/pycollada/${name}.tar.gz";
-      sha256 = "0i50lh98550pwr95zgzrgiqzsspm09wl52xlv83y5nrsz4mblylv";
-    };
-
-    buildInputs = with self; [ numpy ] ++ (if isPy3k then [dateutil] else [dateutil_1_5]);
-
-    # Some tests fail because they refer to test data files that don't exist
-    # (upstream packaging issue)
-    doCheck = false;
-
-    meta = {
-      description = "Python library for reading and writing collada documents";
-      homepage = http://pycollada.github.io/;
-      license = "BSD"; # they don't specify which BSD variant
-      platforms = with platforms; linux ++ darwin;
-      maintainers = with maintainers; [ bjornfor ];
-    };
-  };
+  pycollada = callPackage ../development/python-modules/pycollada { };
 
   pycontracts = buildPythonPackage rec {
     version = "1.7.9";
@@ -5000,26 +4906,7 @@ in {
     };
   };
 
-  dpkt = buildPythonPackage rec {
-    name = "dpkt-1.8";
-    disabled = isPy3k;
-
-    src = pkgs.fetchurl {
-      url = "https://dpkt.googlecode.com/files/${name}.tar.gz";
-      sha256 = "01q5prynymaqyfsfi2296xncicdpid2hs3yyasim8iigvkwy4vf5";
-    };
-
-    # error: invalid command 'test'
-    doCheck = false;
-
-    meta = {
-      description = "Fast, simple packet creation / parsing, with definitions for the basic TCP/IP protocols";
-      homepage = https://code.google.com/p/dpkt/;
-      license = licenses.bsd3;
-      maintainers = with maintainers; [ bjornfor ];
-      platforms = platforms.all;
-    };
-  };
+  dpkt = callPackage ../development/python-modules/dpkt {};
 
   urllib3 = callPackage ../development/python-modules/urllib3 {};
 
@@ -6223,31 +6110,7 @@ in {
 
   jsbeautifier = callPackage ../development/python-modules/jsbeautifier {};
 
-  jug = buildPythonPackage rec {
-    version = "1.6.1";
-    name = "jug-${version}";
-    buildInputs = with self; [ nose numpy ];
-    propagatedBuildInputs = with self; [
-      bottle
-      pyyaml
-      redis
-      six
-
-      pkgs.zlib
-    ];
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/J/Jug/Jug-${version}.tar.gz";
-      sha256 = "15lv998mz6kpp65kh8wsfnrl5ay02bk1lm07nbbdv2k455bhrn1i";
-    };
-
-    meta = {
-      description = "A Task-Based Parallelization Framework";
-      license = licenses.mit;
-      url = https://jug.readthedocs.io/;
-      maintainers = with maintainers; [ luispedro ];
-    };
-  };
+  jug = callPackage ../development/python-modules/jug {};
 
   jsmin = callPackage ../development/python-modules/jsmin { };
 
@@ -7480,24 +7343,7 @@ in {
     };
   };
 
-  raven = buildPythonPackage rec {
-    name = "raven-6.2.1";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/r/raven/${name}.tar.gz";
-      sha256 = "1zkh8llsfng5viz8cpf9j74v30705hv80vb5g6gha1ij7v60p8y0";
-    };
-
-    # way too many dependencies to run tests
-    # see https://github.com/getsentry/raven-python/blob/master/setup.py
-    doCheck = false;
-
-    propagatedBuildInputs = optionals (!isPy3k) [ self.contextlib2 ];
-
-    meta = {
-      maintainers = with maintainers; [ primeos ];
-    };
-  };
+  raven = callPackage ../development/python-modules/raven { };
 
   rethinkdb = buildPythonPackage rec {
     name = "rethinkdb-${version}";
@@ -9558,40 +9404,7 @@ in {
     };
   };
 
-  gevent = buildPythonPackage rec {
-    name = "gevent-1.1.2";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/g/gevent/${name}.tar.gz";
-      sha256 = "cb15cf73d69a2eeefed330858f09634e2c50bf46da9f9e7635730fcfb872c02c";
-    };
-
-    # Why do we have this patch?
-    postPatch = ''
-      substituteInPlace libev/ev.c --replace \
-        "ecb_inline void ecb_unreachable (void) ecb_noreturn" \
-        "ecb_inline ecb_noreturn void ecb_unreachable (void)"
-    '';
-
-    buildInputs = with self; [ pkgs.libev ];
-    propagatedBuildInputs = with self; optionals (!isPyPy) [ greenlet ];
-
-    checkPhase = ''
-      cd greentest
-      ${python.interpreter} testrunner.py
-    '';
-
-    # Bunch of failures.
-    doCheck = false;
-
-    meta = {
-      description = "Coroutine-based networking library";
-      homepage = http://www.gevent.org/;
-      license = licenses.mit;
-      platforms = platforms.unix;
-      maintainers = with maintainers; [ bjornfor ];
-    };
-  };
+  gevent = callPackage ../development/python-modules/gevent { };
 
   geventhttpclient = buildPythonPackage rec {
     name = "geventhttpclient-${version}";
@@ -10720,27 +10533,7 @@ in {
 
   keyring = callPackage ../development/python-modules/keyring { };
 
-  keyutils = buildPythonPackage rec {
-    name = "${pname}-${version}";
-    pname = "keyutils";
-    version = "0.5";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/k/${pname}/${name}.tar.gz";
-      sha256 = "0dskys71vkn59vlsfs1ljli0qnzk7b10iv4pawxawnk2hvyjrf10";
-    };
-
-    buildInputs = with self; [ pkgs.keyutils pytestrunner ];
-
-    doCheck = false;
-
-    meta = {
-      description = "A set of python bindings for keyutils";
-      homepage = https://github.com/sassoftware/python-keyutils;
-      license = licenses.asl20;
-      maintainers = with maintainers; [ primeos ];
-    };
-  };
+  keyutils = callPackage ../development/python-modules/keyutils { };
 
   klaus = buildPythonPackage rec {
     version = "0.9.1";
@@ -11084,33 +10877,8 @@ in {
 
   livereload = callPackage ../development/python-modules/livereload { };
 
-  llfuse = buildPythonPackage rec {
-    name = "llfuse-1.0";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/l/llfuse/${name}.tar.bz2";
-      sha256 = "1li7q04ljrvwharw4fblcbfhvk6s0l3lnv8yqb4c22lcgbkiqlps";
-    };
-
-    nativeBuildInputs = [ pkgs.pkgconfig ];
-    buildInputs = with self; [ pytest pkgs.fuse pkgs.attr pkgs.which ];
-
-    propagatedBuildInputs = with self; [ contextlib2 ];
-
-    checkPhase = ''
-      py.test
-    '';
-
-    # FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin'
-    doCheck = false;
-
-    meta = {
-      description = "Python bindings for the low-level FUSE API";
-      homepage = https://code.google.com/p/python-llfuse/;
-      license = licenses.lgpl2Plus;
-      platforms = platforms.unix;
-      maintainers = with maintainers; [ bjornfor ];
-    };
+  llfuse = callPackage ../development/python-modules/llfuse {
+    fuse = pkgs.fuse;  # use "real" fuse, not the python module
   };
 
   locustio = buildPythonPackage rec {
@@ -12640,7 +12408,7 @@ in {
     patches = [
       (pkgs.fetchpatch {
         url = https://github.com/drkjam/netaddr/commit/2ab73f10be7069c9412e853d2d0caf29bd624012.patch;
-        sha256 = "08rn1s3w9424jhandy4j9sksy852ny00088zh15nirw5ajqg1dn7";
+        sha256 = "0s1cdn9v5alpviabhcjmzc0m2pnpq9dh2fnnk2x96dnry1pshg39";
       })
     ];
 
@@ -13158,29 +12926,7 @@ in {
 
   numtraits = callPackage ../development/python-modules/numtraits { };
 
-  nwdiag = buildPythonPackage rec {
-    name = "nwdiag-1.0.3";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/n/nwdiag/${name}.tar.gz";
-      sha256 = "0n7ary1fngxk8bk15vabc8fhnmxlh098piciwaviwn7l4a5q1zys";
-    };
-
-    buildInputs = with self; [ pep8 nose unittest2 docutils ];
-
-    propagatedBuildInputs = with self; [ blockdiag ];
-
-    # tests fail
-    doCheck = false;
-
-    meta = {
-      description = "Generate network-diagram image from spec-text file (similar to Graphviz)";
-      homepage = http://blockdiag.com/;
-      license = licenses.asl20;
-      platforms = platforms.linux;
-      maintainers = with maintainers; [ bjornfor ];
-    };
-  };
+  nwdiag = callPackage ../development/python-modules/nwdiag { };
 
   dynd = buildPythonPackage rec {
     version = "0.7.2";
@@ -15344,6 +15090,7 @@ in {
   };
 
   pip-tools = callPackage ../development/python-modules/pip-tools {
+    git = pkgs.gitMinimal;
     glibcLocales = pkgs.glibcLocales;
   };
 
@@ -16179,12 +15926,12 @@ in {
 
 
   pycdio = buildPythonPackage rec {
-    name = "pycdio-0.20";
+    name = "pycdio-0.21";
     disabled = !isPy27;
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/p/pycdio/${name}.tar.gz";
-      sha256 = "1mrh233pj584gf7la64d4xlmvdnfl4jwpxs95lnd3i4zd5drid14";
+      sha256 = "1bkcmg838l2yffsw5lln93ap5f8ks3vmqwg02mygmdmay647rc3v";
     };
 
     prePatch = ''
@@ -16198,8 +15945,6 @@ in {
     nativeBuildInputs = [ pkgs.pkgconfig ];
     buildInputs = [ self.setuptools self.nose pkgs.swig pkgs.libcdio ]
       ++ stdenv.lib.optional stdenv.isDarwin pkgs.libiconv;
-
-    patches = [ ../development/python-modules/pycdio/add-cdtext-toc.patch ];
 
     # Run tests using nosetests but first need to install the binaries
     # to the root source directory where they can be found.
@@ -16442,34 +16187,7 @@ in {
     };
   };
 
-
-  pyev = buildPythonPackage rec {
-    name = "pyev-0.9.0";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/pyev/${name}.tar.gz";
-      sha256 = "0rf603lc0s6zpa1nb25vhd8g4y337wg2wyz56i0agsdh7jchl0sx";
-    };
-
-    buildInputs = [ pkgs.libev ];
-
-    libEvSharedLibrary =
-      if !stdenv.isDarwin
-      then "${pkgs.libev}/lib/libev.so.4"
-      else "${pkgs.libev}/lib/libev.4.dylib";
-
-    postPatch = ''
-      test -f "${libEvSharedLibrary}" || { echo "ERROR: File ${libEvSharedLibrary} does not exist, please fix nix expression for pyev"; exit 1; }
-      sed -i -e "s|libev_dll_name = find_library(\"ev\")|libev_dll_name = \"${libEvSharedLibrary}\"|" setup.py
-    '';
-
-    meta = {
-      description = "Python bindings for libev";
-      homepage = https://code.google.com/p/pyev/;
-      license = licenses.gpl3;
-      maintainers = [ maintainers.bjornfor ];
-    };
-  };
+  pyev = callPackage ../development/python-modules/pyev { };
 
   pyexcelerator = buildPythonPackage rec {
     name = "pyexcelerator-${version}";
@@ -16986,23 +16704,7 @@ in {
     };
   });
 
-  Pyro = buildPythonPackage (rec {
-    name = "Pyro-3.16";
-    disabled = isPy3k;
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/P/Pyro/${name}.tar.gz";
-      sha256 = "1bed508453ef7a7556b51424a58101af2349b662baab7e7331c5cb85dbe7e578";
-    };
-
-    meta = {
-      description = "Distributed object middleware for Python (IPC/RPC)";
-      homepage = http://pythonhosted.org/Pyro/;
-      license = licenses.mit;
-      platforms = platforms.unix;
-      maintainers = with maintainers; [ bjornfor ];
-    };
-  });
+  Pyro = callPackage ../development/python-modules/pyro { };
 
   pyrsistent = buildPythonPackage (rec {
     name = "pyrsistent-0.11.12";
@@ -18430,52 +18132,9 @@ in {
 
   restructuredtext_lint = callPackage ../development/python-modules/restructuredtext_lint { };
 
-  robomachine = buildPythonPackage rec {
-    name = "robomachine-0.6";
+  robomachine = callPackage ../development/python-modules/robomachine { };
 
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/R/RoboMachine/RoboMachine-0.6.tar.gz";
-      sha256 = "6c9a9bae7bffa272b2a09b05df06c29a3a776542c70cae8041a8975a061d2e54";
-    };
-
-    propagatedBuildInputs = with self; [ pyparsing argparse robotframework ];
-
-    # Remove Windows .bat files
-    postInstall = ''
-      rm "$out/bin/"*.bat
-    '';
-
-    postPatch = ''
-      substituteInPlace setup.py --replace "argparse" ""
-    '';
-
-    meta = {
-      description = "Test data generator for Robot Framework";
-      homepage = https://github.com/mkorpela/RoboMachine;
-      license = licenses.asl20;
-      maintainers = with maintainers; [ bjornfor ];
-    };
-  };
-
-  robotframework = buildPythonPackage rec {
-    version = "3.0.2";
-    name = "robotframework-${version}";
-    disabled = isPy3k;
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/r/robotframework/${name}.tar.gz";
-      sha256 = "1xqzxv00lxf9xi4vdxdsyd1bfmx18gi96vrnijpzj9w2aqrz4610";
-    };
-
-    meta = {
-      description = "Generic test automation framework";
-      homepage = http://robotframework.org/;
-      license = licenses.asl20;
-      platforms = platforms.linux;
-      maintainers = with maintainers; [ bjornfor ];
-    };
-  };
-
+  robotframework = callPackage ../development/python-modules/robotframework { };
 
   robotframework-selenium2library = buildPythonPackage rec {
     version = "1.6.0";
@@ -18520,36 +18179,7 @@ in {
 
   robotsuite = callPackage ../development/python-modules/robotsuite { };
 
-  robotframework-ride = buildPythonPackage rec {
-    version = "1.2.3";
-    name = "robotframework-ride-${version}";
-    disabled = isPy3k;
-
-    src = pkgs.fetchurl {
-      url = "https://robotframework-ride.googlecode.com/files/${name}.tar.gz";
-      sha256 = "1lf5f4x80f7d983bmkx12sxcizzii21kghs8kf63a1mj022a5x5j";
-    };
-
-    propagatedBuildInputs = with self; [ pygments wxPython ];
-
-    # ride_postinstall.py checks that needed deps are installed and creates a
-    # desktop shortcut. We don't really need it and it clutters up bin/ so
-    # remove it.
-    postInstall = ''
-      rm -f "$out/bin/ride_postinstall.py"
-    '';
-
-    # error: invalid command 'test'
-    doCheck = false;
-
-    meta = {
-      description = "Light-weight and intuitive editor for Robot Framework test case files";
-      homepage = https://code.google.com/p/robotframework-ride/;
-      license = licenses.asl20;
-      platforms = platforms.linux;
-      maintainers = with maintainers; [ bjornfor ];
-    };
-  };
+  robotframework-ride = callPackage ../development/python-modules/robotframework-ride { };
 
   robotframework-requests = buildPythonPackage rec {
     version = "0.4.6";
@@ -18652,24 +18282,7 @@ in {
 
   rpkg = callPackage ../development/python-modules/rpkg/default.nix {};
 
-  rply = buildPythonPackage rec {
-    name = "rply-${version}";
-    version = "0.7.4";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/r/rply/${name}.tar.gz";
-      sha256 = "12rp1d9ba7nvd5rhaxi6xzx1rm67r1k1ylsrkzhpwnphqpb06cvj";
-    };
-
-    buildInputs = with self; [ appdirs ];
-
-    meta = with pkgs.stdenv.lib; {
-      description = "A python Lex/Yacc that works with RPython";
-      homepage = https://github.com/alex/rply;
-      license = licenses.bsd3;
-      maintainers = with maintainers; [ nixy ];
-    };
-  };
+  rply = callPackage ../development/python-modules/rply/default.nix {};
 
   rpm = (pkgs.rpm.override{inherit python;});
 
@@ -18892,31 +18505,7 @@ in {
     };
   };
 
-  seqdiag = buildPythonPackage rec {
-    name = "seqdiag-0.9.4";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/s/seqdiag/${name}.tar.gz";
-      sha256 = "1qa7d0m1wahvmrj95rxkb6128cbwd4w3gy8gbzncls66h46bifiz";
-    };
-
-    buildInputs = with self; [ pep8 nose unittest2 docutils ];
-
-    propagatedBuildInputs = with self; [ blockdiag ];
-
-    # Tests fail:
-    #   ...
-    #   ERROR: Failure: OSError ([Errno 2] No such file or directory: '/tmp/nix-build-python2.7-seqdiag-0.9.0.drv-0/seqdiag-0.9.0/src/seqdiag/tests/diagrams/')
-    doCheck = false;
-
-    meta = {
-      description = "Generate sequence-diagram image from spec-text file (similar to Graphviz)";
-      homepage = http://blockdiag.com/;
-      license = licenses.asl20;
-      platforms = platforms.linux;
-      maintainers = with maintainers; [ bjornfor ];
-    };
-  };
+  seqdiag = callPackage ../development/python-modules/seqdiag { };
 
   pysendfile = buildPythonPackage rec {
     name = "pysendfile-${version}";
@@ -18973,24 +18562,7 @@ in {
 
   sampledata = callPackage ../development/python-modules/sampledata { };
 
-  scapy = buildPythonPackage rec {
-    name = "scapy-2.2.0";
-
-    disabled = isPy3k || isPyPy;
-
-    src = pkgs.fetchurl {
-      url = "http://www.secdev.org/projects/scapy/files/${name}.tar.gz";
-      sha256 = "1bqmp0xglkndrqgmybpwmzkv462mir8qlkfwsxwbvvzh9li3ndn5";
-    };
-
-    meta = {
-      description = "Powerful interactive network packet manipulation program";
-      homepage = http://www.secdev.org/projects/scapy/;
-      license = licenses.gpl2;
-      platforms = platforms.linux;
-      maintainers = with maintainers; [ bjornfor ];
-    };
-  };
+  scapy = callPackage ../development/python-modules/scapy { };
 
   scipy = callPackage ../development/python-modules/scipy { };
 
@@ -22209,25 +21781,7 @@ EOF
     };
   });
 
-  zipstream = buildPythonPackage rec {
-    name = "${pname}-${version}";
-    pname = "zipstream";
-    version = "1.1.4";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/z/${pname}/${name}.tar.gz";
-      sha256 = "01im5anqdyggmwkigqcjg0qw2a5bnn84h33mfaqjjd69a28lpwif";
-    };
-
-    buildInputs = with self; [ nose ];
-
-    meta = {
-      description = "A zip archive generator";
-      homepage = "https://github.com/allanlei/python-zipstream";
-      license = licenses.gpl3Plus;
-      maintainers = with maintainers; [ primeos ];
-    };
-  };
+  zipstream = callPackage ../development/python-modules/zipstream { };
 
   zodb = callPackage ../development/python-modules/zodb {};
 
@@ -23109,35 +22663,7 @@ EOF
 
   unidecode = callPackage ../development/python-modules/unidecode {};
 
-  pyusb = buildPythonPackage rec {
-    name = "pyusb-1.0.0";
-
-    src = pkgs.fetchurl {
-      url = "https://pypi.python.org/packages/8a/19/66fb48a4905e472f5dfeda3a1bafac369fbf6d6fc5cf55b780864962652d/PyUSB-1.0.0.tar.gz";
-      sha256 = "0s2k4z06fapd5vp1gnrlf8a9sjpc03p9974lzw5k6ky39akzyd2v";
-    };
-
-    # Fix the USB backend library lookup
-    postPatch =
-      ''
-        libusb=${pkgs.libusb1.out}/lib/libusb-1.0${stdenv.hostPlatform.extensions.sharedLibrary}
-        test -f $libusb || { echo "ERROR: $libusb doesn't exist, please update/fix this build expression."; exit 1; }
-        sed -i -e "s|find_library=None|find_library=lambda _:\"$libusb\"|" usb/backend/libusb1.py
-      '';
-
-    propagatedBuildInputs = [ pkgs.libusb ];
-
-    # No tests included
-    doCheck = false;
-
-    meta = {
-      description = "Python USB access module (wraps libusb 1.0)";  # can use other backends
-      homepage = http://pyusb.sourceforge.net/;
-      license = licenses.bsd3;
-      maintainers = with maintainers; [ bjornfor ];
-    };
-  };
-
+  pyusb = callPackage ../development/python-modules/pyusb {};
 
   BlinkStick = buildPythonPackage rec {
     name = "BlinkStick-${version}";
@@ -23164,25 +22690,7 @@ EOF
     };
   };
 
-
-  usbtmc = buildPythonPackage rec {
-    name = "usbtmc-${version}";
-    version = "0.6";
-
-    src = pkgs.fetchurl {
-      url = "https://github.com/python-ivi/python-usbtmc/archive/v${version}.tar.gz";
-      sha256 = "1wnw6ndc3s1i8zpbikz5zc40ijvpraqdb0xn8zmqlyn95xxfizw2";
-    };
-
-    propagatedBuildInputs = with self; [ pyusb ];
-
-    meta = {
-      description = "Python implementation of the USBTMC instrument control protocol";
-      homepage = http://alexforencich.com/wiki/en/python-usbtmc/start;
-      license = licenses.mit;
-      maintainers = with maintainers; [ bjornfor ];
-    };
-  };
+  usbtmc = callPackage ../development/python-modules/usbtmc {};
 
   txgithub = buildPythonPackage rec {
     name = "${pname}-${version}";
