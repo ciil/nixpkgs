@@ -44,11 +44,13 @@
   anderspapitto = "Anders Papitto <anderspapitto@gmail.com>";
   andir = "Andreas Rammhold <andreas@rammhold.de>";
   andres = "Andres Loeh <ksnixos@andres-loeh.de>";
+  andrestylianos = "Andre S. Ramos <andre.stylianos@gmail.com>";
   andrewrk = "Andrew Kelley <superjoe30@gmail.com>";
   andsild = "Anders Sildnes <andsild@gmail.com>";
   aneeshusa = "Aneesh Agrawal <aneeshusa@gmail.com>";
   ankhers = "Justin Wood <justin.k.wood@gmail.com>";
   antono = "Antono Vasiljev <self@antono.info>";
+  antonxy = "Anton Schirg <anton.schirg@posteo.de>";
   apeschar = "Albert Peschar <albert@peschar.net>";
   apeyroux = "Alexandre Peyroux <alex@px.io>";
   ardumont = "Antoine R. Dumont <eniotna.t@gmail.com>";
@@ -93,6 +95,7 @@
   bramd = "Bram Duvigneau <bram@bramd.nl>";
   bstrik = "Berno Strik <dutchman55@gmx.com>";
   bzizou = "Bruno Bzeznik <Bruno@bzizou.net>";
+  c0bw3b = "Renaud <c0bw3b@gmail.com>";
   c0dehero = "CodeHero <codehero@nerdpol.ch>";
   calbrecht = "Christian Albrecht <christian.albrecht@mayflower.de>";
   calrama = "Moritz Maxeiner <moritz@ucworks.org>";
@@ -326,6 +329,7 @@
   KibaFox = "Kiba Fox <kiba.fox@foxypossibilities.com>";
   kierdavis = "Kier Davis <kierdavis@gmail.com>";
   kiloreux = "Kiloreux Emperex <kiloreux@gmail.com>";
+  kini = "Keshav Kini <keshav.kini@gmail.com>";
   kkallio = "Karn Kallio <tierpluspluslists@gmail.com>";
   knedlsepp = "Josef Kemetmüller <josef.kemetmueller@gmail.com>";
   konimex = "Muhammad Herdiansyah <herdiansyah@netc.eu>";
@@ -562,6 +566,7 @@
   schristo = "Scott Christopher <schristopher@konputa.com>";
   scolobb = "Sergiu Ivanov <sivanov@colimite.fr>";
   sdll = "Sasha Illarionov <sasha.delly@gmail.com>";
+  SeanZicari = "Sean Zicari <sean.zicari@gmail.com>";
   sepi = "Raffael Mancini <raffael@mancini.lu>";
   seppeljordan = "Sebastian Jordan <sebastian.jordan.mail@googlemail.com>";
   shanemikel = "Shane Pearlman <shanemikel1@gmail.com>";
@@ -585,6 +590,7 @@
   snyh = "Xia Bin <snyh@snyh.org>";
   solson = "Scott Olson <scott@solson.me>";
   sorpaas = "Wei Tang <hi@that.world>";
+  sorki = "Richard Marko <srk@48.io>";
   spacefrogg = "Michael Raitza <spacefrogg-nixos@meterriblecrew.net>";
   spencerjanssen = "Spencer Janssen <spencerjanssen@gmail.com>";
   spinus = "Tomasz Czyż <tomasz.czyz@gmail.com>";
@@ -623,6 +629,7 @@
   ThomasMader = "Thomas Mader <thomas.mader@gmail.com>";
   thoughtpolice = "Austin Seipp <aseipp@pobox.com>";
   timbertson = "Tim Cuthbertson <tim@gfxmonk.net>";
+  timokau = "Timo Kaufmann <timokau@zoho.com>";
   titanous = "Jonathan Rudenberg <jonathan@titanous.com>";
   tnias = "Philipp Bartsch <phil@grmr.de>";
   tohl = "Tomas Hlavaty <tom@logand.com>";
