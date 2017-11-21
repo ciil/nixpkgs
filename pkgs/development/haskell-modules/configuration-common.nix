@@ -65,9 +65,6 @@ self: super: {
   options = dontCheck super.options;
   statistics = dontCheck super.statistics;
 
-  # segfault due to missing return: https://github.com/haskell/c2hs/pull/184
-  c2hs = dontCheck super.c2hs;
-
   # https://github.com/gilith/hol/pull/1
   hol = appendPatch (doJailbreak super.hol) (pkgs.fetchpatch {
     name = "hol.patch";
@@ -98,7 +95,7 @@ self: super: {
       name = "git-annex-${drv.version}-src";
       url = "git://git-annex.branchable.com/";
       rev = "refs/tags/" + drv.version;
-      sha256 = "0iz0yz0bwkmpza5qahsxr9plg1ylmkv7znp1a8f0z65px7f300an";
+      sha256 = "14449sllp81d23mnjwn1m658kzry5qvww2ykxkbkdcrlz6kl6dy0";
     };
   })).override {
     dbus = if pkgs.stdenv.isLinux then self.dbus else null;
@@ -155,7 +152,7 @@ self: super: {
     extraLibraries = [ pkgs.openblasCompat ];
   });
 
-  LambdaHack = super.LambdaHack.override { sdl2-ttf = super.sdl2-ttf_2_0_1; };
+  LambdaHack = super.LambdaHack.override { sdl2-ttf = super.sdl2-ttf_2_0_2; };
 
   # The Haddock phase fails for one reason or another.
   acme-one = dontHaddock super.acme-one;
@@ -960,12 +957,6 @@ self: super: {
     optparse-applicative = self.optparse-applicative_0_14_0_0;
   });
 
-  # Break "hpack >=0.17.0 && <0.19".
-  stack = doJailbreak super.stack;
-
-  # https://github.com/mgajda/json-autotype/issues/15
-  json-autotype = doJailbreak super.json-autotype;
-
   # Depends on broken fluid.
   fluid-idl-http-client = markBroken super.fluid-idl-http-client;
   fluid-idl-scotty = markBroken super.fluid-idl-scotty;
@@ -978,4 +969,17 @@ self: super: {
 
   # missing dependencies: Glob >=0.7.14 && <0.8, data-fix ==0.0.4
   stack2nix = doJailbreak super.stack2nix;
+
+  # Hacks to work around https://github.com/haskell/c2hs/issues/192.
+  c2hs = (overrideCabal super.c2hs {
+    version = "0.26.2-28-g8b79823";
+    doCheck = false;
+    src = pkgs.fetchFromGitHub {
+      owner = "deech";
+      repo = "c2hs";
+      rev = "8b79823c32e234c161baec67fdf7907952ca62b8";
+      sha256 = "0hyrcyssclkdfcw2kgcark8jl869snwnbrhr9k0a9sbpk72wp7nz";
+    };
+  }).override { language-c = self.language-c_0_7_0; };
+
 }
