@@ -16,7 +16,8 @@ let
 
     buildInputs = [ makeWrapper retroarch zlib ] ++ a.extraBuildInputs or [];
 
-    buildPhase = "make -f Makefile.libretro";
+    makefile = "Makefile.libretro";
+
     installPhase = ''
       COREDIR="$out/lib/retroarch/cores"
       mkdir -p $out/bin
@@ -25,6 +26,8 @@ let
       makeWrapper ${retroarch}/bin/retroarch $out/bin/retroarch-${core} \
         --add-flags "-L $COREDIR/${d2u core}_libretro.so $@"
     '';
+
+    enableParallelBuilding = true;
 
     passthru = {
       core = core;
