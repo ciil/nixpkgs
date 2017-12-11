@@ -41,7 +41,7 @@ self: super: {
 
   # cabal-install needs Cabal 2.x. hackage-security's test suite does not compile with
   # Cabal 2.x, though. See https://github.com/haskell/hackage-security/issues/188.
-  cabal-install = super.cabal-install.overrideScope (self: super: { Cabal = self.Cabal_2_0_1_0; });
+  cabal-install = super.cabal-install.overrideScope (self: super: { Cabal = self.Cabal_2_0_1_1; });
   hackage-security = dontCheck super.hackage-security;
 
   # Link statically to avoid runtime dependency on GHC.
@@ -509,6 +509,21 @@ self: super: {
     preConfigure = "sed -i -e 's,time .* < 1.6,time >= 1.5,' -e 's,haddock-library >= 1.1 && < 1.3,haddock-library >= 1.1,' pandoc.cabal";
   });
 
+  # pandoc 2 dependency resolution
+  hslua_0_9_2 = super.hslua_0_9_2.override { lua5_1 = pkgs.lua5_3; };
+  hslua-module-text = super.hslua-module-text.override { hslua = self.hslua_0_9_2; };
+  texmath_0_10 = super.texmath_0_10.override { pandoc-types = self.pandoc-types_1_17_3; };
+  pandoc_2_0_4 = super.pandoc_2_0_4.override {
+    doctemplates = self.doctemplates_0_2_1;
+    pandoc-types = self.pandoc-types_1_17_3;
+    skylighting = self.skylighting_0_4_4_1;
+    texmath = self.texmath_0_10;
+  };
+  pandoc-citeproc_0_12_1 = super.pandoc-citeproc_0_12_1.override {
+    pandoc = self.pandoc_2_0_4;
+    pandoc-types = self.pandoc-types_1_17_3;
+  };
+
   # https://github.com/tych0/xcffib/issues/37
   xcffib = dontCheck super.xcffib;
 
@@ -730,13 +745,8 @@ self: super: {
     '';
   });
 
-  # test suite cannot find its own "idris" binary
+  # The standard libraries are compiled separately
   idris = doJailbreak (dontCheck super.idris);
-
-  idris_1_1_1 = overrideCabal (doJailbreak (dontCheck super.idris_1_1_1)) (drv: {
-    # The standard libraries are compiled separately
-    configureFlags = (drv.configureFlags or []) ++ [ "-fexeconly" ];
-  });
 
   # https://github.com/bos/math-functions/issues/25
   math-functions = dontCheck super.math-functions;
@@ -984,4 +994,9 @@ self: super: {
     };
   }).override { language-c = self.language-c_0_7_0; };
 
+  # Needs pginit to function and pgrep to verify.
+  tmp-postgres = overrideCabal super.tmp-postgres (drv: {
+    libraryToolDepends = drv.libraryToolDepends or [] ++ [pkgs.postgresql];
+    testToolDepends = drv.testToolDepends or [] ++ [pkgs.procps];
+  });
 }
