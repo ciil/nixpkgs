@@ -205,6 +205,7 @@
   elijahcaine = "Elijah Caine <elijahcainemv@gmail.com>";
   elitak = "Eric Litak <elitak@gmail.com>";
   ellis = "Ellis Whitehead <nixos@ellisw.net>";
+  enzime = "Michael Hoang <enzime@users.noreply.github.com>";
   eperuffo = "Emanuele Peruffo <info@emanueleperuffo.com>";
   epitrochoid = "Mabry Cervin <mpcervin@uncg.edu>";
   eqyiel = "Ruben Maher <r@rkm.id.au>";
@@ -433,6 +434,7 @@
   mog = "Matthew O'Gorman <mog-lists@rldn.net>";
   montag451 = "montag451 <montag451@laposte.net>";
   moosingin3space = "Nathan Moos <moosingin3space@gmail.com>";
+  moredread = "André-Patrick Bubel <code@apb.name>";
   moretea = "Maarten Hoogendoorn <maarten@moretea.nl>";
   mornfall = "Petr Ročkai <me@mornfall.net>";
   MostAwesomeDude = "Corbin Simpson <cds@corbinsimpson.com>";

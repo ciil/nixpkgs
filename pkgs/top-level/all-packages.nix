@@ -14627,7 +14627,7 @@ with pkgs;
   emacs25WithPackages = emacs25PackagesNg.emacsWithPackages;
   emacsWithPackages = emacsPackagesNg.emacsWithPackages;
 
-  # inherit (gnome3) empathy;
+  inherit (gnome3) empathy;
 
   enhanced-ctorrent = callPackage ../applications/networking/enhanced-ctorrent { };
 
@@ -16895,6 +16895,8 @@ with pkgs;
   sylpheed = callPackage ../applications/networking/mailreaders/sylpheed { };
 
   symlinks = callPackage ../tools/system/symlinks { };
+
+  syncplay = callPackage ../applications/networking/syncplay { };
 
   syncthing = callPackage ../applications/networking/syncthing { };
 
