@@ -703,7 +703,7 @@ with pkgs;
 
   azureus = callPackage ../tools/networking/p2p/azureus { };
 
-  backblaze-b2 = callPackage ../development/tools/backblaze-b2 { };
+  backblaze-b2 = python.pkgs.callPackage ../development/tools/backblaze-b2 { };
 
   backup = callPackage ../tools/backup/backup { };
 
@@ -1183,6 +1183,8 @@ with pkgs;
 
   iio-sensor-proxy = callPackage ../os-specific/linux/iio-sensor-proxy { };
 
+  lynis = callPackage ../tools/security/lynis { };
+
   mathics = pythonPackages.mathics;
 
   masscan = callPackage ../tools/security/masscan { };
@@ -1329,13 +1331,15 @@ with pkgs;
   bgs = callPackage ../tools/X11/bgs { };
 
   biber = callPackage ../tools/typesetting/biber {
-    inherit (perlPackages)
+    inherit (perlPackages) buildPerlModule
       autovivification BusinessISBN BusinessISMN BusinessISSN ConfigAutoConf
       DataCompare DataDump DateSimple EncodeEUCJPASCII EncodeHanExtra EncodeJIS2K
-      ExtUtilsLibBuilder FileSlurp IPCRun3 Log4Perl LWPProtocolHttps ListAllUtils
-      ListMoreUtils ModuleBuild MozillaCA ReadonlyXS RegexpCommon TextBibTeX
+      DateTime DateTimeFormatBuilder DateTimeCalendarJulian
+      ExtUtilsLibBuilder FileSlurp FileWhich IPCRun3 Log4Perl LWPProtocolHttps ListAllUtils
+      ListMoreUtils MozillaCA ReadonlyXS RegexpCommon TextBibTeX
       UnicodeCollate UnicodeLineBreak URI XMLLibXMLSimple XMLLibXSLT XMLWriter
-      ClassAccessor TextRoman DataUniqid LinguaTranslit UnicodeNormalize;
+      ClassAccessor TextCSV TextCSV_XS TextRoman DataUniqid LinguaTranslit UnicodeNormalize SortKey
+      TestDifferences;
   };
 
   blueman = callPackage ../tools/bluetooth/blueman {
@@ -1392,6 +1396,8 @@ with pkgs;
   can-utils = callPackage ../os-specific/linux/can-utils { };
 
   caudec = callPackage ../applications/audio/caudec { };
+
+  ccd2iso = callPackage ../tools/cd-dvd/ccd2iso { };
 
   ccid = callPackage ../tools/security/ccid { };
 
@@ -3979,12 +3985,12 @@ with pkgs;
 
   philter = callPackage ../tools/networking/philter { };
 
-  pinentry = callPackage ../tools/security/pinentry {
-    libcap = if stdenv.isDarwin then null else libcap;
-    qt4 = null;
+  pinentry = pinentry_ncurses.override {
+    inherit gtk2;
   };
 
-  pinentry_ncurses = pinentry.override {
+  pinentry_ncurses = callPackage ../tools/security/pinentry {
+    libcap = if stdenv.isDarwin then null else libcap;
     gtk2 = null;
   };
 
@@ -3993,11 +3999,11 @@ with pkgs;
   };
 
   pinentry_qt4 = pinentry_ncurses.override {
-    inherit qt4;
+    qt = qt4;
   };
 
-  pinentry_qt5 = libsForQt5.callPackage ../tools/security/pinentry/qt5.nix {
-    libcap = if stdenv.isDarwin then null else libcap;
+  pinentry_qt5 = pinentry_ncurses.override {
+    qt = qt5.qtbase;
   };
 
   pinentry_mac = callPackage ../tools/security/pinentry-mac {
@@ -4502,6 +4508,8 @@ with pkgs;
   };
 
   smbnetfs = callPackage ../tools/filesystems/smbnetfs {};
+
+  smenu = callPackage ../tools/misc/smenu { };
 
   smugline = python3Packages.smugline;
 
@@ -6082,26 +6090,17 @@ with pkgs;
 
   jre8Plugin = lowPrio (pkgs.oraclejdk8distro false true);
 
-  supportsJDK =
-    system == "i686-linux" ||
-    system == "x86_64-linux" ||
-    system == "armv7l-linux" ||
-    system == "aarch64-linux";
-
   jdkdistro = oraclejdk8distro;
 
   oraclejdk8distro = installjdk: pluginSupport:
-    assert supportsJDK;
     (if pluginSupport then appendToName "with-plugin" else x: x)
       (callPackage ../development/compilers/oraclejdk/jdk8cpu-linux.nix { inherit installjdk pluginSupport; });
 
   oraclejdk8psu_distro = installjdk: pluginSupport:
-    assert supportsJDK;
     (if pluginSupport then appendToName "with-plugin" else x: x)
       (callPackage ../development/compilers/oraclejdk/jdk8psu-linux.nix { inherit installjdk pluginSupport; });
 
   oraclejdk9distro = packageType: pluginSupport:
-    assert supportsJDK;
     (if pluginSupport then appendToName "with-plugin" else x: x)
       (callPackage ../development/compilers/oraclejdk/jdk9-linux.nix { inherit packageType pluginSupport; });
 
@@ -11958,6 +11957,8 @@ with pkgs;
 
   vmfs-tools = callPackage ../tools/filesystems/vmfs-tools { };
 
+  pgbouncer = callPackage ../servers/sql/pgbouncer/default.nix { };
+
   pgpool93 = pgpool.override { postgresql = postgresql93; };
   pgpool94 = pgpool.override { postgresql = postgresql94; };
 
@@ -13595,6 +13596,8 @@ with pkgs;
   mro-unicode = callPackage ../data/fonts/mro-unicode { };
 
   mustache-spec = callPackage ../data/documentation/mustache-spec { };
+
+  myrica = callPackage ../data/fonts/myrica { };
 
   nafees = callPackage ../data/fonts/nafees { };
 
@@ -16125,12 +16128,6 @@ with pkgs;
 
   notmuch-addrlookup = callPackage ../applications/networking/mailreaders/notmuch-addrlookup { };
 
-  # Open Stack
-  nova = callPackage ../applications/virtualization/openstack/nova.nix { };
-  keystone = callPackage ../applications/virtualization/openstack/keystone.nix { };
-  neutron = callPackage ../applications/virtualization/openstack/neutron.nix { };
-  glance = callPackage ../applications/virtualization/openstack/glance.nix { };
-
   nova-filters =  callPackage ../applications/audio/nova-filters { };
 
   nspluginwrapper = callPackage ../applications/networking/browsers/mozilla-plugins/nspluginwrapper {};
@@ -16780,7 +16777,9 @@ with pkgs;
 
   lightdm_qt = lightdm.override { withQt5 = true; };
 
-  lightdm_gtk_greeter = callPackage ../applications/display-managers/lightdm-gtk-greeter { };
+  lightdm_gtk_greeter = callPackage ../applications/display-managers/lightdm-gtk-greeter {
+    inherit (xfce) exo;
+  };
 
   slic3r = callPackage ../applications/misc/slic3r { };
 
@@ -18841,7 +18840,7 @@ with pkgs;
   };
   coq_8_6 = callPackage ../applications/science/logic/coq {};
   coq_8_7 = callPackage ../applications/science/logic/coq {
-    version = "8.7.0";
+    version = "8.7.1";
   };
 
   mkCoqPackages = self: coq: let callPackage = newScope self; in rec {
@@ -18890,6 +18889,8 @@ with pkgs;
     gmp = lib.overrideDerivation gmp (a: { dontDisableStatic = true; });
   };
   cvc4 = callPackage ../applications/science/logic/cvc4 {};
+
+  drat-trim = callPackage ../applications/science/logic/drat-trim {};
 
   ekrhyper = callPackage ../applications/science/logic/ekrhyper {
     inherit (ocamlPackages_4_02) ocaml;
@@ -19031,6 +19032,11 @@ with pkgs;
   gtkwave = callPackage ../applications/science/electronics/gtkwave { };
 
   kicad = callPackage ../applications/science/electronics/kicad {
+    wxGTK = wxGTK30;
+    boost = boost160;
+  };
+
+  kicad-unstable = python.pkgs.callPackage ../applications/science/electronics/kicad/unstable.nix {
     wxGTK = wxGTK30;
     boost = boost160;
   };

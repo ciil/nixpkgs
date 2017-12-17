@@ -95,7 +95,7 @@ self: super: {
       name = "git-annex-${drv.version}-src";
       url = "git://git-annex.branchable.com/";
       rev = "refs/tags/" + drv.version;
-      sha256 = "1bnnrwamw3d37fz7cwykxhi1ryy22dq8r6ld59gsbgcv23drqzax";
+      sha256 = "1fd7lyrwr60dp55swc5iwl0mkkzmdzpmj9qmx1qca2r7y9wc5w5k";
     };
   })).override {
     dbus = if pkgs.stdenv.isLinux then self.dbus else null;
@@ -627,6 +627,19 @@ self: super: {
 
   # https://github.com/lens/lens-aeson/issues/18
   lens-aeson = dontCheck super.lens-aeson;
+
+  # Install icons and metadata, remove broken hgettext dependency.
+  # https://github.com/vasylp/hgettext/issues/10
+  bustle = overrideCabal super.bustle (drv: {
+    configureFlags = drv.configureFlags or [] ++ ["-f-hgettext"];
+    executableHaskellDepends = pkgs.lib.remove self.hgettext drv.executableHaskellDepends;
+    buildDepends = [ pkgs.libpcap ];
+    buildTools = with pkgs; [ gettext perl help2man intltool ];
+    doCheck = false; # https://github.com/wjt/bustle/issues/6
+    postInstall = ''
+      make install PREFIX=$out
+    '';
+  });
 
   # Byte-compile elisp code for Emacs.
   ghc-mod = overrideCabal super.ghc-mod (drv: {
