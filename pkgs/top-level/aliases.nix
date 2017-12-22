@@ -60,6 +60,7 @@ mapAliases (rec {
   gettextWithExpat = gettext; # 2016-02-19
   gdb-multitarget = gdb; # added 2017-11-13
   git-hub = gitAndTools.git-hub; # added 2016-04-29
+  go-pup = pup; # added 2017-12-19
   googleAuthenticator = google-authenticator; # added 2016-10-16
   grantlee5 = libsForQt5.grantlee;  # added 2015-12-19
   gst_ffmpeg = gst-ffmpeg;  # added 2017-02
@@ -159,6 +160,7 @@ mapAliases (rec {
   vimprobable2Wrapper = vimprobable2; # added 2015-01
   virtviewer = virt-viewer; # added 2015-12-24
   vorbisTools = vorbis-tools; # added 2016-01-26
+  winusb = woeusb; # added 2017-12-22
   x11 = xlibsWrapper; # added 2015-09
   xf86_video_nouveau = xorg.xf86videonouveau; # added 2015-09
   xlibs = xorg; # added 2015-09
