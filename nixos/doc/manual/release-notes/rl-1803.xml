@@ -139,6 +139,12 @@ following incompatible changes:</para>
       will be accessible at <literal>/run/memcached/memcached.sock</literal>.
     </para>
   </listitem>
+  <listitem>
+    <para>
+      The DNSCrypt proxy module has been removed, the upstream project
+      is no longer maintained.
+    </para>
+  </listitem>
 </itemizedlist>
 
 </section>
@@ -232,6 +238,13 @@ following incompatible changes:</para>
   ];
 </programlisting>
       to your <literal>configuration.nix</literal>.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      The NixOS test driver supports user services declared by <literal>systemd.user.services</literal>.
+      The methods <literal>waitForUnit</literal>, <literal>getUnitInfo</literal>, <literal>startJob</literal>
+      and <literal>stopJob</literal> provide an optional <literal>$user</literal> argument for that purpose.
     </para>
   </listitem>
 </itemizedlist>

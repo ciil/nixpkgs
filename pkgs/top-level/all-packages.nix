@@ -1482,7 +1482,8 @@ with pkgs;
 
   # Use Citrix Receiver 13.4.0 below if you get "A network error occured (SSL error 4)"
   # See https://discussions.citrix.com/topic/385459-ssl-error-with-135-works-with-134/?p=1977735
-  citrix_receiver        = hiPrio citrix_receiver_13_7_0;
+  citrix_receiver        = hiPrio citrix_receiver_13_8_0;
+  citrix_receiver_13_8_0 = callPackage ../applications/networking/remote/citrix-receiver { version = "13.8.0"; };
   citrix_receiver_13_7_0 = callPackage ../applications/networking/remote/citrix-receiver { version = "13.7.0"; };
   citrix_receiver_13_6_0 = callPackage ../applications/networking/remote/citrix-receiver { version = "13.6.0"; };
   citrix_receiver_13_5_0 = callPackage ../applications/networking/remote/citrix-receiver { version = "13.5.0"; };
@@ -7011,6 +7012,8 @@ with pkgs;
 
   avr8burnomat = callPackage ../development/misc/avr8-burn-omat { };
 
+  betaflight = callPackage ../development/stm32/betaflight { };
+
   sourceFromHead = callPackage ../build-support/source-from-head-fun.nix {};
 
   ecj = callPackage ../development/eclipse/ecj { };
@@ -11726,7 +11729,9 @@ with pkgs;
 
   cayley = callPackage ../servers/cayley { };
 
-  charybdis = callPackage ../servers/irc/charybdis {};
+  charybdis = callPackage ../servers/irc/charybdis { };
+
+  clamsmtp = callPackage ../servers/mail/clamsmtp { };
 
   clickhouse = callPackage ../servers/clickhouse { };
 
@@ -15893,6 +15898,8 @@ with pkgs;
 
   matchbox = callPackage ../applications/window-managers/matchbox { };
 
+  mblaze = callPackage ../applications/networking/mailreaders/mblaze { };
+
   mcpp = callPackage ../development/compilers/mcpp { };
 
   mda_lv2 = callPackage ../applications/audio/mda-lv2 { };
@@ -16245,6 +16252,8 @@ with pkgs;
   mypaint = callPackage ../applications/graphics/mypaint { };
 
   mythtv = callPackage ../applications/video/mythtv { };
+
+  micro = callPackage ../applications/editors/micro { };
 
   nano = callPackage ../applications/editors/nano { };
 
@@ -16682,7 +16691,9 @@ with pkgs;
 
   renoise = callPackage ../applications/audio/renoise {};
 
-  radiotray-ng = callPackage ../applications/audio/radiotray-ng { };
+  radiotray-ng = callPackage ../applications/audio/radiotray-ng {
+    wxGTK = wxGTK30;
+  };
 
   rapcad = libsForQt56.callPackage ../applications/graphics/rapcad { boost = boost159; };
 
@@ -17367,7 +17378,9 @@ with pkgs;
     system-libvirt = libvirt;
   };
 
-  virtmanager-qt = libsForQt5.callPackage ../applications/virtualization/virt-manager/qt.nix { };
+  virtmanager-qt = libsForQt5.callPackage ../applications/virtualization/virt-manager/qt.nix {
+    qtermwidget = lxqt.qtermwidget;
+  };
 
   virtinst = callPackage ../applications/virtualization/virtinst {};
 

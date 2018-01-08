@@ -245,6 +245,7 @@
   ./services/hardware/udev.nix
   ./services/hardware/udisks2.nix
   ./services/hardware/upower.nix
+  ./services/hardware/usbmuxd.nix
   ./services/hardware/thermald.nix
   ./services/logging/SystemdJournal2Gelf.nix
   ./services/logging/awstats.nix
@@ -260,6 +261,7 @@
   ./services/logging/rsyslogd.nix
   ./services/logging/syslog-ng.nix
   ./services/logging/syslogd.nix
+  ./services/mail/clamsmtp.nix
   ./services/mail/dkimproxy-out.nix
   ./services/mail/dovecot.nix
   ./services/mail/dspam.nix
@@ -444,7 +446,6 @@
   ./services/networking/dhcpd.nix
   ./services/networking/dnscache.nix
   ./services/networking/dnschain.nix
-  ./services/networking/dnscrypt-proxy.nix
   ./services/networking/dnscrypt-wrapper.nix
   ./services/networking/dnsmasq.nix
   ./services/networking/ejabberd.nix
