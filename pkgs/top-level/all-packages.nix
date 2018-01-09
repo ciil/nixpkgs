@@ -1226,6 +1226,8 @@ with pkgs;
 
   onboard = callPackage ../applications/misc/onboard { };
 
+  optar = callPackage ../tools/graphics/optar {};
+
   patdiff = callPackage ../tools/misc/patdiff { };
 
   playerctl = callPackage ../tools/audio/playerctl { };
@@ -4174,6 +4176,8 @@ with pkgs;
   psensor = callPackage ../tools/system/psensor {
     libXNVCtrl = linuxPackages.nvidia_x11.settings.libXNVCtrl;
   };
+
+  pubs = callPackage ../tools/misc/pubs {};
 
   pv = callPackage ../tools/misc/pv { };
 
@@ -8515,6 +8519,8 @@ with pkgs;
 
   gettext = callPackage ../development/libraries/gettext { };
 
+  gflags = callPackage ../development/libraries/gflags { };
+
   gf2x = callPackage ../development/libraries/gf2x {};
 
   gd = callPackage ../development/libraries/gd {
@@ -8657,6 +8663,8 @@ with pkgs;
   gperftools = callPackage ../development/libraries/gperftools { };
 
   grib-api = callPackage ../development/libraries/grib-api { };
+
+  grpc = callPackage ../development/libraries/grpc { };
 
   gst_all_1 = recurseIntoAttrs(callPackage ../development/libraries/gstreamer {
     callPackage = pkgs.newScope (pkgs // { libav = pkgs.ffmpeg; });
@@ -12291,7 +12299,7 @@ with pkgs;
     tomcat7
     tomcat8
     tomcat85
-    tomcatUnstable;
+    tomcat9;
 
   tomcat_mysql_jdbc = callPackage ../servers/http/tomcat/jdbc/mysql { };
 
