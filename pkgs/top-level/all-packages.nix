@@ -203,38 +203,11 @@ with pkgs;
 
   fetchCrate = callPackage ../build-support/rust/fetchcrate.nix { };
 
-  fetchFromGitHub = {
-    owner, repo, rev, name ? "source",
-    fetchSubmodules ? false, private ? false,
-    githubBase ? "github.com", varPrefix ? null,
-    ... # For hash agility
-  }@args: assert private -> !fetchSubmodules;
-  let
-    baseUrl = "https://${githubBase}/${owner}/${repo}";
-    passthruAttrs = removeAttrs args [ "owner" "repo" "rev" "fetchSubmodules" "private" "githubBase" "varPrefix" ];
-    varBase = "NIX${if varPrefix == null then "" else "_${varPrefix}"}_GITHUB_PRIVATE_";
-    # We prefer fetchzip in cases we don't need submodules as the hash
-    # is more stable in that case.
-    fetcher = if fetchSubmodules then fetchgit else fetchzip;
-    privateAttrs = lib.optionalAttrs private {
-      netrcPhase = ''
-        if [ -z "''$${varBase}USERNAME" -o -z "''$${varBase}PASSWORD" ]; then
-          echo "Error: Private fetchFromGitHub requires the nix building process (nix-daemon in multi user mode) to have the ${varBase}USERNAME and ${varBase}PASSWORD env vars set." >&2
-          exit 1
-        fi
-        cat > netrc <<EOF
-        machine ${githubBase}
-                login ''$${varBase}USERNAME
-                password ''$${varBase}PASSWORD
-        EOF
-      '';
-      netrcImpureEnvVars = [ "${varBase}USERNAME" "${varBase}PASSWORD" ];
-    };
-    fetcherArgs = (if fetchSubmodules
-        then { inherit rev fetchSubmodules; url = "${baseUrl}.git"; }
-        else ({ url = "${baseUrl}/archive/${rev}.tar.gz"; } // privateAttrs)
-      ) // passthruAttrs // { inherit name; };
-  in fetcher fetcherArgs // { meta.homepage = baseUrl; inherit rev; };
+  fetchFromGitHub = { owner, repo, rev, sha256 }: fetchzip {
+    name = "source";
+    url = "https://github.com/${owner}/${repo}/archive/${rev}.zip";
+    inherit sha256;
+  };
 
   fetchFromBitbucket = {
     owner, repo, rev, name ? "source",
@@ -840,6 +813,8 @@ with pkgs;
   btrbk = callPackage ../tools/backup/btrbk { };
 
   buildtorrent = callPackage ../tools/misc/buildtorrent { };
+
+  bustle = haskellPackages.bustle;
 
   bwm_ng = callPackage ../tools/networking/bwm-ng { };
 
@@ -1978,8 +1953,8 @@ with pkgs;
   evemu = callPackage ../tools/system/evemu { };
 
   # The latest version used by elasticsearch, logstash, kibana and the the beats from elastic.
-  elk5Version = "5.6.5";
-  elk6Version = "6.1.1";
+  elk5Version = "5.6.6";
+  elk6Version = "6.1.2";
 
   elasticsearch = callPackage ../servers/search/elasticsearch { };
   elasticsearch2 = callPackage ../servers/search/elasticsearch/2.x.nix { };
@@ -2479,10 +2454,7 @@ with pkgs;
     callPackage ../tools/misc/graylog/plugins.nix { }
   );
 
-  gprof2dot = callPackage ../development/tools/profiling/gprof2dot {
-    # Using pypy provides significant performance improvements (~2x)
-    pythonPackages = pypyPackages;
-  };
+  gprof2dot = callPackage ../development/tools/profiling/gprof2dot { };
 
   graphviz = callPackage ../tools/graphics/graphviz {
     inherit (darwin.apple_sdk.frameworks) ApplicationServices;
@@ -3456,6 +3428,8 @@ with pkgs;
   megatools = callPackage ../tools/networking/megatools { };
 
   memo = callPackage ../applications/misc/memo/default.nix { };
+
+  mencal = callPackage ../applications/misc/mencal/default.nix { } ;
 
   metamorphose2 = callPackage ../applications/misc/metamorphose2 { };
 
@@ -5114,6 +5088,8 @@ with pkgs;
 
   woff2 = callPackage ../development/web/woff2 { };
 
+  woof = callPackage ../tools/misc/woof { };
+
   wsmancli = callPackage ../tools/system/wsmancli {};
 
   wolfebin = callPackage ../tools/networking/wolfebin {
@@ -6671,7 +6647,7 @@ with pkgs;
   inherit (beam.interpreters)
     erlang erlangR18 erlangR19 erlangR20
     erlang_odbc erlang_javac erlang_odbc_javac erlang_nox erlang_basho_R16B02
-    elixir elixir_1_6_rc elixir_1_5 elixir_1_4 elixir_1_3
+    elixir elixir_1_6 elixir_1_5 elixir_1_4 elixir_1_3
     lfe lfe_1_2;
 
   inherit (beam.packages.erlang)
@@ -7202,8 +7178,8 @@ with pkgs;
   bam = callPackage ../development/tools/build-managers/bam {};
 
   bazel_0_4 = callPackage ../development/tools/build-managers/bazel/0.4.nix { };
-  bazel_0_5 = callPackage ../development/tools/build-managers/bazel { };
-  bazel = bazel_0_5;
+  bazel_0_9 = callPackage ../development/tools/build-managers/bazel { };
+  bazel = bazel_0_9;
 
   bear = callPackage ../development/tools/build-managers/bear { };
 
@@ -7680,7 +7656,7 @@ with pkgs;
 
   msitools = callPackage ../development/tools/misc/msitools { };
 
-  multi-ghc-travis = callPackage ../development/tools/haskell/multi-ghc-travis { ghc = haskell.compiler.ghc802; };
+  multi-ghc-travis = haskell.lib.justStaticExecutables haskellPackages.multi-ghc-travis;
 
   neoload = callPackage ../development/tools/neoload {
     licenseAccepted = (config.neoload.accept_license or false);
@@ -10273,7 +10249,7 @@ with pkgs;
 
   ncurses5 = callPackage ../development/libraries/ncurses { abiVersion = "5"; };
   ncurses6 = callPackage ../development/libraries/ncurses { abiVersion = "6"; };
-  ncurses = if stdenv.isDarwin then ncurses5 else ncurses6;
+  ncurses = ncurses6;
 
   neardal = callPackage ../development/libraries/neardal { };
 
@@ -10498,7 +10474,9 @@ with pkgs;
 
   phonon-backend-vlc = callPackage ../development/libraries/phonon/backends/vlc.nix {};
 
-  physfs = callPackage ../development/libraries/physfs { };
+  inherit (callPackage ../development/libraries/physfs { })
+    physfs_2
+    physfs;
 
   pipelight = callPackage ../tools/misc/pipelight {
     stdenv = stdenv_32bit;
@@ -12789,8 +12767,7 @@ with pkgs;
   linux_beagleboard = callPackage ../os-specific/linux/kernel/linux-beagleboard.nix {
     kernelPatches =
       [ kernelPatches.bridge_stp_helper
-        kernelPatches.p9_fixes
-        kernelPatches.cpu-cgroup-v2."4.9"
+        kernelPatches.cpu-cgroup-v2."4.11"
         kernelPatches.modinst_arg_list_too_long
       ];
   };
@@ -17279,7 +17256,9 @@ with pkgs;
     gtk = gtk3;
   };
 
-  timbreid = callPackage ../applications/audio/pd-plugins/timbreid { };
+  timbreid = callPackage ../applications/audio/pd-plugins/timbreid {
+    fftw = fftwSinglePrec;
+  };
 
   timescaledb = callPackage ../servers/sql/postgresql/timescaledb {};
 
@@ -17379,6 +17358,8 @@ with pkgs;
   unpaper = callPackage ../tools/graphics/unpaper { };
 
   urh = callPackage ../applications/misc/urh { };
+
+  uuagc = haskell.lib.justStaticExecutables haskellPackages.uuagc;
 
   uucp = callPackage ../tools/misc/uucp { };
 
@@ -18078,6 +18059,7 @@ with pkgs;
   asc = callPackage ../games/asc {
     lua = lua5_1;
     libsigcxx = libsigcxx12;
+    physfs = physfs_2;
   };
 
   astromenace = callPackage ../games/astromenace { };
@@ -18185,9 +18167,13 @@ with pkgs;
 
   dwarf-therapist = dwarf-fortress-packages.dwarf-therapist;
 
-  d1x_rebirth = callPackage ../games/d1x-rebirth { };
+  dxx-rebirth = callPackage ../games/dxx-rebirth {
+    physfs = physfs_2;
+  };
 
-  d2x_rebirth = callPackage ../games/d2x-rebirth { };
+  d1x_rebirth = dxx-rebirth;
+
+  d2x_rebirth = dxx-rebirth;
 
   easyrpg-player = callPackage ../games/easyrpg-player { };
 
@@ -18323,7 +18309,10 @@ with pkgs;
 
   lincity = callPackage ../games/lincity {};
 
-  lincity_ng = callPackage ../games/lincity/ng.nix {};
+  lincity_ng = callPackage ../games/lincity/ng.nix {
+    # https://github.com/lincity-ng/lincity-ng/issues/25
+    physfs = physfs_2;
+  };
 
   liquidwar = callPackage ../games/liquidwar {
     guile = guile_1_8;
@@ -20034,7 +20023,7 @@ with pkgs;
   vimprobable2 = wrapFirefox vimprobable2-unwrapped { };
 
   vimb-unwrapped = callPackage ../applications/networking/browsers/vimb {
-    webkit = webkitgtk24x-gtk2;
+    webkit = webkitgtk218x;
   };
   vimb = wrapFirefox vimb-unwrapped { };
 
