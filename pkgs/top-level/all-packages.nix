@@ -5460,6 +5460,8 @@ with pkgs;
 
   yle-dl = callPackage ../tools/misc/yle-dl {};
 
+  you-get = python3Packages.callPackage ../tools/misc/you-get { };
+
   zbackup = callPackage ../tools/backup/zbackup {};
 
   zbar = callPackage ../tools/graphics/zbar { };
@@ -6476,7 +6478,11 @@ with pkgs;
 
   buildRustCrate = callPackage ../build-support/rust/build-rust-crate.nix { };
 
-  carnix = (callPackage ../build-support/rust/carnix.nix { }).carnix_0_5_2;
+  carnix =
+    let carnix = callPackage ../build-support/rust/carnix.nix { };
+        carnixFeatures = carnix.carnix_0_6_0_features {};
+    in
+    carnix.carnix_0_6_0 carnixFeatures;
 
   defaultCrateOverrides = callPackage ../build-support/rust/default-crate-overrides.nix { };
 
@@ -18030,8 +18036,6 @@ with pkgs;
 
   yoshimi = callPackage ../applications/audio/yoshimi { };
 
-  inherit (python3Packages) you-get;
-
   inherit (pythonPackages) youtube-dl;
 
   youtube-viewer = perlPackages.WWWYoutubeViewer;
@@ -18814,6 +18818,8 @@ with pkgs;
     dash-to-dock = callPackage ../desktops/gnome-3/extensions/dash-to-dock { };
     dash-to-panel = callPackage ../desktops/gnome-3/extensions/dash-to-panel { };
     mediaplayer = callPackage ../desktops/gnome-3/extensions/mediaplayer { };
+    nohotcorner = callPackage ../desktops/gnome-3/extensions/nohotcorner { };
+    pixel-saver = callPackage ../desktops/gnome-3/extensions/pixel-saver { };
     topicons-plus = callPackage ../desktops/gnome-3/extensions/topicons-plus { };
   };
 
@@ -18943,6 +18949,8 @@ with pkgs;
     neuron-version = neuron.version;
   };
 
+  kallisto = callPackage ../applications/science/biology/kallisto { };
+
   neuron = callPackage ../applications/science/biology/neuron {
     python = null;
   };
@@ -18984,6 +18992,8 @@ with pkgs;
   };
 
   ### SCIENCE/MATH
+
+  almonds = pythonPackages.callPackage ../applications/science/math/almonds { };
 
   arpack = callPackage ../development/libraries/science/math/arpack { };
 
@@ -19619,7 +19629,7 @@ with pkgs;
   faust1 = callPackage ../applications/audio/faust/faust1.nix { };
 
   faust2 = callPackage ../applications/audio/faust/faust2.nix {
-    llvm = llvm_38;
+    llvm = llvm_4;
   };
 
   faust2alqt = callPackage ../applications/audio/faust/faust2alqt.nix { };
