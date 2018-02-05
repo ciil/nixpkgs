@@ -1191,6 +1191,8 @@ with pkgs;
 
   gringo = callPackage ../tools/misc/gringo { scons = scons_2_5_1; };
 
+  grobi = callPackage ../tools/X11/grobi { };
+
   gti = callPackage ../tools/misc/gti { };
 
   heatseeker = callPackage ../tools/misc/heatseeker { };
@@ -3890,14 +3892,11 @@ with pkgs;
   openssh =
     callPackage ../tools/networking/openssh {
       hpnSupport = false;
-      withKerberos = stdenv.isDarwin;
       etcDir = "/etc/ssh";
       pam = if stdenv.isLinux then pam else null;
     };
 
   openssh_hpn = pkgs.appendToName "with-hpn" (openssh.override { hpnSupport = true; });
-
-  openssh_with_kerberos = pkgs.appendToName "with-kerberos" (openssh.override { withKerberos = true; });
 
   opensp = callPackage ../tools/text/sgml/opensp { };
 
@@ -6360,7 +6359,10 @@ with pkgs;
   llvmPackages_4 = callPackage ../development/compilers/llvm/4 ({
     inherit (stdenvAdapters) overrideCC;
   } // stdenv.lib.optionalAttrs stdenv.isDarwin {
-    cmake = cmake.override { isBootstrap = true; };
+    cmake = cmake.override {
+      isBootstrap = true;
+      majorVersion = "3.9"; # 3.10.2: 'ApplicationServices/ApplicationServices.h' file not found
+    };
     libxml2 = libxml2.override { pythonSupport = false; };
     python2 = callPackage ../development/interpreters/python/cpython/2.7/boot.nix { inherit (darwin) CF configd; };
   });
@@ -6488,11 +6490,9 @@ with pkgs;
 
   buildRustCrate = callPackage ../build-support/rust/build-rust-crate.nix { };
 
-  carnix =
-    let carnix = callPackage ../build-support/rust/carnix.nix { };
-        carnixFeatures = carnix.carnix_0_6_0_features {};
-    in
-    carnix.carnix_0_6_0 carnixFeatures;
+  cargo-vendor = callPackage ../build-support/rust/cargo-vendor {};
+
+  carnix = (callPackage ../build-support/rust/carnix.nix { }).carnix { };
 
   defaultCrateOverrides = callPackage ../build-support/rust/default-crate-overrides.nix { };
 
@@ -7278,6 +7278,9 @@ with pkgs;
   buildbot-worker = callPackage ../development/tools/build-managers/buildbot/worker.nix {
     pythonPackages = python2Packages;
   };
+  buildbot-pkg = callPackage ../development/tools/build-managers/buildbot/pkg.nix {
+    inherit (python2Packages) buildPythonPackage fetchPypi setuptools;
+  };
   buildbot-plugins = callPackages ../development/tools/build-managers/buildbot/plugins.nix {
     pythonPackages = python2Packages;
   };
@@ -7862,6 +7865,9 @@ with pkgs;
   remake = callPackage ../development/tools/build-managers/remake { };
 
   retdec = callPackage ../development/tools/analysis/retdec { };
+  retdec-full = callPackage ../development/tools/analysis/retdec {
+    withPEPatterns = true;
+  };
 
   rhc = callPackage ../development/tools/rhc { };
 
@@ -8085,6 +8091,8 @@ with pkgs;
   amrnb = callPackage ../development/libraries/amrnb { };
 
   amrwb = callPackage ../development/libraries/amrwb { };
+
+  anttweakbar = callPackage ../development/libraries/AntTweakBar { };
 
   appstream = callPackage ../development/libraries/appstream { };
 
@@ -9877,6 +9885,8 @@ with pkgs;
 
   libqalculate = callPackage ../development/libraries/libqalculate { };
 
+  libroxml = callPackage ../development/libraries/libroxml { };
+
   librsvg = callPackage ../development/libraries/librsvg { };
 
   librsync = callPackage ../development/libraries/librsync { };
@@ -10095,6 +10105,13 @@ with pkgs;
   libyaml = callPackage ../development/libraries/libyaml { };
 
   libyamlcpp = callPackage ../development/libraries/libyaml-cpp { };
+
+  libyamlcpp_0_3 = pkgs.libyamlcpp.overrideAttrs (oldAttrs: rec {
+    src = pkgs.fetchurl {
+      url = "https://github.com/jbeder/yaml-cpp/archive/release-0.3.0.tar.gz";
+      sha256 = "12aszqw6svwlnb6nzhsbqhz3c7vnd5ahd0k6xlj05w8lm83hx3db";
+      };
+  });
 
   # interception-tools needs this. This should be removed when there is a new
   # release of libyamlcpp, i.e. when the version of libyamlcpp is newer than
@@ -16520,6 +16537,10 @@ with pkgs;
     inherit (gnome3) yelp_tools;
   };
 
+  osm2xmap = callPackage ../applications/misc/osm2xmap {
+    libyamlcpp = libyamlcpp_0_3;
+  };
+
   osmctools = callPackage ../applications/misc/osmctools { };
 
   vivaldi = callPackage ../applications/networking/browsers/vivaldi {};
@@ -17458,6 +17479,8 @@ with pkgs;
   testssl = callPackage ../applications/networking/testssl { };
 
   umurmur = callPackage ../applications/networking/umurmur { };
+
+  udocker = pythonPackages.callPackage ../tools/virtualization/udocker { };
 
   unigine-valley = callPackage ../applications/graphics/unigine-valley { };
 

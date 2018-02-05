@@ -155,6 +155,8 @@ in {
 
   agate-sql = callPackage ../development/python-modules/agate-sql { };
 
+  aioimaplib = callPackage ../development/python-modules/aioimaplib { };
+
   aioamqp = callPackage ../development/python-modules/aioamqp { };
 
   ansicolor = callPackage ../development/python-modules/ansicolor { };
@@ -225,6 +227,8 @@ in {
 
   diff-match-patch = callPackage ../development/python-modules/diff-match-patch { };
 
+  globus-sdk = callPackage ../development/python-modules/globus-sdk { };
+  
   gssapi = callPackage ../development/python-modules/gssapi { };
 
   h5py = callPackage ../development/python-modules/h5py {
@@ -243,6 +247,8 @@ in {
     mpi = pkgs.openmpi;
   };
 
+  mwoauth = callPackage ../development/python-modules/mwoauth { };
+  
   neuron = pkgs.neuron.override {
     inherit python;
   };
@@ -260,6 +266,8 @@ in {
   nltk = callPackage ../development/python-modules/nltk { };
 
   ntlm-auth = callPackage ../development/python-modules/ntlm-auth { };
+
+  oauthenticator = callPackage ../development/python-modules/oauthenticator { };
 
   plantuml = callPackage ../tools/misc/plantuml { };
 
@@ -342,6 +350,8 @@ in {
     slurm = pkgs.slurm;
   };
 
+  pytest-tornado = callPackage ../development/python-modules/pytest-tornado { };
+  
   python-sql = callPackage ../development/python-modules/python-sql { };
 
   python-stdnum = callPackage ../development/python-modules/python-stdnum { };
@@ -364,15 +374,21 @@ in {
 
   salmon-mail = callPackage ../development/python-modules/salmon-mail { };
 
+  serversyncstorage = callPackage ../development/python-modules/serversyncstorage {};
+
   simpleeval = callPackage ../development/python-modules/simpleeval { };
 
   sip = callPackage ../development/python-modules/sip { };
 
   supervise_api = callPackage ../development/python-modules/supervise_api { };
 
+  syncserver = callPackage ../development/python-modules/syncserver {};
+
   tables = callPackage ../development/python-modules/tables {
     hdf5 = pkgs.hdf5.override { zlib = pkgs.zlib; };
   };
+
+  tokenserver = callPackage ../development/python-modules/tokenserver {};
 
   unifi = callPackage ../development/python-modules/unifi { };
 
@@ -608,6 +624,8 @@ in {
       sha256 = "1lfmjm8apy9qpnpbq8g641fd01qxh9jlya5g2d6z60vf8p04rla1";
     };
   };
+
+  asynctest = callPackage ../development/python-modules/asynctest { };
 
   async-timeout = callPackage ../development/python-modules/async_timeout { };
 
@@ -1013,7 +1031,7 @@ in {
 
   backports_shutil_get_terminal_size = callPackage ../development/python-modules/backports_shutil_get_terminal_size { };
 
-  backports_ssl_match_hostname_3_4_0_2 = self.buildPythonPackage rec {
+  backports_ssl_match_hostname_3_4_0_2 = if !(pythonOlder "3.5") then null else self.buildPythonPackage rec {
     name = "backports.ssl_match_hostname-3.4.0.2";
 
     src = pkgs.fetchurl {
@@ -1027,7 +1045,7 @@ in {
     };
   };
 
-  backports_ssl_match_hostname = self.buildPythonPackage rec {
+  backports_ssl_match_hostname = if !(pythonOlder "3.5") then null else self.buildPythonPackage rec {
     name = "backports.ssl_match_hostname-${version}";
     version = "3.5.0.1";
 
@@ -2014,6 +2032,11 @@ in {
     doCheck = false;
   });
 
+  can = callPackage ../development/python-modules/can {};
+
+  canopen = callPackage ../development/python-modules/canopen {};
+
+  canmatrix = callPackage ../development/python-modules/canmatrix {};
 
   cairocffi = buildPythonPackage rec {
     name = "cairocffi-0.7.2";
@@ -2108,26 +2131,6 @@ in {
       homepage = https://pypi.python.org/pypi/carrot;
       description = "AMQP Messaging Framework for Python";
     };
-  };
-
-  github-cli = buildPythonPackage rec {
-    version = "1.0.0";
-    name = "github-cli-${version}";
-    src = pkgs.fetchFromGitHub {
-      owner = "jsmits";
-      repo = "github-cli";
-      rev = version;
-      sha256 = "16bwn42wqd76zs97v8p6mqk79p5i2mb06ljk67lf8gy6kvqc1x8y";
-    };
-
-    buildInputs = with self; [ nose pkgs.git ];
-    propagatedBuildInputs = with self; [ simplejson ];
-
-    # skipping test_issues_cli.py since it requires access to the github.com
-    patchPhase = "rm tests/test_issues_cli.py";
-    checkPhase = "nosetests tests/";
-
-    meta.maintainers = with maintainers; [ garbas ];
   };
 
   case = buildPythonPackage rec {
@@ -5215,6 +5218,8 @@ in {
     };
   };
 
+  idna-ssl = callPackage ../development/python-modules/idna-ssl/default.nix { };
+
   ijson = callPackage ../development/python-modules/ijson/default.nix {};
 
   imagesize = buildPythonPackage rec {
@@ -5261,6 +5266,8 @@ in {
       platforms = platforms.linux;
     };
   };
+
+  imaplib2 = callPackage ../development/python-modules/imaplib2 { };
 
   ipfsapi = buildPythonPackage rec {
     name = "ipfsapi-${version}";
@@ -5607,6 +5614,8 @@ in {
       license = licenses.gpl3;
     };
   };
+
+  luftdaten = callPackage ../development/python-modules/luftdaten { };
 
   m2r = callPackage ../development/python-modules/m2r { };
 
@@ -13309,13 +13318,13 @@ in {
 
 
   vobject = buildPythonPackage rec {
-    version = "0.9.3";
+    version = "0.9.5";
     name = "vobject-${version}";
 
     src = pkgs.fetchFromGitHub {
       owner = "eventable";
       repo = "vobject";
-      sha256 = "00vbii5awwqwfh5hfklj1q79w7d85gjigvf2imgyb71g03sb8cjv";
+      sha256 = "1f5lw9kpssr66bdirkjba3izbnm68p8pd47546m5yl4c7x76s1ld";
       rev = version;
     };
 
@@ -15438,24 +15447,7 @@ in {
   };
 
 
-  rdflib = buildPythonPackage (rec {
-    name = "rdflib-4.2.2";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/r/rdflib/${name}.tar.gz";
-      sha256 = "0398c714znnhaa2x7v51b269hk20iz073knq2mvmqp2ma92z27fs";
-    };
-
-    # error: invalid command 'test'
-    doCheck = false;
-
-    propagatedBuildInputs = with self; [ isodate html5lib SPARQLWrapper ];
-
-    meta = {
-      description = "A Python library for working with RDF, a simple yet powerful language for representing information";
-      homepage = http://www.rdflib.net/;
-    };
-  });
+  rdflib = callPackage ../development/python-modules/rdflib { };
 
   isodate = buildPythonPackage rec {
     name = "isodate-${version}";
@@ -19197,25 +19189,6 @@ EOF
     '';
   };
 
-  tokenserver = buildPythonPackage rec {
-    name = "tokenserver-${version}";
-    version = "1.2.11";
-
-    src = pkgs.fetchgit {
-      url = https://github.com/mozilla-services/tokenserver.git;
-      rev = "refs/tags/${version}";
-      sha256 = "1cvkvxcday1qc3zyarasj3l7322w8afhrcxcsvb5wac1ryh1w6y2";
-    };
-
-    doCheck = false;
-    buildInputs = [ self.testfixtures ];
-    propagatedBuildInputs = with self; [ cornice mozsvc pybrowserid tokenlib ];
-
-    meta = {
-      platforms = platforms.all;
-    };
-  };
-
   testfixtures = callPackage ../development/python-modules/testfixtures {};
 
   tissue = buildPythonPackage rec {
@@ -20143,49 +20116,6 @@ EOF
       license = licenses.gpl2Plus;
       maintainers =  with maintainers; [ gal_bolle ];
     };
-  };
-
-  syncserver = buildPythonPackage rec {
-    name = "syncserver-${version}";
-    version = "1.5.2";
-    disabled = ! isPy27;
-
-    src = pkgs.fetchgit {
-      url = https://github.com/mozilla-services/syncserver.git;
-      rev = "refs/tags/${version}";
-      sha256 = "1pk4rvwvsd1vxbpzg39hxqi8pi9v6b4s6m0mqbpg88s6s7i6ks3m";
-    };
-
-    buildInputs = with self; [ unittest2 ];
-    propagatedBuildInputs = with self; [
-      cornice gunicorn pyramid requests simplejson sqlalchemy mozsvc tokenserver
-      serversyncstorage configparser
-    ];
-
-    meta = {
-      maintainers = [ ];
-      platforms = platforms.all;
-    };
-  };
-
-  serversyncstorage = buildPythonPackage rec {
-    name = "serversyncstorage-${version}";
-    version = "1.5.13";
-    disabled = !isPy27;
-
-    src = pkgs.fetchgit {
-      url = https://github.com/mozilla-services/server-syncstorage.git;
-      rev = "refs/tags/${version}";
-      sha256 = "0m14v7n105y06w3mdp35pyxyzjj5vqwbznzdbixhkms3df6md2lq";
-    };
-
-    propagatedBuildInputs = with self; [
-      pyramid sqlalchemy simplejson mozsvc cornice pyramid_hawkauth pymysql
-      pymysqlsa umemcache WSGIProxy requests pybrowserid
-    ];
-    buildInputs = with self; [ testfixtures unittest2 webtest ];
-
-    #doCheck = false; # lazy packager
   };
 
   WSGIProxy = buildPythonPackage rec {
