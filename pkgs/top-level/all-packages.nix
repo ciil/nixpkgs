@@ -1727,7 +1727,7 @@ with pkgs;
 
   curl = callPackage ../tools/networking/curl rec {
     fetchurl = fetchurlBoot;
-    http2Support = !stdenv.isDarwin;
+    http2Support = true;
     zlibSupport = true;
     sslSupport = zlibSupport;
     scpSupport = zlibSupport && !stdenv.isSunOS && !stdenv.isCygwin;
@@ -1810,6 +1810,8 @@ with pkgs;
   dfc  = callPackage ../tools/system/dfc { };
 
   dev86 = callPackage ../development/compilers/dev86 { };
+
+  diskrsync = callPackage ../tools/backup/diskrsync { };
 
   djbdns = callPackage ../tools/networking/djbdns { };
 
@@ -1895,7 +1897,13 @@ with pkgs;
   };
   doomseeker = callPackage ../applications/misc/doomseeker { };
 
+  doom-bcc = callPackage ../games/zdoom/bcc-git.nix { };
+
   slade = callPackage ../applications/misc/slade {
+    wxGTK = wxGTK30;
+  };
+
+  sladeUnstable = callPackage ../applications/misc/slade/git.nix {
     wxGTK = wxGTK30;
   };
 
@@ -4390,6 +4398,10 @@ with pkgs;
   remmina = callPackage ../applications/networking/remote/remmina {
     adwaita-icon-theme = gnome3.adwaita-icon-theme;
     gsettings_desktop_schemas = gnome3.gsettings_desktop_schemas;
+  };
+
+  rename = callPackage ../tools/misc/rename {
+    inherit (perlPackages) buildPerlPackage;
   };
 
   renameutils = callPackage ../tools/misc/renameutils { };
@@ -11312,7 +11324,7 @@ with pkgs;
   v8_3_16_14 = callPackage ../development/libraries/v8/3.16.14.nix {
     inherit (python2Packages) python gyp;
     cctools = darwin.cctools;
-    stdenv = overrideCC stdenv gcc5;
+    stdenv = if stdenv.isDarwin then stdenv else overrideCC stdenv gcc5;
   };
 
   v8_6_x = callPackage ../development/libraries/v8/6_x.nix {
@@ -13118,7 +13130,7 @@ with pkgs;
     sch_cake = callPackage ../os-specific/linux/sch_cake { };
 
     inherit (callPackage ../os-specific/linux/spl {})
-      splStable splUnstable;
+      splStable splUnstable splLegacyCrypto;
 
     spl = splStable;
 
@@ -13149,7 +13161,7 @@ with pkgs;
     inherit (callPackage ../os-specific/linux/zfs {
       configFile = "kernel";
       inherit kernel spl;
-     }) zfsStable zfsUnstable;
+     }) zfsStable zfsUnstable zfsLegacyCrypto;
 
      zfs = zfsStable;
   });
@@ -13206,7 +13218,7 @@ with pkgs;
 
   # A function to build a manually-configured kernel
   linuxManualConfig = pkgs.buildLinux;
-  buildLinux = makeOverridable (callPackage ../os-specific/linux/kernel/manual-config.nix {});
+  buildLinux = makeOverridable (callPackage ../os-specific/linux/kernel/generic.nix {});
 
   keyutils = callPackage ../os-specific/linux/keyutils { };
 
@@ -13655,7 +13667,7 @@ with pkgs;
 
   inherit (callPackage ../os-specific/linux/zfs {
     configFile = "user";
-  }) zfsStable zfsUnstable;
+  }) zfsStable zfsUnstable zfsLegacyCrypto;
 
   zfs = zfsStable;
 
@@ -15916,6 +15928,10 @@ with pkgs;
   kubecfg = callPackage ../applications/networking/cluster/kubecfg { };
 
   kubernetes = callPackage ../applications/networking/cluster/kubernetes {  };
+
+  kubectl = (kubernetes.override { components = [ "cmd/kubectl" ]; }).overrideAttrs(oldAttrs: {
+    name = "kubectl-${oldAttrs.version}";
+  });
 
   kubernetes-helm = callPackage ../applications/networking/cluster/helm { };
 

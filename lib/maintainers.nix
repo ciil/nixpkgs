@@ -449,6 +449,7 @@
   mirrexagon = "Andrew Abbott <mirrexagon@mirrexagon.com>";
   mjanczyk = "Marcin Janczyk <m@dragonvr.pl>";
   mjp = "Mike Playle <mike@mythik.co.uk>"; # github = "MikePlayle";
+  mkg = "Mark K Gardner <mkg@vt.edu>";
   mlieberman85 = "Michael Lieberman <mlieberman85@gmail.com>";
   mmahut = "Marek Mahut <marek.mahut@gmail.com>";
   moaxcp = "John Mercier <moaxcp@gmail.com>";
@@ -718,6 +719,7 @@
   vandenoever = "Jos van den Oever <jos@vandenoever.info>";
   vanschelven = "Klaas van Schelven <klaas@vanschelven.com>";
   vanzef = "Ivan Solyankin <vanzef@gmail.com>";
+  varunpatro = "Varun Patro <varun.kumar.patro@gmail.com>";
   vbgl = "Vincent Laporte <Vincent.Laporte@gmail.com>";
   vbmithr = "Vincent Bernardoff <vb@luminar.eu.org>";
   vcunat = "Vladimír Čunát <vcunat@gmail.com>";
