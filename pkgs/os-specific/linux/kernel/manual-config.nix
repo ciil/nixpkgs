@@ -82,7 +82,8 @@ let
         (isModular || (config.isDisabled "FIRMWARE_IN_KERNEL"));
     in (optionalAttrs isModular { outputs = [ "out" "dev" ]; }) // {
       passthru = {
-        inherit version modDirVersion config kernelPatches configfile moduleBuildDependencies;
+        inherit version modDirVersion config kernelPatches configfile
+          moduleBuildDependencies stdenv;
       };
 
       inherit src;
@@ -236,7 +237,7 @@ let
           "The Linux kernel" +
           (if kernelPatches == [] then "" else
             " (with patches: "
-            + stdenv.lib.concatStrings (stdenv.lib.intersperse ", " (map (x: x.name) kernelPatches))
+            + stdenv.lib.concatStringsSep ", " (map (x: x.name) kernelPatches)
             + ")");
         license = stdenv.lib.licenses.gpl2;
         homepage = https://www.kernel.org/;

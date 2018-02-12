@@ -241,6 +241,10 @@ in {
     hdf5 = pkgs.hdf5-mpi;
   };
 
+  habanero = callPackage ../development/python-modules/habanero { };
+
+  i3ipc = callPackage ../development/python-modules/i3ipc { };
+
   intelhex = callPackage ../development/python-modules/intelhex { };
 
   lmtpd = callPackage ../development/python-modules/lmtpd { };
@@ -328,6 +332,8 @@ in {
     callPackage = pkgs.callPackage;
   };
 
+  pyparser = callPackage ../development/python-modules/pyparser { };
+
   pyqt4 = callPackage ../development/python-modules/pyqt/4.x.nix {
     pythonPackages = self;
   };
@@ -412,6 +418,8 @@ in {
 
   adal = callPackage ../development/python-modules/adal { };
 
+  aioconsole = callPackage ../development/python-modules/aioconsole { };
+
   aiodns = callPackage ../development/python-modules/aiodns { };
 
   aiofiles = callPackage ../development/python-modules/aiofiles { };
@@ -483,7 +491,7 @@ in {
       homepage = https://github.com/pazz/alot;
       description = "Terminal MUA using notmuch mail";
       platforms = platforms.linux;
-      maintainers = with maintainers; [ garbas profpatsch ];
+      maintainers = with maintainers; [ garbas ];
     };
   };
 
@@ -597,6 +605,8 @@ in {
   argcomplete = callPackage ../development/python-modules/argcomplete { };
 
   area53 = callPackage ../development/python-modules/area53 { };
+
+  arxiv2bib = callPackage ../development/python-modules/arxiv2bib { };
 
   chai = callPackage ../development/python-modules/chai { };
 
@@ -2225,39 +2235,7 @@ in {
     '';
   };
 
-  celery = buildPythonPackage rec {
-    name = "celery-${version}";
-    version = "4.0.2";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/c/celery/${name}.tar.gz";
-      sha256 = "0kgmbs3fl9879n48p4m79nxy9by2yhvxq1jdvlnqzzvkdb2sdmg3";
-    };
-
-    # Fixes testsuite for python-3.6
-    # From ubuntu packaging: https://launchpad.net/ubuntu/+archive/primary/+files/celery_4.0.2-0ubuntu1.debian.tar.xz
-    # (linked from https://launchpad.net/ubuntu/+source/celery)
-    # https://github.com/celery/celery/pull/3736#issuecomment-274155454 from upstream
-    patches = [ ../development/python-modules/celery/fix_endless_python3.6_loop_logger_isa.patch ];
-
-    # make /etc/protocols accessible to fix socket.getprotobyname('tcp') in sandbox
-    preCheck = ''
-      export NIX_REDIRECTS=/etc/protocols=${pkgs.iana-etc}/etc/protocols \
-        LD_PRELOAD=${pkgs.libredirect}/lib/libredirect.so
-    '';
-    postCheck = ''
-      unset NIX_REDIRECTS LD_PRELOAD
-    '';
-
-    buildInputs = with self; [ pytest case ];
-    propagatedBuildInputs = with self; [ kombu billiard pytz anyjson amqp eventlet ];
-
-    meta = {
-      homepage = https://github.com/celery/celery/;
-      description = "Distributed task queue";
-      license = licenses.bsd3;
-    };
-  };
+  celery = callPackage ../development/python-modules/celery { pytest = self.pytest_32; };
 
   cerberus = buildPythonPackage rec {
     name = "Cerberus-${version}";
@@ -3162,6 +3140,15 @@ in {
     };
   };
 
+  # Needed for celery
+  pytest_32 = self.pytest_34.overrideAttrs( oldAttrs: rec {
+    version = "3.2.5";
+    src = oldAttrs.src.override {
+      inherit version;
+      sha256 = "6d5bd4f7113b444c55a3bbb5c738a3dd80d43563d063fc42dcb0aaefbdd78b81";
+    };
+  });
+
   pytest-httpbin = callPackage ../development/python-modules/pytest-httpbin { };
 
   pytest-asyncio = callPackage ../development/python-modules/pytest-asyncio { };
@@ -3636,7 +3623,7 @@ in {
 
     buildInputs = with self; [ pytest docutils ];
     propagatedBuildInputs = with self; [
-      dask six boto3 s3fs tblib locket msgpack click cloudpickle tornado
+      dask six boto3 s3fs tblib locket msgpack-python click cloudpickle tornado
       psutil botocore zict lz4 sortedcollections sortedcontainers
     ] ++ (if !isPy3k then [ singledispatch ] else []);
 
@@ -5809,6 +5796,8 @@ in {
   pants = pkgs.pants;
 
   paperwork-backend = callPackage ../applications/office/paperwork/backend.nix { };
+
+  papis-python-rofi = callPackage ../development/python-modules/papis-python-rofi { };
 
   pathspec = callPackage ../development/python-modules/pathspec { };
 
@@ -9785,32 +9774,7 @@ in {
 
   py_scrypt = callPackage ../development/python-modules/py_scrypt/default.nix { };
 
-  python_magic = buildPythonPackage rec {
-    name = "python-magic-0.4.10";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/python-magic/${name}.tar.gz";
-      sha256 = "1hx2sjd4fdswswj3yydn2azxb59rjmi9b7jzh94lf1wnxijjizbr";
-    };
-
-    propagatedBuildInputs = with self; [ pkgs.file ];
-
-    patchPhase = ''
-      substituteInPlace magic.py --replace "ctypes.util.find_library('magic')" "'${pkgs.file}/lib/libmagic${stdenv.hostPlatform.extensions.sharedLibrary}'"
-    '';
-
-    doCheck = false;
-
-    # TODO: tests are failing
-    #checkPhase = ''
-    #  ${python}/bin/${python.executable} ./test.py
-    #'';
-
-    meta = {
-      description = "A python interface to the libmagic file type identification library";
-      homepage = https://github.com/ahupp/python-magic;
-    };
-  };
+  python_magic = callPackage ../development/python-modules/python-magic { };
 
   magic = buildPythonPackage rec {
     name = "${pkgs.file.name}";
@@ -10568,21 +10532,13 @@ in {
     };
   };
 
-  msgpack = buildPythonPackage rec {
-    name = "msgpack-python-${version}";
-    version = "0.4.7";
+  msgpack = callPackage ../development/python-modules/msgpack {};
 
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/m/msgpack-python/${name}.tar.gz";
-      sha256 = "0syd7bs83qs9qmxw540jbgsildbqk4yb57fmrlns1021llli402y";
-    };
-
-    checkPhase = ''
-      py.test
+  msgpack-python = self.msgpack.overridePythonAttrs {
+    pname = "msgpack-python";
+    postPatch = ''
+      substituteInPlace setup.py --replace "TRANSITIONAL = False" "TRANSITIONAL = True"
     '';
-
-    buildInputs = with self; [ pytest ];
-    propagatedBuildInputs = with self; [ ];
   };
 
   msrplib = buildPythonPackage rec {
@@ -14404,6 +14360,8 @@ in {
 
   pylibacl = callPackage ../development/python-modules/pylibacl { };
 
+  pylibgen = callPackage ../development/python-modules/pylibgen { };
+
   pyliblo = buildPythonPackage rec {
     name = "pyliblo-${version}";
     version = "0.9.2";
@@ -14843,6 +14801,11 @@ in {
       homepage = https://github.com/jplana/python-etcd;
       license = licenses.mit;
     };
+  };
+
+  pythonnet = callPackage ../development/python-modules/pythonnet {
+    # `mono >= 4.6` required to prevent crashes encountered with earlier versions.
+    mono = pkgs.mono46;
   };
 
   pytz = callPackage ../development/python-modules/pytz { };
@@ -17874,7 +17837,7 @@ in {
     meta = {
       description = "Tree widgets for urwid";
       license = licenses.gpl3;
-      maintainers = with maintainers; [ profpatsch ];
+      maintainers = with maintainers; [ ];
     };
   };
 
@@ -20001,23 +19964,7 @@ EOF
     propagatedBuildInputs = with self; [ pynacl six ];
   };
 
-  pynacl = buildPythonPackage rec {
-    name = "pynacl-${version}";
-    version = "0.3.0";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/P/PyNaCl/PyNaCl-0.3.0.tar.gz";
-      sha256 = "1hknxlp3a3f8njn19w92p8nhzl9jkfwzhv5fmxhmyq2m8hqrfj8j";
-    };
-
-    buildInputs = with self; [ pytest coverage ];
-    propagatedBuildInputs = with self; [pkgs.libsodium six cffi pycparser];
-
-    checkPhase = ''
-      coverage run --source nacl --branch -m pytest
-    '';
-
-  };
+  pynacl = callPackage ../development/python-modules/pynacl { };
 
   service-identity = callPackage ../development/python-modules/service_identity { };
 
@@ -20138,26 +20085,7 @@ EOF
     };
   };
 
-  weboob = buildPythonPackage rec {
-    name = "weboob-1.1";
-    disabled = ! isPy27;
-
-    src = pkgs.fetchurl {
-      url = "https://symlink.me/attachments/download/324/${name}.tar.gz";
-      sha256 = "0736c5wsck2abxlwvx8i4496kafk9xchkkzhg4dcfbj0isldih6b";
-    };
-
-    setupPyBuildFlags = ["--qt" "--xdg"];
-
-    propagatedBuildInputs = with self; [ pillow prettytable pyyaml dateutil gdata requests mechanize feedparser lxml pkgs.gnupg pyqt4 pkgs.libyaml simplejson cssselect futures pdfminer termcolor ];
-
-    meta = {
-      homepage = http://weboob.org;
-      description = "Collection of applications and APIs to interact with websites without requiring the user to open a browser";
-      license = licenses.agpl3;
-      maintainers = with maintainers; [ ];
-    };
-  };
+  weboob = callPackage ../development/python-modules/weboob { };
 
   datadiff = buildPythonPackage rec {
     name = "datadiff-1.1.6";
@@ -20431,36 +20359,7 @@ EOF
 
   trollius = callPackage ../development/python-modules/trollius {};
 
-  neovim = buildPythonPackage rec {
-    version = "0.2.0";
-    name = "neovim-${version}";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/n/neovim/${name}.tar.gz";
-      sha256 = "1ywkgbrxd95cwlglihydmffcw2d2aji6562aqncymxs3ld5y02yn";
-    };
-
-    buildInputs = with self; [ nose ];
-
-    checkPhase = ''
-      nosetests
-    '';
-
-    # Tests require pkgs.neovim,
-    # which we cannot add because of circular dependency.
-    doCheck = false;
-
-    propagatedBuildInputs = with self; [ msgpack ]
-      ++ optional (!isPyPy) greenlet
-      ++ optional (pythonOlder "3.4") trollius;
-
-    meta = {
-      description = "Python client for Neovim";
-      homepage = "https://github.com/neovim/python-client";
-      license = licenses.asl20;
-      maintainers = with maintainers; [ garbas ];
-    };
-  };
+  neovim = callPackage ../development/python-modules/neovim {};
 
   neovim_gui = buildPythonPackage rec {
     name = "neovim-pygui-${self.neovim.version}";
@@ -21567,6 +21466,8 @@ EOF
       sha256 = "1495l2ml8mg120wfvqhikqkfczhwwaby40vdmsz8v2l69jps01fl";
     };
   };
+
+  python-telegram-bot = callPackage ../development/python-modules/python-telegram-bot { };
 
   irc = buildPythonPackage rec {
     name = "irc-${version}";
