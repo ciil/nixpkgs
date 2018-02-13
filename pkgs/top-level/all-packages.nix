@@ -96,6 +96,11 @@ with pkgs;
     { substitutions = { gnu_config = gnu-config;}; }
     ../build-support/setup-hooks/update-autotools-gnu-config-scripts.sh;
 
+  gogUnpackHook = makeSetupHook {
+    name = "gog-unpack-hook";
+    deps = [ innoextract file-rename ]; }
+    ../build-support/setup-hooks/gog-unpack.sh;
+
   buildEnv = callPackage ../build-support/buildenv { }; # not actually a package
 
   buildFHSUserEnv = callPackage ../build-support/build-fhs-userenv { };
@@ -1244,6 +1249,8 @@ with pkgs;
   mathics = pythonPackages.mathics;
 
   masscan = callPackage ../tools/security/masscan { };
+
+  massren = callPackage ../tools/misc/massren { };
 
   meritous = callPackage ../games/meritous { };
 
@@ -3235,6 +3242,8 @@ with pkgs;
   nologin = shadow;
 
   npm2nix = nodePackages.npm2nix;
+
+  file-rename = callPackage ../tools/filesystems/file-rename { };
 
   kea = callPackage ../tools/networking/kea {
     boost = boost165;
@@ -18193,6 +18202,8 @@ with pkgs;
 
   inherit (gnome3) yelp;
 
+  yokadi = python3Packages.callPackage ../applications/misc/yokadi {};
+
   yoshimi = callPackage ../applications/audio/yoshimi { };
 
   inherit (pythonPackages) youtube-dl;
@@ -18384,9 +18395,17 @@ with pkgs;
     physfs = physfs_2;
   };
 
+  # these are here for compatibility
   d1x_rebirth = dxx-rebirth;
-
   d2x_rebirth = dxx-rebirth;
+
+  inherit (callPackages ../games/dxx-rebirth/assets.nix { })
+    descent1-assets
+    descent2-assets;
+
+  inherit (callPackages ../games/dxx-rebirth/full.nix { })
+    d1x-rebirth-full
+    d2x-rebirth-full;
 
   easyrpg-player = callPackage ../games/easyrpg-player { };
 
@@ -19807,7 +19826,7 @@ with pkgs;
   faust1 = callPackage ../applications/audio/faust/faust1.nix { };
 
   faust2 = callPackage ../applications/audio/faust/faust2.nix {
-    llvm = llvm_4;
+    llvm = llvm_5;
   };
 
   faust2alqt = callPackage ../applications/audio/faust/faust2alqt.nix { };
