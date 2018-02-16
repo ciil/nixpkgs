@@ -230,7 +230,7 @@ in {
   diff-match-patch = callPackage ../development/python-modules/diff-match-patch { };
 
   globus-sdk = callPackage ../development/python-modules/globus-sdk { };
-  
+
   gssapi = callPackage ../development/python-modules/gssapi { };
 
   h5py = callPackage ../development/python-modules/h5py {
@@ -254,7 +254,7 @@ in {
   };
 
   mwoauth = callPackage ../development/python-modules/mwoauth { };
-  
+
   neuron = pkgs.neuron.override {
     inherit python;
   };
@@ -359,7 +359,7 @@ in {
   };
 
   pytest-tornado = callPackage ../development/python-modules/pytest-tornado { };
-  
+
   python-sql = callPackage ../development/python-modules/python-sql { };
 
   python-stdnum = callPackage ../development/python-modules/python-stdnum { };
@@ -5152,6 +5152,30 @@ in {
 
   };
 
+  imbalanced-learn = buildPythonPackage rec {
+    name = "imbalanced-learn-${version}";
+    version = "0.3.2";
+
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/i/imbalanced-learn/${name}.tar.gz";
+      sha256 = "0j76m0rrsvyqj9bimky9m7b609y5v6crf9apigww3xvcnchhj901";
+    };
+
+    preConfigure = ''
+      export HOME=$PWD
+    '';
+
+    propagatedBuildInputs = with self; [ scikitlearn ];
+    buildInputs = with self; [ nose pytest pandas ];
+
+    meta = {
+      description = "Library offering a number of re-sampling techniques commonly used in datasets showing strong between-class imbalance";
+      homepage = https://github.com/scikit-learn-contrib/imbalanced-learn;
+      license = with licenses; [ mit ];
+    };
+
+  };
+
   imread = buildPythonPackage rec {
     name = "python-imread-${version}";
     version = "0.6";
@@ -5262,9 +5286,13 @@ in {
     };
   };
 
+  JayDeBeApi = callPackage ../development/python-modules/JayDeBeApi {};
+
   jdcal = callPackage ../development/python-modules/jdcal { };
 
   internetarchive = callPackage ../development/python-modules/internetarchive {};
+
+  JPype1 = callPackage ../development/python-modules/JPype1 {};
 
   jsbeautifier = callPackage ../development/python-modules/jsbeautifier {};
 
@@ -9699,7 +9727,7 @@ in {
 
   locustio = callPackage ../development/python-modules/locustio { };
 
-  llvmlite = callPackage ../development/python-modules/llvmlite {llvm=pkgs.llvm_5;};
+  llvmlite = callPackage ../development/python-modules/llvmlite { llvm = pkgs.llvm; };
 
   lockfile = buildPythonPackage rec {
     pname = "lockfile";
@@ -14657,6 +14685,7 @@ in {
       substituteInPlace "setup.cfg"                                     \
               --replace "/usr/local/include" "${pkgs.sqlite.dev}/include"   \
               --replace "/usr/local/lib" "${pkgs.sqlite.out}/lib"
+      ${stdenv.lib.optionalString (!stdenv.isDarwin) ''export LDSHARED="$CC -pthread -shared"''}
     '';
 
     meta = {

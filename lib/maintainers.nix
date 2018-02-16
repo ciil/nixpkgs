@@ -327,6 +327,7 @@
   jirkamarsik = "Jirka Marsik <jiri.marsik89@gmail.com>";
   jlesquembre = "José Luis Lafuente <jl@lafuente.me>";
   jluttine = "Jaakko Luttinen <jaakko.luttinen@iki.fi>";
+  Jo = "Joachim Ernst <0x4A6F@shackspace.de>";
   joachifm = "Joachim Fasting <joachifm@fastmail.fm>";
   joamaki = "Jussi Maki <joamaki@gmail.com>";
   joelmo = "Joel Moberg <joel.moberg@gmail.com>";
@@ -670,6 +671,7 @@
   symphorien = "Guillaume Girol <symphorien_nixpkgs@xlumurb.eu>";
   szczyp = "Szczyp <qb@szczyp.com>";
   sztupi = "Attila Sztupak <attila.sztupak@gmail.com>";
+  tadfisher = "Tad Fisher <tadfisher@gmail.com>";
   taeer = "Taeer Bar-Yam <taeer@necsi.edu>";
   tailhook = "Paul Colomiets <paul@colomiets.name>";
   taketwo = "Sergey Alexandrov <alexandrov88@gmail.com>";

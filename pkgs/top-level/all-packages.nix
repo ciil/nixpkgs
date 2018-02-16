@@ -171,6 +171,8 @@ with pkgs;
 
   fetchMavenArtifact = callPackage ../build-support/fetchmavenartifact { };
 
+  graph-easy = callPackage ../tools/graphics/graph-easy { };
+
   packer = callPackage ../development/tools/packer { };
 
   mht2htm = callPackage ../tools/misc/mht2htm { };
@@ -318,9 +320,9 @@ with pkgs;
   makeWrapper = makeSetupHook { deps = [ dieHook ]; }
                               ../build-support/setup-hooks/make-wrapper.sh;
 
-  makeModulesClosure = { kernel, rootModules, allowMissing ? false }:
+  makeModulesClosure = { kernel, firmware, rootModules, allowMissing ? false }:
     callPackage ../build-support/kernel/modules-closure.nix {
-      inherit kernel rootModules allowMissing;
+      inherit kernel firmware rootModules allowMissing;
     };
 
   mkShell = callPackage ../build-support/mkshell { };
@@ -404,6 +406,8 @@ with pkgs;
   acoustidFingerprinter = callPackage ../tools/audio/acoustid-fingerprinter {
     ffmpeg = ffmpeg_1;
   };
+
+  acpica-tools = callPackage ../tools/system/acpica-tools { };
 
   actdiag = pythonPackages.actdiag;
 
@@ -4190,6 +4194,8 @@ with pkgs;
     libpng = libpng12;
   };
 
+  plotinus = callPackage ../tools/misc/plotinus { };
+
   plotutils = callPackage ../tools/graphics/plotutils { };
 
   plowshare = callPackage ../tools/misc/plowshare { };
@@ -5429,8 +5435,6 @@ with pkgs;
             platform = {
               name = "ben_nanonote";
               kernelMajor = "2.6";
-              # It's not a bcm47xx processor, but for the headers this should work
-              kernelHeadersBaseConfig = "bcm47xx_defconfig";
               kernelArch = "mips";
             };
             gcc = {
@@ -5741,9 +5745,7 @@ with pkgs;
     '';
   });
 
-  crystal = callPackage ../development/compilers/crystal {
-    llvm = llvm_5;
-  };
+  crystal = callPackage ../development/compilers/crystal { };
 
   devpi-client = callPackage ../development/tools/devpi-client {};
 
@@ -5842,6 +5844,7 @@ with pkgs;
     libcCross1 =
       if targetPlatform.libc == "msvcrt" then targetPackages.windows.mingw_w64_headers
       else if targetPlatform.libc == "libSystem" then darwin.xcode
+      else if targetPlatform.libc == "musl" then musl
       else null;
     binutils1 = wrapBintoolsWith {
       bintools = binutils-unwrapped;
@@ -6381,7 +6384,7 @@ with pkgs;
   llvm_35 = llvmPackages_35.llvm;
   llvm_34 = llvmPackages_34.llvm;
 
-  llvmPackages = recurseIntoAttrs llvmPackages_4;
+  llvmPackages = recurseIntoAttrs llvmPackages_5;
 
   llvmPackagesSelf = llvmPackages_34.override {
     stdenv = libcxxStdenv;
@@ -6407,7 +6410,11 @@ with pkgs;
     inherit (stdenvAdapters) overrideCC;
   };
 
-  llvmPackages_4 = callPackage ../development/compilers/llvm/4 ({
+  llvmPackages_4 = callPackage ../development/compilers/llvm/4 {
+    inherit (stdenvAdapters) overrideCC;
+  };
+
+  llvmPackages_5 = callPackage ../development/compilers/llvm/5 ({
     inherit (stdenvAdapters) overrideCC;
   } // stdenv.lib.optionalAttrs stdenv.isDarwin {
     cmake = cmake.override {
@@ -6417,10 +6424,6 @@ with pkgs;
     libxml2 = libxml2.override { pythonSupport = false; };
     python2 = callPackage ../development/interpreters/python/cpython/2.7/boot.nix { inherit (darwin) CF configd; };
   });
-
-  llvmPackages_5 = callPackage ../development/compilers/llvm/5 {
-    inherit (stdenvAdapters) overrideCC;
-  };
 
   manticore = callPackage ../development/compilers/manticore { };
 
@@ -7282,8 +7285,7 @@ with pkgs;
   bam = callPackage ../development/tools/build-managers/bam {};
 
   bazel_0_4 = callPackage ../development/tools/build-managers/bazel/0.4.nix { };
-  bazel_0_9 = callPackage ../development/tools/build-managers/bazel { };
-  bazel = bazel_0_9;
+  bazel = callPackage ../development/tools/build-managers/bazel { };
 
   bear = callPackage ../development/tools/build-managers/bear { };
 
@@ -7612,6 +7614,8 @@ with pkgs;
   global = callPackage ../development/tools/misc/global { };
 
   gnome_doc_utils = callPackage ../development/tools/documentation/gnome-doc-utils {};
+
+  gnome-desktop-testing = callPackage ../development/tools/gnome-desktop-testing {};
 
   gnum4 = callPackage ../development/tools/misc/gnum4 { };
 
@@ -8099,7 +8103,6 @@ with pkgs;
 
   ycmd = callPackage ../development/tools/misc/ycmd {
     inherit (darwin.apple_sdk.frameworks) Cocoa;
-    llvmPackages = llvmPackages_5;
     python = python2;
   };
 
@@ -8740,20 +8743,25 @@ with pkgs;
     stdenv = crossLibcStdenv;
   };
 
+  muslCross = callPackage ../os-specific/linux/musl {
+    stdenv = crossLibcStdenv;
+  };
+
   # We can choose:
   libcCrossChooser = name:
     # libc is hackily often used from the previous stage. This `or`
     # hack fixes the hack, *sigh*.
     /**/ if name == "glibc" then targetPackages.glibcCross or glibcCross
     else if name == "uclibc" then uclibcCross
+    else if name == "musl" then targetPackages.muslCross or muslCross
     else if name == "msvcrt" then targetPackages.windows.mingw_w64 or windows.mingw_w64
     else if name == "libSystem" then darwin.xcode
     else throw "Unknown libc";
 
   libcCross = assert targetPlatform != buildPlatform; libcCrossChooser targetPlatform.libc;
 
-  # Only supported on Linux
-  glibcLocales = if stdenv.isLinux then callPackage ../development/libraries/glibc/locales.nix { } else null;
+  # Only supported on Linux, using glibc
+  glibcLocales = if hostPlatform.libc == "glibc" then callPackage ../development/libraries/glibc/locales.nix { } else null;
 
   glibcInfo = callPackage ../development/libraries/glibc/info.nix { };
 
@@ -9364,9 +9372,7 @@ with pkgs;
 
   libchop = callPackage ../development/libraries/libchop { };
 
-  libclc = callPackage ../development/libraries/libclc {
-    llvmPackages = llvmPackages_5;
-  };
+  libclc = callPackage ../development/libraries/libclc { };
 
   libcli = callPackage ../development/libraries/libcli { };
 
@@ -9478,6 +9484,8 @@ with pkgs;
   else callPackage ../development/libraries/libelf { };
 
   libetpan = callPackage ../development/libraries/libetpan { };
+
+  libexecinfo = callPackage ../development/libraries/libexecinfo { };
 
   libfaketime = callPackage ../development/libraries/libfaketime { };
 
@@ -9755,7 +9763,7 @@ with pkgs;
   };
 
   # On non-GNU systems we need GNU Gettext for libintl.
-  libintlOrEmpty = stdenv.lib.optional (!stdenv.isLinux) gettext;
+  libintlOrEmpty = stdenv.lib.optional (!stdenv.isLinux || hostPlatform.libc != "glibc") gettext;
 
   libid3tag = callPackage ../development/libraries/libid3tag {
     gperf = gperf_3_0;
@@ -10263,8 +10271,6 @@ with pkgs;
     # makes it slower, but during runtime we link against just mesa_drivers
     # through /run/opengl-driver*, which is overriden according to config.grsecurity
     # grsecEnabled = true; # no more support in nixpkgs ATM
-
-    llvmPackages = llvmPackages_5;
   });
 
   mesa_glu =  mesaDarwinOr (callPackage ../development/libraries/mesa-glu { });
@@ -12043,6 +12049,8 @@ with pkgs;
 
   grafana = callPackage ../servers/monitoring/grafana { };
 
+  h2o = callPackage ../servers/http/h2o { };
+
   haka = callPackage ../tools/security/haka { };
 
   heapster = callPackage ../servers/monitoring/heapster { };
@@ -12557,11 +12565,12 @@ with pkgs;
   };
 
   xorg = recurseIntoAttrs (lib.callPackagesWith pkgs ../servers/x11/xorg/default.nix {
-    inherit clangStdenv fetchurl fetchgit fetchpatch stdenv pkgconfig intltool freetype fontconfig
+    inherit clangStdenv fetchurl fetchgit fetchpatch stdenv intltool freetype fontconfig
       libxslt expat libpng zlib perl mesa_drivers spice_protocol libunwind
       dbus libuuid openssl gperf m4 libevdev tradcpp libinput mcpp makeWrapper autoreconfHook
-      autoconf automake libtool xmlto asciidoc flex bison mtdev pixman
+      autoconf automake libtool mtdev pixman
       cairo epoxy;
+    inherit (buildPackages) pkgconfig xmlto asciidoc flex bison;
     inherit (darwin) apple_sdk cf-private libobjc;
     bootstrap_cmds = if stdenv.isDarwin then darwin.bootstrap_cmds else null;
     mesa = mesa_noglu;
@@ -12724,7 +12733,7 @@ with pkgs;
   fscrypt-experimental = callPackage ../os-specific/linux/fscrypt { };
   fscryptctl-experimental = callPackage ../os-specific/linux/fscryptctl { };
 
-  fwupd = callPackage ../os-specific/linux/firmware/fwupd { inherit (gnome2) gtk_doc; inherit (python3Packages) pygobject3 pillow; };
+  fwupd = callPackage ../os-specific/linux/firmware/fwupd { };
 
   fwupdate = callPackage ../os-specific/linux/firmware/fwupdate { };
 
@@ -12905,8 +12914,9 @@ with pkgs;
 
   lkl = callPackage ../applications/virtualization/lkl { };
 
-  linuxHeaders_4_4 = callPackage ../os-specific/linux/kernel-headers/4.4.nix { };
-  linuxHeaders = linuxHeaders_4_4;
+  inherit (callPackages ../os-specific/linux/kernel-headers { })
+    linuxHeaders_4_4 linuxHeaders_4_15;
+  linuxHeaders = if hostPlatform.isMusl then linuxHeaders_4_15 else linuxHeaders_4_4;
 
   kernelPatches = callPackage ../os-specific/linux/kernel/patches.nix { };
 
@@ -13335,6 +13345,17 @@ with pkgs;
   multipath-tools = callPackage ../os-specific/linux/multipath-tools { };
 
   musl = callPackage ../os-specific/linux/musl { };
+  musl-fts = callPackage ../os-specific/linux/musl/fts.nix { };
+  musl-getconf = callPackage ../os-specific/linux/musl/getconf.nix { };
+  musl-getent = callPackage ../os-specific/linux/musl/getent.nix { };
+  getent =
+    if hostPlatform.isMusl then musl-getent
+    # This may not be right on other platforms, but preserves existing behavior
+    else /* if hostPlatform.libc == "glibc" then */ glibc.bin;
+
+  getconf =
+    if hostPlatform.isMusl then musl-getconf
+    else lib.getBin stdenv.cc.libc;
 
   nettools = callPackage ../os-specific/linux/net-tools { };
 
@@ -14547,6 +14568,8 @@ with pkgs;
   catfish = callPackage ../applications/search/catfish { };
 
   cava = callPackage ../applications/audio/cava { };
+
+  cask = callPackage ../development/tools/build-managers/cask { };
 
   cb2bib = libsForQt5.callPackage ../applications/office/cb2bib { };
 
@@ -17348,7 +17371,11 @@ with pkgs;
 
   syncplay = callPackage ../applications/networking/syncplay { };
 
-  syncthing = callPackage ../applications/networking/syncthing { };
+  inherit (callPackages ../applications/networking/syncthing { })
+    syncthing
+    syncthing-cli
+    syncthing-discovery
+    syncthing-relay;
 
   syncthing-gtk = python2Packages.callPackage ../applications/networking/syncthing-gtk { };
 
@@ -18567,7 +18594,9 @@ with pkgs;
     libpng = libpng12;
   };
 
-  mnemosyne = callPackage ../games/mnemosyne { };
+  mnemosyne = callPackage ../games/mnemosyne {
+    python = python3;
+  };
 
   mrrescue = callPackage ../games/mrrescue { };
 
@@ -19893,6 +19922,8 @@ with pkgs;
   hplip_3_16_11 = callPackage ../misc/drivers/hplip/3.16.11.nix { };
 
   hplipWithPlugin_3_16_11 = hplip.override { withPlugin = true; };
+
+  hyperfine = callPackage ../tools/misc/hyperfine { };
 
   epkowa = callPackage ../misc/drivers/epkowa { };
 
