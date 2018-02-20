@@ -60,6 +60,7 @@
   ./misc/extra-arguments.nix
   ./misc/ids.nix
   ./misc/lib.nix
+  ./misc/label.nix
   ./misc/locate.nix
   ./misc/meta.nix
   ./misc/nixpkgs.nix
@@ -509,6 +510,7 @@
   ./services/networking/ngircd.nix
   ./services/networking/nghttpx/default.nix
   ./services/networking/nix-serve.nix
+  ./services/networking/nixops-dns.nix
   ./services/networking/nntp-proxy.nix
   ./services/networking/nsd.nix
   ./services/networking/ntopng.nix
