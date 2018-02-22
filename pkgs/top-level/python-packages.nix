@@ -3836,27 +3836,6 @@ in {
     };
   });
 
-  ddar = buildPythonPackage {
-    name = "ddar-1.0";
-
-    src = pkgs.fetchurl {
-      url = "https://github.com/basak/ddar/archive/v1.0.tar.gz";
-      sha256 = "08lv7hrbhcv6hbl01sx8fgx3l8s2nn8rvcicdidafwm87bvi2nmr";
-    };
-
-    preBuild = ''
-      make -f Makefile.prep synctus/ddar_pb2.py
-    '';
-
-    propagatedBuildInputs = with self; [ protobuf ];
-
-    meta = {
-      description = "Unix de-duplicating archiver";
-      license = licenses.gpl3;
-      homepage = https://github.com/basak/ddar;
-    };
-  };
-
   decorator = callPackage ../development/python-modules/decorator { };
 
   deform = buildPythonPackage rec {
@@ -10890,6 +10869,7 @@ in {
     };
   };
 
+  mysql-connector = callPackage ../development/python-modules/mysql-connector { };
 
   mysql_connector_repackaged = buildPythonPackage rec {
     name = "mysql-connector-repackaged-0.3.1";
@@ -11319,6 +11299,8 @@ in {
     };
   });
 
+  notify2 = callPackage ../development/python-modules/notify2 {};
+
   notmuch = buildPythonPackage rec {
     name = "python-${pkgs.notmuch.name}";
 
@@ -11430,25 +11412,7 @@ in {
     blas = pkgs.openblasCompat;
   };
 
-  numpydoc = buildPythonPackage rec {
-    pname = "numpydoc";
-    name = "${pname}-${version}";
-    version = "0.6.0";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/${builtins.substring 0 1 pname}/${pname}/${name}.tar.gz";
-      sha256 = "1ec573e91f6d868a9940d90a6599f3e834a2d6c064030fbe078d922ee21dcfa1";
-    };
-
-    buildInputs = [ self.nose ];
-    propagatedBuildInputs = [ self.sphinx self.matplotlib ];
-
-    meta = {
-      description = "Sphinx extension to support docstrings in Numpy format";
-      homepage = "https://github.com/numpy/numpydoc";
-      license = licenses.free;
-    };
-  };
+  numpydoc = callPackage ../development/python-modules/numpydoc { };
 
   numpy-stl = callPackage ../development/python-modules/numpy-stl { };
 
@@ -15530,11 +15494,11 @@ in {
 
   ruamel_yaml = buildPythonPackage rec {
     name = "ruamel.yaml-${version}";
-    version = "0.13.7";
+    version = "0.15.35";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/r/ruamel.yaml/${name}.tar.gz";
-      sha256 = "1vca2552k0kmhr9msg1bbfdvp3p9im17x1a6npaw221vlgg15z7h";
+      sha256 = "0xggyfaj6vprggahf7cq8kp9j79rb7hn8ndk3bxj2sxvwhhliiwd";
     };
 
     # Tests cannot load the module to test
@@ -21272,11 +21236,10 @@ EOF
   tensorflow-tensorboard = callPackage ../development/python-modules/tensorflow-tensorboard { };
 
   tensorflow = callPackage ../development/python-modules/tensorflow rec {
-    bazel = pkgs.bazel_0_4;
     cudaSupport = pkgs.config.cudaSupport or false;
     inherit (pkgs.linuxPackages) nvidia_x11;
-    cudatoolkit = pkgs.cudatoolkit8;
-    cudnn = pkgs.cudnn6_cudatoolkit8;
+    cudatoolkit = pkgs.cudatoolkit9;
+    cudnn = pkgs.cudnn_cudatoolkit9;
   };
 
   tensorflowWithoutCuda = self.tensorflow.override {
