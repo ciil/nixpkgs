@@ -1056,7 +1056,7 @@ with pkgs;
 
   devmem2 = callPackage ../os-specific/linux/devmem2 { };
 
-  dbus-broker = callPackage ../os-specific/linux/dbus-broker {};
+  dbus-broker = callPackage ../os-specific/linux/dbus-broker { };
 
   ioport = callPackage ../os-specific/linux/ioport {};
 
@@ -1380,6 +1380,8 @@ with pkgs;
   appdata-tools = callPackage ../tools/misc/appdata-tools { };
 
   arping = callPackage ../tools/networking/arping { };
+
+  arpoison = callPackage ../tools/networking/arpoison { };
 
   asciidoc = callPackage ../tools/typesetting/asciidoc {
     inherit (python2Packages) matplotlib numpy aafigure recursivePthLoader;
@@ -3170,6 +3172,10 @@ with pkgs;
 
   matrix-synapse = callPackage ../servers/matrix-synapse { };
 
+  mdbook = callPackage ../tools/text/mdbook {
+    inherit (darwin.apple_sdk.frameworks) CoreServices;
+  };
+
   memtester = callPackage ../tools/system/memtester { };
 
   minidlna = callPackage ../tools/networking/minidlna { };
@@ -3245,6 +3251,8 @@ with pkgs;
   nginx-config-formatter = callPackage ../tools/misc/nginx-config-formatter { };
 
   ninka = callPackage ../development/tools/misc/ninka { };
+
+  nixnote2 = libsForQt5.callPackage ../applications/misc/nixnote2 { };
 
   nodejs = hiPrio nodejs-6_x;
 
@@ -3887,7 +3895,7 @@ with pkgs;
 
   nzbget = callPackage ../tools/networking/nzbget { };
 
-  oathToolkit = callPackage ../tools/security/oath-toolkit { };
+  oathToolkit = callPackage ../tools/security/oath-toolkit { inherit (gnome2) gtkdoc;  };
 
   obex_data_server = callPackage ../tools/bluetooth/obex-data-server { };
 
@@ -4689,6 +4697,8 @@ with pkgs;
   sipsak = callPackage ../tools/networking/sipsak { };
 
   sisco.lv2 = callPackage ../applications/audio/sisco.lv2 { };
+
+  sit = callPackage ../applications/version-management/sit { };
 
   skippy-xd = callPackage ../tools/X11/skippy-xd {};
 
@@ -6200,23 +6210,15 @@ with pkgs;
       inherit (darwin.apple_sdk.frameworks) Security;
     };
 
-  go_1_6 = callPackage ../development/compilers/go/1.6.nix {
-    inherit (darwin.apple_sdk.frameworks) Security Foundation;
-  };
-
-  go_1_7 = callPackage ../development/compilers/go/1.7.nix {
-    inherit (darwin.apple_sdk.frameworks) Security Foundation;
-  };
-
-  go_1_8 = callPackage ../development/compilers/go/1.8.nix {
-    inherit (darwin.apple_sdk.frameworks) Security Foundation;
-  };
-
   go_1_9 = callPackage ../development/compilers/go/1.9.nix {
     inherit (darwin.apple_sdk.frameworks) Security Foundation;
   };
 
-  go = go_1_9;
+  go_1_10 = callPackage ../development/compilers/go/1.10.nix {
+    inherit (darwin.apple_sdk.frameworks) Security Foundation;
+  };
+
+  go = go_1_10;
 
   go-repo-root = callPackage ../development/tools/go-repo-root { };
 
@@ -6646,7 +6648,6 @@ with pkgs;
   sbclBootstrap = callPackage ../development/compilers/sbcl/bootstrap.nix {};
   sbcl = callPackage ../development/compilers/sbcl {};
 
-  scala_2_9 = callPackage ../development/compilers/scala/2.9.nix { };
   scala_2_10 = callPackage ../development/compilers/scala/2.10.nix { };
   scala_2_11 = callPackage ../development/compilers/scala/2.11.nix { };
   scala_2_12 = callPackage ../development/compilers/scala { jre = jre8; };
@@ -9209,16 +9210,20 @@ with pkgs;
 
   hyena = callPackage ../development/libraries/hyena { };
 
-  icu58 = callPackage ../development/libraries/icu/58.nix
+  icu58 = callPackage (import ../development/libraries/icu/58.nix fetchurl) {
+    nativeBuildRoot = buildPackages.icu58.override { buildRootOnly = true; };
+  } //
     (stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
       stdenv = overrideCC stdenv gcc6; # with gcc-7: undefined reference to `__divmoddi4'
     });
-  icu59 = callPackage ../development/libraries/icu/59.nix
-    (stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
+  icu59 = callPackage ../development/libraries/icu/59.nix {
+    nativeBuildRoot = buildPackages.icu59.override { buildRootOnly = true; };
+  } // (stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
       stdenv = overrideCC stdenv gcc6; # with gcc-7: undefined reference to `__divmoddi4'
     });
-  icu60 = callPackage ../development/libraries/icu/60.nix
-    (stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
+  icu60 = callPackage ../development/libraries/icu/60.nix {
+    nativeBuildRoot = buildPackages.icu60.override { buildRootOnly = true; };
+  } // (stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
       stdenv = overrideCC stdenv gcc6; # with gcc-7: undefined reference to `__divmoddi4'
     });
 
@@ -10794,6 +10799,7 @@ with pkgs;
   };
 
   postgis = callPackage ../development/libraries/postgis { };
+  postgis_2_3 = callPackage ../development/libraries/postgis/2.3.nix { };
 
   protobuf = callPackage ../development/libraries/protobuf/3.4.nix { };
 
@@ -11854,18 +11860,6 @@ with pkgs;
 
   ### DEVELOPMENT / GO MODULES
 
-  buildGo16Package = callPackage ../development/go-modules/generic {
-    go = go_1_6;
-  };
-
-  buildGo17Package = callPackage ../development/go-modules/generic {
-    go = go_1_7;
-  };
-
-  buildGo18Package = callPackage ../development/go-modules/generic {
-    go = go_1_8;
-  };
-
   buildGo19Package = callPackage ../development/go-modules/generic {
     go = go_1_9;
   };
@@ -12791,10 +12785,7 @@ with pkgs;
 
   cifs-utils = callPackage ../os-specific/linux/cifs-utils { };
 
-  cockroachdb = callPackage ../servers/sql/cockroachdb {
-    # Go 1.9 build fails with "go1.8.* required (see CONTRIBUTING.md)".
-    buildGoPackage = buildGo18Package;
-  };
+  cockroachdb = callPackage ../servers/sql/cockroachdb { };
 
   conky = callPackage ../os-specific/linux/conky ({
     lua = lua5_1; # conky can use 5.2, but toluapp can not
@@ -13174,13 +13165,7 @@ with pkgs;
     kernelPatches = [
       kernelPatches.bridge_stp_helper
       kernelPatches.modinst_arg_list_too_long
-    ] ++ lib.optionals hostPlatform.isRiscV [
-      kernelPatches.riscv_modules
-      kernelPatches.riscv_irq_busy
-      kernelPatches.riscv_install
-      kernelPatches.riscv_initrd
-      kernelPatches.riscv_initrd_free
-   ];
+    ];
   };
 
   linux_samus_4_12 = callPackage ../os-specific/linux/kernel/linux-samus-4.12.nix {
@@ -13191,7 +13176,7 @@ with pkgs;
         # when adding a new linux version
         kernelPatches.cpu-cgroup-v2."4.11"
         kernelPatches.modinst_arg_list_too_long
-    ];
+      ];
   };
 
   /* Linux kernel modules are inherently tied to a specific kernel.  So
@@ -13266,9 +13251,13 @@ with pkgs;
 
     ply = callPackage ../os-specific/linux/ply { };
 
+    rtl8192eu = callPackage ../os-specific/linux/rtl8192eu { };
+
     rtl8723bs = callPackage ../os-specific/linux/rtl8723bs { };
 
     rtl8812au = callPackage ../os-specific/linux/rtl8812au { };
+
+    rtl8814au = callPackage ../os-specific/linux/rtl8814au { };
 
     rtlwifi_new = callPackage ../os-specific/linux/rtlwifi_new { };
 
@@ -14697,7 +14686,10 @@ with pkgs;
     openjpeg = openjpeg_1;
   };
 
-  perkeep = callPackage ../applications/misc/perkeep { };
+  perkeep = callPackage ../applications/misc/perkeep {
+    # Perkeep is very particular about which go version to build with.
+    go = go_1_9;
+  };
 
   canto-curses = callPackage ../applications/networking/feedreaders/canto-curses { };
 
@@ -15273,9 +15265,10 @@ with pkgs;
 
   keepass-keeagent = callPackage ../applications/misc/keepass-plugins/keeagent { };
 
-  keepass-keefox = callPackage ../applications/misc/keepass-plugins/keefox { };
-
   keepass-keepasshttp = callPackage ../applications/misc/keepass-plugins/keepasshttp { };
+
+  keepass-keepassrpc = callPackage ../applications/misc/keepass-plugins/keepassrpc { };
+  keepass-keefox = keepass-keepassrpc; # backwards compatibility alias, added 2018-02
 
   exrdisplay = callPackage ../applications/graphics/exrdisplay { };
 
@@ -19192,7 +19185,7 @@ with pkgs;
     icon-hider = callPackage ../desktops/gnome-3/extensions/icon-hider { };
     mediaplayer = callPackage ../desktops/gnome-3/extensions/mediaplayer { };
     nohotcorner = callPackage ../desktops/gnome-3/extensions/nohotcorner { };
-    pixel-saver = callPackage ../desktops/gnome-3/extensions/pixel-saver { };
+    no-title-bar = callPackage ../desktops/gnome-3/extensions/no-title-bar { };
     remove-dropdown-arrows = callPackage ../desktops/gnome-3/extensions/remove-dropdown-arrows { };
     taskwhisperer = callPackage ../desktops/gnome-3/extensions/taskwhisperer { };
     topicons-plus = callPackage ../desktops/gnome-3/extensions/topicons-plus { };
@@ -19280,7 +19273,7 @@ with pkgs;
     kwallet-pam kwayland-integration kwin kwrited milou oxygen plasma-desktop
     plasma-integration plasma-nm plasma-pa plasma-vault plasma-workspace
     plasma-workspace-wallpapers polkit-kde-agent powerdevil sddm-kcm
-    systemsettings xdg-desktop-portal-kde;
+    systemsettings user-manager xdg-desktop-portal-kde;
 
   ### SCIENCE
 
@@ -19948,6 +19941,8 @@ with pkgs;
   cups-dymo = callPackage ../misc/cups/drivers/dymo {};
 
   cups-toshiba-estudio = callPackage ../misc/cups/drivers/estudio {};
+
+  cups-zj-58 =  callPackage ../misc/cups/drivers/zj-58 { };
 
   crashplan = callPackage ../applications/backup/crashplan { };
   crashplansb = callPackage ../applications/backup/crashplan/crashplan-small-business.nix { inherit (gnome3) gconf; };

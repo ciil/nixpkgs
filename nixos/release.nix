@@ -258,7 +258,7 @@ in rec {
   tests.firefox = callTest tests/firefox.nix {};
   tests.firewall = callTest tests/firewall.nix {};
   tests.fleet = callTestOnTheseSystems ["x86_64-linux"] tests/fleet.nix {};
-  #tests.fwupd = callTest tests/fwupd.nix {}; # build during evaluation
+  tests.fwupd = callTest tests/fwupd.nix {};
   #tests.gitlab = callTest tests/gitlab.nix {};
   tests.gitolite = callTest tests/gitolite.nix {};
   tests.gjs = callTest tests/gjs.nix {};
@@ -339,6 +339,7 @@ in rec {
   tests.pumpio = callTest tests/pump.io.nix {};
   # tests.quagga = callTest tests/quagga.nix {};
   tests.quake3 = callTest tests/quake3.nix {};
+  tests.rabbitmq = callTest tests/rabbitmq.nix {};
   tests.radicale = callTest tests/radicale.nix {};
   tests.rspamd = callSubTests tests/rspamd.nix {};
   tests.runInMachine = callTest tests/run-in-machine.nix {};

@@ -82,6 +82,11 @@ following incompatible changes:</para>
 <itemizedlist>
   <listitem>
     <para>
+      <literal>sound.enable</literal> now defaults to false.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
       Dollar signs in options under <option>services.postfix</option> are
       passed verbatim to Postfix, which will interpret them as the beginning of
       a parameter expression. This was already true for string-valued options
