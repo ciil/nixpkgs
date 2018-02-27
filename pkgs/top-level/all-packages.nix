@@ -726,6 +726,8 @@ with pkgs;
     qt4Support = config.avahi.qt4Support or false;
   };
 
+  avro-c = callPackage ../development/libraries/avro-c { };
+
   avro-cpp = callPackage ../development/libraries/avro-c++ { boost = boost160; };
 
   aws = callPackage ../tools/virtualization/aws { };
@@ -3263,9 +3265,6 @@ with pkgs;
 
   nodejs-slim = nodejs-slim-6_x;
 
-  nodejs-4_x = callPackage ../development/web/nodejs/v4.nix {};
-  nodejs-slim-4_x = callPackage ../development/web/nodejs/v4.nix { enableNpm = false; };
-
   nodejs-6_x = callPackage ../development/web/nodejs/v6.nix {};
   nodejs-slim-6_x = callPackage ../development/web/nodejs/v6.nix { enableNpm = false; };
 
@@ -3281,10 +3280,6 @@ with pkgs;
 
   nodePackages_6_x = callPackage ../development/node-packages/default-v6.nix {
     nodejs = pkgs.nodejs-6_x;
-  };
-
-  nodePackages_4_x = callPackage ../development/node-packages/default-v4.nix {
-    nodejs = pkgs.nodejs-4_x;
   };
 
   nodePackages = nodePackages_6_x;
@@ -6597,7 +6592,6 @@ with pkgs;
   ocsigen-i18n = callPackage ../development/tools/ocaml/ocsigen-i18n { };
 
   opa = callPackage ../development/compilers/opa {
-    nodejs = nodejs-4_x;
     ocamlPackages = ocamlPackages_4_02;
   };
 
@@ -8885,9 +8879,7 @@ with pkgs;
     glibc32 = pkgsi686Linux.glibc;
   };
 
-  glm = callPackage ../development/libraries/glm
-    (lib.optionalAttrs stdenv.cc.isGNU { stdenv = overrideCC stdenv gcc6;/*maybe a hack*/ });
-
+  glm = callPackage ../development/libraries/glm { };
   glm_0954 = callPackage ../development/libraries/glm/0954.nix { };
 
   globalplatform = callPackage ../development/libraries/globalplatform { };
@@ -9927,6 +9919,8 @@ with pkgs;
     graphviz = graphviz-nox;
   };
 
+  libinput-gestures = callPackage ../tools/inputmethods/libinput-gestures {};
+
   libisofs = callPackage ../development/libraries/libisofs { };
 
   libisoburn = callPackage ../development/libraries/libisoburn { };
@@ -10798,7 +10792,10 @@ with pkgs;
     suffix = "min";
   };
 
-  poppler_qt4 = callPackage ../development/libraries/poppler/qt4.nix { };
+  poppler_qt4 = poppler.override {
+    qt4Support = true;
+    suffix = "qt4";
+  };
 
   poppler_utils = poppler.override { suffix = "utils"; utils = true; };
 
@@ -18004,6 +18001,8 @@ with pkgs;
   way-cooler = callPackage ../applications/window-managers/way-cooler {};
 
   wayv = callPackage ../tools/X11/wayv {};
+
+  webtorrent_desktop = callPackage ../applications/video/webtorrent_desktop {};
 
   weechat = callPackage ../applications/networking/irc/weechat {
     inherit (darwin) libobjc;
