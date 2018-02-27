@@ -121,6 +121,8 @@ with pkgs;
 
   dieHook = makeSetupHook {} ../build-support/setup-hooks/die.sh;
 
+  digitalbitbox = libsForQt5.callPackage ../applications/misc/digitalbitbox { };
+
   # go 1.9 pin until https://github.com/moby/moby/pull/35739
   dockerTools = callPackage ../build-support/docker { go = go_1_9; };
 
@@ -4618,6 +4620,10 @@ with pkgs;
     quazip = quazip_qt4;
   };
 
+  screenkey = python2Packages.callPackage ../applications/video/screenkey {
+    inherit (gnome3) defaultIconTheme;
+  };
+
   quazip_qt4 = libsForQt5.quazip.override {
     qtbase = qt4; qmake = qmake4Hook;
   };
@@ -5474,7 +5480,7 @@ with pkgs;
   xbursttools = assert stdenv ? glibc; callPackage ../tools/misc/xburst-tools rec {
     # It needs a cross compiler for mipsel to build the firmware it will
     # load into the Ben Nanonote
-    crossPrefix = "mips64el-unknown-linux-gnu";
+    crossPrefix = "mipsel-unknown-linux-gnu";
     gccCross =
       let
         pkgsCross = nixpkgsFun {
@@ -16288,6 +16294,8 @@ with pkgs;
 
   lighttable = callPackage ../applications/editors/lighttable {};
 
+  libdsk = callPackage ../misc/emulators/libdsk { };
+
   links2 = callPackage ../applications/networking/browsers/links2 { };
 
   linphone = callPackage ../applications/networking/instant-messengers/linphone rec {
@@ -20690,6 +20698,8 @@ with pkgs;
 
   zsnes = callPackage_i686 ../misc/emulators/zsnes { };
 
+  xcpc = callPackage ../misc/emulators/xcpc { };
+
   zxcvbn-c = callPackage ../development/libraries/zxcvbn-c { };
 
   snes9x-gtk = callPackage ../misc/emulators/snes9x-gtk { };
@@ -20828,4 +20838,6 @@ with pkgs;
   safeDiscardStringContext = callPackage ../build-support/safe-discard-string-context.nix { };
 
   simplehttp2server = callPackage ../servers/simplehttp2server { };
+
+  diceware = callPackage ../tools/security/diceware { };
 }
