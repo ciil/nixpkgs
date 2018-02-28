@@ -4043,6 +4043,8 @@ with pkgs;
 
   packetdrill = callPackage ../tools/networking/packetdrill { };
 
+  pacman = callPackage ../tools/package-management/pacman { };
+
   padthv1 = callPackage ../applications/audio/padthv1 { };
 
   pakcs = callPackage ../development/compilers/pakcs {};
@@ -8332,6 +8334,10 @@ with pkgs;
 
   libopcodes = callPackage ../development/libraries/libopcodes { };
 
+  # TODO(@Ericson2314): Build bionic libc from source
+  bionic = assert hostPlatform.useAndroidPrebuilt;
+    androidenv.androidndkPkgs.libraries;
+
   bobcat = callPackage ../development/libraries/bobcat { };
 
   boehmgc = callPackage ../development/libraries/boehm-gc { };
@@ -8868,6 +8874,7 @@ with pkgs;
     # libc is hackily often used from the previous stage. This `or`
     # hack fixes the hack, *sigh*.
     /**/ if name == "glibc" then targetPackages.glibcCross or glibcCross
+    else if name == "bionic" then targetPackages.bionic
     else if name == "uclibc" then uclibcCross
     else if name == "musl" then targetPackages.muslCross or muslCross
     else if name == "msvcrt" then targetPackages.windows.mingw_w64 or windows.mingw_w64
@@ -16549,11 +16556,19 @@ with pkgs;
     };
 
   mpv = callPackage ../applications/video/mpv rec {
-    lua = lua5_1;
-    lua5_sockets = lua5_1_sockets;
+    inherit (luaPackages) luasocket;
     youtube-dl = pythonPackages.youtube-dl;
-    libva = libva-full;
-    waylandSupport = stdenv.isLinux;
+    libva      = libva-full;
+    waylandSupport     = stdenv.isLinux;
+    alsaSupport        = !stdenv.isDarwin;
+    pulseSupport       = !stdenv.isDarwin;
+    rubberbandSupport  = !stdenv.isDarwin;
+    dvdreadSupport     = !stdenv.isDarwin;
+    dvdnavSupport      = !stdenv.isDarwin;
+    drmSupport         = !stdenv.isDarwin;
+    x11Support         = !stdenv.isDarwin;
+    xineramaSupport    = !stdenv.isDarwin;
+    xvSupport          = !stdenv.isDarwin;
   };
 
   mpvScripts = {
