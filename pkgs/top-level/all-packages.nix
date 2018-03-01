@@ -2035,6 +2035,10 @@ with pkgs;
 
   uudeview = callPackage ../tools/misc/uudeview { };
 
+  uutils-coreutils = callPackage ../tools/misc/uutils-coreutils {
+    inherit (pythonPackages) sphinx;
+  };
+
   zabbix-cli = callPackage ../tools/misc/zabbix-cli { };
 
   ### DEVELOPMENT / EMSCRIPTEN
@@ -3971,6 +3975,8 @@ with pkgs;
   opensc = callPackage ../tools/security/opensc {
     inherit (darwin.apple_sdk.frameworks) Carbon;
   };
+
+  opensm = callPackage ../tools/networking/opensm { };
 
   openssh =
     callPackage ../tools/networking/openssh {
@@ -6346,6 +6352,8 @@ with pkgs;
   jre = jre8;
   jre_headless = jre8_headless;
 
+  inherit (callPackages ../development/compilers/graalvm { }) mx jvmci8 graalvm8;
+
   openshot-qt = libsForQt5.callPackage ../applications/video/openshot-qt { };
 
   oraclejdk = pkgs.jdkdistro true false;
@@ -7150,6 +7158,8 @@ with pkgs;
   rascal = callPackage ../development/interpreters/rascal { };
 
   red = callPackage ../development/interpreters/red { };
+
+  regextester = callPackage ../applications/misc/regextester { };
 
   regina = callPackage ../development/interpreters/regina { };
 
@@ -8893,7 +8903,6 @@ with pkgs;
   };
 
   glm = callPackage ../development/libraries/glm { };
-  glm_0954 = callPackage ../development/libraries/glm/0954.nix { };
 
   globalplatform = callPackage ../development/libraries/globalplatform { };
   gppcscconnectionplugin =
@@ -9110,6 +9119,7 @@ with pkgs;
   gnome-sharp = callPackage ../development/libraries/gnome-sharp {};
 
   granite = callPackage ../development/libraries/granite { };
+  elementary-cmake-modules = callPackage ../development/libraries/elementary-cmake-modules { };
 
   gtk2 = callPackage ../development/libraries/gtk+/2.x.nix {
     cupsSupport = config.gtk2.cups or stdenv.isLinux;
@@ -9236,22 +9246,22 @@ with pkgs;
 
   hyena = callPackage ../development/libraries/hyena { };
 
-  icu58 = callPackage (import ../development/libraries/icu/58.nix fetchurl) {
+  icu58 = callPackage (import ../development/libraries/icu/58.nix fetchurl) ({
     nativeBuildRoot = buildPackages.icu58.override { buildRootOnly = true; };
   } //
     (stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
       stdenv = overrideCC stdenv gcc6; # with gcc-7: undefined reference to `__divmoddi4'
-    });
-  icu59 = callPackage ../development/libraries/icu/59.nix {
+    }));
+  icu59 = callPackage ../development/libraries/icu/59.nix ({
     nativeBuildRoot = buildPackages.icu59.override { buildRootOnly = true; };
   } // (stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
       stdenv = overrideCC stdenv gcc6; # with gcc-7: undefined reference to `__divmoddi4'
-    });
-  icu60 = callPackage ../development/libraries/icu/60.nix {
+    }));
+  icu60 = callPackage ../development/libraries/icu/60.nix ({
     nativeBuildRoot = buildPackages.icu60.override { buildRootOnly = true; };
   } // (stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
       stdenv = overrideCC stdenv gcc6; # with gcc-7: undefined reference to `__divmoddi4'
-    });
+    }));
 
   icu = icu59;
 
@@ -9647,10 +9657,6 @@ with pkgs;
   libgap = callPackage ../development/libraries/libgap { };
 
   libgdata = gnome3.libgdata;
-
-  libgee_0_6 = callPackage ../development/libraries/libgee/0.6.nix { };
-
-  libgee_0_8 = callPackage ../development/libraries/libgee/0.8.nix { };
 
   libgig = callPackage ../development/libraries/libgig { };
 
@@ -13132,22 +13138,6 @@ with pkgs;
       ];
   };
 
-  linux_4_13 = callPackage ../os-specific/linux/kernel/linux-4.13.nix {
-    kernelPatches =
-      [ kernelPatches.bridge_stp_helper
-        kernelPatches.p9_fixes
-        # See pkgs/os-specific/linux/kernel/cpu-cgroup-v2-patches/README.md
-        # when adding a new linux version
-        kernelPatches.cpu-cgroup-v2."4.11"
-        kernelPatches.modinst_arg_list_too_long
-      ]
-      ++ lib.optionals ((platform.kernelArch or null) == "mips")
-      [ kernelPatches.mips_fpureg_emu
-        kernelPatches.mips_fpu_sigill
-        kernelPatches.mips_ext3_n32
-      ];
-  };
-
   linux_4_14 = callPackage ../os-specific/linux/kernel/linux-4.14.nix {
     kernelPatches =
       [ kernelPatches.bridge_stp_helper
@@ -13379,7 +13369,6 @@ with pkgs;
   linuxPackages_rpi = linuxPackagesFor pkgs.linux_rpi;
   linuxPackages_4_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_4);
   linuxPackages_4_9 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_9);
-  linuxPackages_4_13 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_13);
   linuxPackages_4_14 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_14);
   linuxPackages_4_15 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_15);
   # Don't forget to update linuxPackages_latest!
@@ -13804,7 +13793,7 @@ with pkgs;
 
   udisks1 = callPackage ../os-specific/linux/udisks/1-default.nix { };
   udisks2 = callPackage ../os-specific/linux/udisks/2-default.nix { };
-  udisks = udisks1;
+  udisks = udisks2;
 
   udisks_glue = callPackage ../os-specific/linux/udisks-glue { };
 
@@ -15828,6 +15817,11 @@ with pkgs;
 
   gv = callPackage ../applications/misc/gv { };
 
+  gutenberg = callPackage ../applications/misc/gutenberg {
+    inherit (darwin.apple_sdk.frameworks) CoreServices;
+    inherit (darwin) cf-private;
+  };
+
   guvcview = callPackage ../os-specific/linux/guvcview {
     pulseaudioSupport = config.pulseaudio or true;
     ffmpeg = ffmpeg_2;
@@ -16258,7 +16252,6 @@ with pkgs;
     inherit (gnome2) GConf ORBit2 gnome_vfs;
     inherit (gnome3) defaultIconTheme;
     zip = zip.override { enableNLS = false; };
-    #glm = glm_0954;
     bluez5 = bluez5_28;
     fontsConf = makeFontsConf {
       fontDirectories = [
@@ -18976,6 +18969,8 @@ with pkgs;
 
   sienna = callPackage ../games/sienna { love = love_0_10; };
 
+  sil = callPackage ../games/sil { };
+
   simutrans = callPackage ../games/simutrans { };
   # get binaries without data built by Hydra
   simutrans_binaries = lowPrio simutrans.binaries;
@@ -20849,8 +20844,6 @@ with pkgs;
   wal-g = callPackage ../tools/backup/wal-g {};
 
   tlwg = callPackage ../data/fonts/tlwg { };
-
-  safeDiscardStringContext = callPackage ../build-support/safe-discard-string-context.nix { };
 
   simplehttp2server = callPackage ../servers/simplehttp2server { };
 
