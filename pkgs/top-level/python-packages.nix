@@ -184,7 +184,7 @@ in {
   backports_csv = callPackage ../development/python-modules/backports_csv {};
 
   bap = callPackage ../development/python-modules/bap {
-    bap = pkgs.ocamlPackages_4_02.bap;
+    bap = pkgs.ocamlPackages.bap;
   };
 
   bash_kernel = callPackage ../development/python-modules/bash_kernel { };
@@ -5639,6 +5639,8 @@ in {
     };
   };
 
+  ncclient = callPackage ../development/python-modules/ncclient {};
+
   logfury = callPackage ../development/python-modules/logfury { };
 
   ndg-httpsclient = buildPythonPackage rec {
@@ -6024,6 +6026,8 @@ in {
 
   pyhomematic = callPackage ../development/python-modules/pyhomematic { };
 
+  pylama = callPackage ../development/python-modules/pylama { };
+
   pyphen = callPackage ../development/python-modules/pyphen {};
 
   pypoppler = buildPythonPackage rec {
@@ -6268,6 +6272,8 @@ in {
       platforms = platforms.linux;
     };
   };
+
+  junos-eznc = callPackage ../development/python-modules/junos-eznc {};
 
   raven = callPackage ../development/python-modules/raven { };
 
@@ -7574,6 +7580,8 @@ in {
   flake8-debugger = callPackage ../development/python-modules/flake8-debugger { };
 
   flake8-future-import = callPackage ../development/python-modules/flake8-future-import { };
+
+  flake8-import-order = callPackage ../development/python-modules/flake8-import-order { };
 
   flaky = buildPythonPackage rec {
     name = "flaky-${version}";
@@ -12413,24 +12421,7 @@ in {
 
   pylibmc = callPackage ../development/python-modules/pylibmc {};
 
-  pymetar = buildPythonPackage rec {
-    name = "${pname}-${version}";
-    pname = "pymetar";
-    version = "0.20";
-
-    disabled = isPy3k;
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/${pname}/${name}.tar.gz";
-      sha256 = "1rxyg9465cp6nc47pqxqf092wmbvv2zhffzvaf2w74laal43pgxw";
-    };
-
-    meta = {
-      description = "A command-line tool to show the weather report by a given station ID";
-      homepage = http://www.schwarzvogel.de/software/pymetar.html;
-      license = licenses.gpl2;
-    };
-  };
+  pymetar = callPackage ../development/python-modules/pymetar { };
 
   pysftp = buildPythonPackage rec {
     name = "pysftp-${version}";
@@ -13043,12 +13034,12 @@ in {
 
 
   pycdio = buildPythonPackage rec {
-    name = "pycdio-0.21";
+    name = "pycdio-2.0.0";
     disabled = !isPy27;
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/p/pycdio/${name}.tar.gz";
-      sha256 = "1bkcmg838l2yffsw5lln93ap5f8ks3vmqwg02mygmdmay647rc3v";
+      sha256 = "1a1h0lmfl56a2a9xqhacnjclv81nv3906vdylalybxrk4bhrm3hj";
     };
 
     prePatch = ''
@@ -13076,7 +13067,6 @@ in {
       maintainers = with maintainers; [ rycee ];
       license = licenses.gpl3Plus;
     };
-
   };
 
   pycosat = callPackage ../development/python-modules/pycosat { };
@@ -15318,6 +15308,8 @@ in {
   scikitlearn = callPackage ../development/python-modules/scikitlearn {
     inherit (pkgs) gfortran glibcLocales;
   };
+
+  scp = callPackage ../development/python-modules/scp {};
 
   scripttest = buildPythonPackage rec {
     version = "1.3";
@@ -20386,8 +20378,6 @@ EOF
   ed25519 = callPackage ../development/python-modules/ed25519 { };
 
   trezor = callPackage ../development/python-modules/trezor { };
-
-  protocol = callPackage ../development/python-modules/protocol { };
 
   trezor_agent = buildPythonPackage rec{
     name = "${pname}-${version}";
