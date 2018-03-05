@@ -5531,6 +5531,25 @@ in {
     };
   };
 
+  mt-940 = buildPythonPackage rec {
+    version = "4.10.0";
+    name = "mt-940-${version}";
+
+    src = pkgs.fetchurl {
+      url = "mirror://pypi/m/mt-940/mt-940-${version}.tar.gz";
+      sha256 = "1gyqf1k2r2ml45x08bk69ws865yrpcph514mn4xvjz779mlgh67j";
+    };
+
+    buildInputs = with self; [ pytestrunner pyyaml pytest ];
+    doCheck = false; # Can't find data files
+
+    meta = {
+      description = "A library to parse MT940 files and returns smart Python collections for statistics and manipulation";
+      homepage = "http://pythonhosted.org/mt-940/";
+      license = licenses.bsd3;
+    };
+  };
+
   mwlib = let
     pyparsing = buildPythonPackage rec {
       name = "pyparsing-1.5.7";
@@ -14155,11 +14174,11 @@ in {
       url = "mirror://pypi/P/PyOpenGL/PyOpenGL-${version}.tar.gz";
       sha256 = "9b47c5c3a094fa518ca88aeed35ae75834d53e4285512c61879f67a48c94ddaf";
     };
-    propagatedBuildInputs = [ pkgs.mesa pkgs.freeglut self.pillow ];
+    propagatedBuildInputs = [ pkgs.libGLU_combined pkgs.freeglut self.pillow ];
     patchPhase = ''
       sed -i "s|util.find_library( name )|name|" OpenGL/platform/ctypesloader.py
       sed -i "s|'GL',|'libGL.so',|" OpenGL/platform/glx.py
-      sed -i "s|'GLU',|'${pkgs.mesa}/lib/libGLU.so',|" OpenGL/platform/glx.py
+      sed -i "s|'GLU',|'${pkgs.libGLU_combined}/lib/libGLU.so',|" OpenGL/platform/glx.py
       sed -i "s|'glut',|'${pkgs.freeglut}/lib/libglut.so',|" OpenGL/platform/glx.py
     '';
     meta = {
@@ -14402,6 +14421,8 @@ in {
       homepage = "http://pysvn.tigris.org/";
     };
   };
+
+  python-ptrace = callPackage ../development/python-modules/python-ptrace { };
 
   python-wifi = buildPythonPackage rec {
     name = "python-wifi-${version}";
@@ -20286,7 +20307,7 @@ EOF
     inherit (pkgs.xgboost) version src meta;
 
     propagatedBuildInputs = with self; [ scipy ];
-    buildInputs = with self; [ nose ];
+    checkInputs = with self; [ nose ];
 
     postPatch = ''
       cd python-package
@@ -21046,7 +21067,7 @@ EOF
       sha256 = "18n14ha2d3j3ghg2f2aqnf2mks94nn7ma9ii7vkiwcay93zm82cf";
     };
     disabled = isPy3k; # Judging from SyntaxError
-    buildInputs = with self; [ pkgs.swig1 pkgs.coin3d pkgs.soqt pkgs.mesa pkgs.xorg.libXi ];
+    buildInputs = with self; [ pkgs.swig1 pkgs.coin3d pkgs.soqt pkgs.libGLU_combined pkgs.xorg.libXi ];
   };
 
   smugpy = callPackage ../development/python-modules/smugpy { };
@@ -21247,6 +21268,10 @@ EOF
   pysigset = callPackage ../development/python-modules/pysigset { };
 
   us = callPackage ../development/python-modules/us { };
+
+  wsproto = callPackage ../development/python-modules/wsproto { };
+
+  h11 = callPackage ../development/python-modules/h11 { };
 });
 
 in fix' (extends overrides packages)
