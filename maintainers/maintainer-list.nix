@@ -276,6 +276,11 @@
     github = "akc";
     name = "Anders Claesson";
   };
+  akru = {
+    email = "mail@akru.me";
+    github = "akru";
+    name = "Alexander Krupenkin ";
+  };
   alexvorobiev = {
     email = "alexander.vorobiev@gmail.com";
     github = "alexvorobiev";
@@ -630,11 +635,6 @@
     email = "christian.albrecht@mayflower.de";
     github = "calbrecht";
     name = "Christian Albrecht";
-  };
-  calrama = {
-    email = "moritz@ucworks.org";
-    github = "MoritzMaxeiner";
-    name = "Moritz Maxeiner";
   };
   calvertvl = {
     email = "calvertvl@gmail.com";
@@ -1032,11 +1032,6 @@
     email = "nix@wdtz.org";
     github = "dtzWill";
     name = "Will Dietz";
-  };
-  dupgit = {
-    email = "olivier.delhomme@free.fr";
-    github = "dupgit";
-    name = "Olivier Delhomme";
   };
   dywedir = {
     email = "dywedir@protonmail.ch";
@@ -1662,7 +1657,7 @@
     name = "Johannes Frankenau";
   };
   jgeerds = {
-    email = "jascha@jgeerds.name";
+    email = "jascha@geerds.org";
     github = "jgeerds";
     name = "Jascha Geerds";
   };
