@@ -1110,6 +1110,8 @@ with pkgs;
 
   dlx = callPackage ../misc/emulators/dlx { };
 
+  doitlive = callPackage ../tools/misc/doitlive { };
+
   dosage = pythonPackages.dosage;
 
   dpic = callPackage ../tools/graphics/dpic { };
@@ -1219,6 +1221,8 @@ with pkgs;
   gist = callPackage ../tools/text/gist { };
 
   gixy = callPackage ../tools/admin/gixy { };
+
+  gllvm = callPackage ../development/tools/gllvm { };
 
   glide = callPackage ../development/tools/glide { };
 
@@ -2290,7 +2294,7 @@ with pkgs;
   flameGraph = flamegraph;
 
   flvtool2 = callPackage ../tools/video/flvtool2 { };
-  
+
   fmbt = callPackage ../development/tools/fmbt {
     python = python2;
   };
@@ -2351,6 +2355,7 @@ with pkgs;
   frescobaldi = callPackage ../misc/frescobaldi {};
 
   frostwire = callPackage ../applications/networking/p2p/frostwire { };
+  frostwire-bin = callPackage ../applications/networking/p2p/frostwire/frostwire-bin.nix { };
 
   ftgl = callPackage ../development/libraries/ftgl { };
 
@@ -2616,9 +2621,9 @@ with pkgs;
    * that do want 2.32 but not 2.0 or 2.36. Please give a day's notice for
    * objections before removal. The feature is libgraph.
    */
-  graphviz_2_32 = callPackage ../tools/graphics/graphviz/2.32.nix {
+  graphviz_2_32 = lib.overrideDerivation (callPackage ../tools/graphics/graphviz/2.32.nix {
     inherit (darwin.apple_sdk.frameworks) ApplicationServices;
-  };
+  }) (x: { configureFlags = x.configureFlags ++ ["--with-cgraph=no"];});
 
   grin = callPackage ../tools/text/grin { };
   ripgrep = callPackage ../tools/text/ripgrep { };
@@ -4057,6 +4062,8 @@ with pkgs;
 
   otpw = callPackage ../os-specific/linux/otpw { };
 
+  overmind = callPackage ../applications/misc/overmind { };
+
   owncloud = owncloud70;
 
   inherit (callPackages ../servers/owncloud { })
@@ -5160,7 +5167,9 @@ with pkgs;
 
   udptunnel = callPackage ../tools/networking/udptunnel { };
 
-  ufraw = callPackage ../applications/graphics/ufraw { };
+  ufraw = callPackage ../applications/graphics/ufraw {
+    stdenv = overrideCC stdenv gcc6; # doesn't build with gcc7
+  };
 
   uget = callPackage ../tools/networking/uget { };
 
@@ -5762,7 +5771,8 @@ with pkgs;
   avra = callPackage ../development/compilers/avra { };
 
   avian = callPackage ../development/compilers/avian {
-    stdenv = overrideCC stdenv gcc49;
+    inherit (darwin.apple_sdk.frameworks) CoreServices Foundation;
+    stdenv = if stdenv.cc.isGNU then overrideCC stdenv gcc49 else stdenv;
   };
 
   bigloo = callPackage ../development/compilers/bigloo { };
@@ -5787,7 +5797,9 @@ with pkgs;
     chickenEggs = callPackage ../development/tools/egg2nix/chicken-eggs.nix { };
   };
 
-  ccl = callPackage ../development/compilers/ccl { };
+  ccl = callPackage ../development/compilers/ccl {
+    inherit (darwin) bootstrap_cmds;
+  };
 
   chez = callPackage ../development/compilers/chez {
     inherit (darwin) cctools;
@@ -5814,8 +5826,6 @@ with pkgs;
   clang-tools = callPackage ../development/tools/clang-tools { };
 
   clang-analyzer = callPackage ../development/tools/analysis/clang-analyzer { };
-
-  clangUnwrapped = llvm: pkg: callPackage pkg { inherit llvm; };
 
   clangSelf = clangWrapSelf llvmPackagesSelf.clang;
 
@@ -8452,7 +8462,9 @@ with pkgs;
 
   cdk = callPackage ../development/libraries/cdk {};
 
-  cdo = callPackage ../development/libraries/cdo {};
+  cdo = callPackage ../development/libraries/cdo {
+    stdenv = gccStdenv;
+  };
 
   cimg = callPackage  ../development/libraries/cimg { };
 
@@ -9389,6 +9401,8 @@ with pkgs;
 
   jshon = callPackage ../development/tools/parsing/jshon { };
 
+  json2hcl = callPackage ../development/tools/json2hcl { };
+
   json-glib = callPackage ../development/libraries/json-glib { };
 
   json_c = callPackage ../development/libraries/json-c { };
@@ -9535,7 +9549,7 @@ with pkgs;
   libburn = callPackage ../development/libraries/libburn { };
 
   libcaca = callPackage ../development/libraries/libcaca {
-    inherit (xlibs) libX11 libXext;
+    inherit (xorg) libX11 libXext;
   };
 
   libcanberra = callPackage ../development/libraries/libcanberra { };
@@ -9557,7 +9571,10 @@ with pkgs;
 
   libcddb = callPackage ../development/libraries/libcddb { };
 
-  libcdio = callPackage ../development/libraries/libcdio { };
+  libcdio = callPackage ../development/libraries/libcdio {
+    inherit (darwin.apple_sdk.frameworks) Carbon IOKit;
+  };
+
   libcdio-paranoia = callPackage ../development/libraries/libcdio-paranoia { };
 
   libcdr = callPackage ../development/libraries/libcdr { lcms = lcms2; };
@@ -11459,6 +11476,8 @@ with pkgs;
 
   suil = suil-qt4;
 
+  sundials = callPackage ../development/libraries/sundials { };
+
   sutils = callPackage ../tools/misc/sutils { };
 
   svrcore = callPackage ../development/libraries/svrcore { };
@@ -11673,6 +11692,7 @@ with pkgs;
 
   vxl = callPackage ../development/libraries/vxl {
     libpng = libpng12;
+    stdenv = overrideCC stdenv gcc6; # upstream code incompatible with gcc7
   };
 
   wavpack = callPackage ../development/libraries/wavpack {
@@ -13081,6 +13101,8 @@ with pkgs;
 
   i7z = callPackage ../os-specific/linux/i7z { };
 
+  pcm = callPackage ../os-specific/linux/pcm { };
+
   ima-evm-utils = callPackage ../os-specific/linux/ima-evm-utils { };
 
   intel2200BGFirmware = callPackage ../os-specific/linux/firmware/intel2200BGFirmware { };
@@ -13650,6 +13672,8 @@ with pkgs;
 
   gomodifytags = callPackage ../development/tools/gomodifytags { };
 
+  go-langserver = callPackage ../development/tools/go-langserver { };
+
   gotests = callPackage ../development/tools/gotests { };
 
   gogoclient = callPackage ../os-specific/linux/gogoclient { };
@@ -13690,6 +13714,8 @@ with pkgs;
     firmware = config.pcmciaUtils.firmware or [];
     config = config.pcmciaUtils.config or null;
   };
+
+  pcstat = callPackage ../tools/system/pcstat { };
 
   perf-tools = callPackage ../os-specific/linux/perf-tools { };
 
@@ -14571,7 +14597,7 @@ with pkgs;
 
   androidStudioPackages = callPackage ../applications/editors/android-studio { };
   android-studio = androidStudioPackages.stable;
-  android-studio-preview = androidStudioPackages.preview;
+  android-studio-preview = androidStudioPackages.beta;
 
   antfs-cli = callPackage ../applications/misc/antfs-cli {};
 
@@ -16230,6 +16256,8 @@ with pkgs;
 
   keepnote = callPackage ../applications/office/keepnote { };
 
+  kega-fusion = callPackage_i686 ../misc/emulators/kega-fusion { };
+
   kermit = callPackage ../tools/misc/kermit { };
 
   kexi = libsForQt5.callPackage ../applications/office/kexi { };
@@ -16410,7 +16438,7 @@ with pkgs;
 
   linuxsampler = callPackage ../applications/audio/linuxsampler { };
 
-  llpp = ocaml-ng.ocamlPackages.callPackage ../applications/misc/llpp { };
+  llpp = ocaml-ng.ocamlPackages_4_04.callPackage ../applications/misc/llpp { };
 
   lmms = libsForQt5.callPackage ../applications/audio/lmms {
     lame = null;
@@ -16440,7 +16468,9 @@ with pkgs;
 
   looking-glass-client = callPackage ../applications/virtualization/looking-glass-client { };
 
-  lumail = callPackage ../applications/networking/mailreaders/lumail { };
+  lumail = callPackage ../applications/networking/mailreaders/lumail {
+    lua = lua5_1;
+  };
 
   lv2bm = callPackage ../applications/audio/lv2bm { };
 
@@ -18284,7 +18314,9 @@ with pkgs;
 
   wtftw = callPackage ../applications/window-managers/wtftw {};
 
-  wxhexeditor = callPackage ../applications/editors/wxhexeditor { };
+  wxhexeditor = callPackage ../applications/editors/wxhexeditor {
+    wxGTK = wxGTK31;
+  };
 
   wxcam = callPackage ../applications/video/wxcam {
     inherit (gnome2) libglade;
@@ -18445,21 +18477,21 @@ with pkgs;
 
   xmonad_log_applet_gnome2 = callPackage ../applications/window-managers/xmonad-log-applet {
     desktopSupport = "gnome2";
-    inherit (xfce) libxfce4util xfce4panel;
+    inherit (xfce) libxfce4util xfce4-panel;
     gnome2_panel = gnome2.gnome_panel;
     GConf2 = gnome2.GConf;
   };
 
   xmonad_log_applet_gnome3 = callPackage ../applications/window-managers/xmonad-log-applet {
     desktopSupport = "gnome3";
-    inherit (xfce) libxfce4util xfce4panel;
+    inherit (xfce) libxfce4util xfce4-panel;
     gnome2_panel = gnome2.gnome_panel;
     GConf2 = gnome2.GConf;
   };
 
   xmonad_log_applet_xfce = callPackage ../applications/window-managers/xmonad-log-applet {
     desktopSupport = "xfce4";
-    inherit (xfce) libxfce4util xfce4panel;
+    inherit (xfce) libxfce4util xfce4-panel;
     gnome2_panel = gnome2.gnome_panel;
     GConf2 = gnome2.GConf;
   };
@@ -19250,6 +19282,8 @@ with pkgs;
 
   warmux = callPackage ../games/warmux { };
 
+  warsow-engine = callPackage ../games/warsow/engine.nix { };
+
   warsow = callPackage ../games/warsow { };
 
   warzone2100 = libsForQt5.callPackage ../games/warzone2100 { };
@@ -19945,9 +19979,7 @@ with pkgs;
 
   pcalc = callPackage ../applications/science/math/pcalc { };
 
-  bcal = callPackage ../applications/science/math/bcal {
-    stdenv = gccStdenv;
-  };
+  bcal = callPackage ../applications/science/math/bcal { };
 
   pspp = callPackage ../applications/science/math/pspp {
     inherit (gnome3) gtksourceview;
@@ -20537,6 +20569,10 @@ with pkgs;
 
   sane-frontends = callPackage ../applications/graphics/sane/frontends.nix { };
 
+  satysfi = callPackage ../tools/typesetting/satysfi {
+    ocamlPackages = ocaml-ng.ocamlPackages_4_06;
+  };
+
   sc-controller = pythonPackages.callPackage ../misc/drivers/sc-controller {
     inherit libusb1; # Shadow python.pkgs.libusb1.
     librsvg = librsvg.override { enableIntrospection = true; };
@@ -20665,9 +20701,7 @@ with pkgs;
   };
   vimprobable2 = wrapFirefox vimprobable2-unwrapped { };
 
-  vimb-unwrapped = callPackage ../applications/networking/browsers/vimb {
-    webkit = webkitgtk218x;
-  };
+  vimb-unwrapped = callPackage ../applications/networking/browsers/vimb { };
   vimb = wrapFirefox vimb-unwrapped { };
 
   vips = callPackage ../tools/graphics/vips { };
