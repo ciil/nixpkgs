@@ -613,6 +613,8 @@ with pkgs;
 
   container-linux-config-transpiler = callPackage ../development/tools/container-linux-config-transpiler { };
 
+  chkcrontab = callPackage ../tools/admin/chkcrontab { };
+
   djmount = callPackage ../tools/filesystems/djmount { };
 
   dgsh = callPackage ../shells/dgsh { };
@@ -764,6 +766,8 @@ with pkgs;
   backblaze-b2 = python.pkgs.callPackage ../development/tools/backblaze-b2 { };
 
   backup = callPackage ../tools/backup/backup { };
+
+  bar = callPackage ../tools/system/bar {};
 
   base16-builder = callPackage ../misc/base16-builder { };
 
@@ -1311,6 +1315,8 @@ with pkgs;
   mpdris2 = callPackage ../tools/audio/mpdris2 { };
 
   nfdump = callPackage ../tools/networking/nfdump { };
+
+  noteshrink = callPackage ../tools/misc/noteshrink { };
 
   nrsc5 = callPackage ../applications/misc/nrsc5 { };
 
@@ -3391,6 +3397,8 @@ with pkgs;
   libtelnet = callPackage ../development/libraries/libtelnet { };
 
   libtirpc = callPackage ../development/libraries/ti-rpc { };
+
+  libtins = callPackage ../development/libraries/libtins { };
 
   libshout = callPackage ../development/libraries/libshout { };
 
@@ -7722,6 +7730,8 @@ with pkgs;
 
   frame = callPackage ../development/libraries/frame { };
 
+  fsatrace = callPackage ../development/tools/misc/fsatrace { };
+
   fswatch = callPackage ../development/tools/misc/fswatch { };
 
   funnelweb = callPackage ../development/tools/literate-programming/funnelweb { };
@@ -8651,7 +8661,9 @@ with pkgs;
     inherit (pkgs.gnome2) gtkglext;
   };
 
-  far2l = callPackage ../applications/misc/far2l { };
+  far2l = callPackage ../applications/misc/far2l {
+    stdenv = if stdenv.cc.isClang then llvmPackages_4.stdenv else stdenv;
+  };
 
   farbfeld = callPackage ../development/libraries/farbfeld { };
 
@@ -8772,7 +8784,9 @@ with pkgs;
 
   freeglut = callPackage ../development/libraries/freeglut { };
 
-  freenect = callPackage ../development/libraries/freenect { };
+  freenect = callPackage ../development/libraries/freenect {
+    inherit (darwin.apple_sdk.frameworks) Cocoa GLUT;
+  };
 
   freetype = callPackage ../development/libraries/freetype { };
 
@@ -11358,7 +11372,8 @@ with pkgs;
 
   speechd = callPackage ../development/libraries/speechd { };
 
-  speech_tools = callPackage ../development/libraries/speech-tools {};
+  speech-tools = callPackage ../development/libraries/speech-tools {};
+  speech_tools = speech-tools;
 
   speex = callPackage ../development/libraries/speex {
     fftw = fftwFloat;
@@ -18187,8 +18202,8 @@ with pkgs;
   worker = callPackage ../applications/misc/worker { };
 
   workrave = callPackage ../applications/misc/workrave {
-    inherit (gnome2) GConf gconfmm;
     inherit (python27Packages) cheetah;
+    inherit (gst_all_1) gstreamer gst-plugins-base gst-plugins-good;
   };
 
   worldengine-cli = python3Packages.worldengine;
@@ -19353,6 +19368,7 @@ with pkgs;
     no-title-bar = callPackage ../desktops/gnome-3/extensions/no-title-bar { };
     remove-dropdown-arrows = callPackage ../desktops/gnome-3/extensions/remove-dropdown-arrows { };
     taskwhisperer = callPackage ../desktops/gnome-3/extensions/taskwhisperer { };
+    timepp = callPackage ../desktops/gnome-3/extensions/timepp { };
     topicons-plus = callPackage ../desktops/gnome-3/extensions/topicons-plus { };
   };
 
@@ -20098,6 +20114,8 @@ with pkgs;
   brgenml1lpr = callPackage_i686 ../misc/cups/drivers/brgenml1lpr {};
 
   brgenml1cupswrapper = callPackage ../misc/cups/drivers/brgenml1cupswrapper {};
+
+  calaos_installer = libsForQt5.callPackage ../misc/calaos/installer {};
 
   cups = callPackage ../misc/cups {
     libusb = libusb1;
@@ -20978,4 +20996,6 @@ with pkgs;
   simplehttp2server = callPackage ../servers/simplehttp2server { };
 
   diceware = callPackage ../tools/security/diceware { };
+
+  xml2rfc = callPackage ../tools/typesetting/xml2rfc { };
 }
