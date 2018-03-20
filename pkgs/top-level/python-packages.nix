@@ -303,6 +303,8 @@ in {
 
   pyatspi = disabledIf (!isPy3k) (callPackage ../development/python-modules/pyatspi { });
 
+  pyaxmlparser = callPackage ../development/python-modules/pyaxmlparser { };
+
   pycairo = callPackage ../development/python-modules/pycairo { };
 
   pycangjie = disabledIf (!isPy3k) (callPackage ../development/python-modules/pycangjie { });
@@ -4718,33 +4720,8 @@ in {
 
   google-compute-engine = callPackage ../tools/virtualization/google-compute-engine { };
 
-  gplaycli = buildPythonPackage rec {
-    version = "0.1.2";
-    name = "gplaycli-${version}";
-
-    src = pkgs.fetchFromGitHub {
-      owner = "matlink";
-      repo = "gplaycli";
-      rev = "${version}";
-      sha256 = "0yc09inzs3aggj0gw4irlhlzw5q562fsp0sks352y6z0vx31hcp3";
-    };
-
-   disabled = ! isPy27;
-
-   propagatedBuildInputs = with self; [ pkgs.libffi pyasn1 clint ndg-httpsclient protobuf requests args ];
-
-   preBuild = ''
-     substituteInPlace setup.py --replace "/etc" "$out/etc"
-     substituteInPlace gplaycli/gplaycli.py --replace "/etc" "$out/etc"
-   '';
-
-    meta = {
-      homepage = https://github.com/matlink/gplaycli;
-      description = "Google Play Downloader via Command line";
-      license = licenses.agpl3Plus;
-      maintainers = with maintainers; [ ];
-    };
-  };
+  gpapi = callPackage ../development/python-modules/gpapi { };
+  gplaycli = callPackage ../development/python-modules/gplaycli { };
 
   gpsoauth = buildPythonPackage rec {
     version = "0.2.0";
@@ -10161,6 +10138,8 @@ in {
 
   msgpack = callPackage ../development/python-modules/msgpack {};
 
+  msgpack-numpy = callPackage ../development/python-modules/msgpack-numpy {};
+
   msgpack-python = self.msgpack.overridePythonAttrs {
     pname = "msgpack-python";
     postPatch = ''
@@ -10611,19 +10590,22 @@ in {
 
   sleekxmpp = buildPythonPackage rec {
     name = "sleekxmpp-${version}";
-    version = "1.3.1";
+    version = "1.3.3";
 
-    propagatedBuildInputs = with self ; [ dnspython pyasn1 ];
+    propagatedBuildInputs = with self; [ dnspython pyasn1 gevent ];
+    checkInputs = [ pkgs.gnupg ];
+    checkPhase = "${python.interpreter} testall.py";
+    doCheck = false; # Tests failed all this time and upstream doesn't seem to care.
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/s/sleekxmpp/${name}.tar.gz";
-      sha256 = "1krkhkvj8xw5a6c2xlf7h1rg9xdcm9d8x2niivwjahahpvbl6krr";
+      sha256 = "0samiq1d97kk8g9pszfbrbfw9zc41zp6017dbkwha9frf7gc24yj";
     };
 
     meta = {
       description = "XMPP library for Python";
       license = licenses.mit;
-      homepage = "http://sleekxmpp.com/";
+      homepage = http://sleekxmpp.com/;
     };
   };
 
@@ -10712,48 +10694,7 @@ in {
     };
   };
 
-  nevow = buildPythonPackage (rec {
-    name = "nevow-${version}";
-    version = "0.14.2";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/N/Nevow/Nevow-${version}.tar.gz";
-      sha256 = "0wsh40ysj5gvfc777nrdvf5vbkr606r1gh7ibvw7x8b5g8afdy3y";
-      name = "${name}.tar.gz";
-    };
-
-    disabled = isPy3k;
-
-    propagatedBuildInputs = with self; [ twisted ];
-
-    postInstall = "twistd --help > /dev/null";
-
-    meta = {
-      description = "Nevow, a web application construction kit for Python";
-
-      longDescription = ''
-        Nevow - Pronounced as the French "nouveau", or "noo-voh", Nevow
-        is a web application construction kit written in Python.  It is
-        designed to allow the programmer to express as much of the view
-        logic as desired in Python, and includes a pure Python XML
-        expression syntax named stan to facilitate this.  However it
-        also provides rich support for designer-edited templates, using
-        a very small XML attribute language to provide bi-directional
-        template manipulation capability.
-
-        Nevow also includes formless, a declarative syntax for
-        specifying the types of method parameters and exposing these
-        methods to the web.  Forms can be rendered automatically, and
-        form posts will be validated and input coerced, rendering error
-        pages if appropriate.  Once a form post has validated
-        successfully, the method will be called with the coerced values.
-      '';
-
-      homepage = http://divmod.org/trac/wiki/DivmodNevow;
-
-      license = "BSD-style";
-    };
-  });
+  nevow = callPackage ../development/python-modules/nevow { };
 
   nibabel = callPackage ../development/python-modules/nibabel {};
 
@@ -13013,8 +12954,10 @@ in {
 
     buildInputs = with self; [ pkgs.curl pkgs.openssl.out ];
 
-    # error: invalid command 'test'
-    doCheck = false;
+    checkInputs = with self; [ bottle pytest nose ];
+    checkPhase = ''
+      py.test -k "not test_ssl_in_static_libs" tests
+    '';
 
     preConfigure = ''
       substituteInPlace setup.py --replace '--static-libs' '--libs'
@@ -13024,7 +12967,6 @@ in {
     meta = {
       homepage = http://pycurl.sourceforge.net/;
       description = "Python wrapper for libcurl";
-      platforms = platforms.linux;
     };
   });
 
@@ -13380,7 +13322,7 @@ in {
       homepage = https://pypi.python.org/pypi/PyICU/;
       description = "Python extension wrapping the ICU C++ API";
       license = licenses.mit;
-      platforms = with platforms; allBut darwin;
+      platforms = platforms.linux; # Maybe other non-darwin Unix
       maintainers = [ maintainers.rycee ];
     };
   };
@@ -16086,20 +16028,15 @@ in {
   hieroglyph = callPackage ../development/python-modules/hieroglyph { };
 
   sphinx_rtd_theme = buildPythonPackage (rec {
-    name = "sphinx_rtd_theme-0.1.9";
+    name = "sphinx_rtd_theme-0.2.5b2";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/s/sphinx_rtd_theme/${name}.tar.gz";
-      sha256 = "18d0r63w7jpdrk4q5qy26n08vdlmnj9sar93akwjphyambw4cf17";
+      sha256 = "0grf16fi4g0p3dfh11b1624ic34iqkjhf5i1g6hvsh4nlm0ll00q";
     };
 
-    postPatch = ''
-      rm requirements.txt
-      touch requirements.txt
-    '';
-
     meta = {
-      description = "ReadTheDocs.org theme for Sphinx, 2013 version";
+      description = "ReadTheDocs.org theme for Sphinx";
       homepage = https://github.com/snide/sphinx_rtd_theme/;
       license = licenses.bsd3;
       platforms = platforms.unix;
@@ -16766,7 +16703,9 @@ in {
       patchelf --set-rpath $new_rpath $out/${py.sitePackages}/_tkinter*
     '';
 
-    inherit (py) meta;
+    meta = py.meta // {
+      platforms = platforms.linux;
+    };
   };
 
   tlslite = buildPythonPackage rec {
@@ -20137,28 +20076,8 @@ EOF
     };
   };
 
-  xgboost = buildPythonPackage rec {
-    name = "xgboost-${version}";
-
-    inherit (pkgs.xgboost) version src meta;
-
-    propagatedBuildInputs = with self; [ scipy ];
-    checkInputs = with self; [ nose ];
-
-    postPatch = ''
-      cd python-package
-
-      sed "s/CURRENT_DIR = os.path.dirname(__file__)/CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))/g" -i setup.py
-      sed "/^LIB_PATH.*/a LIB_PATH = [os.path.relpath(LIB_PATH[0], CURRENT_DIR)]" -i setup.py
-      cat <<EOF >xgboost/libpath.py
-      def find_lib_path():
-        return ["${pkgs.xgboost}/lib/libxgboost.so"]
-      EOF
-    '';
-
-    postInstall = ''
-      rm -rf $out/xgboost
-    '';
+  xgboost = callPackage ../development/python-modules/xgboost {
+    xgboost = pkgs.xgboost;
   };
 
   xkcdpass = buildPythonPackage rec {
@@ -21034,7 +20953,11 @@ EOF
 
   node-semver = callPackage ../development/python-modules/node-semver { };
 
+  node-semver2 = callPackage ../development/python-modules/node-semver/2.nix { };
+
   distro = callPackage ../development/python-modules/distro { };
+
+  distro11 = callPackage ../development/python-modules/distro/11.nix { };
 
   bz2file =  callPackage ../development/python-modules/bz2file { };
 

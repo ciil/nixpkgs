@@ -176,6 +176,11 @@
     github = "abigailbuccaneer";
     name = "Abigail Bunyan";
   };
+  aborsu = {
+    email = "a.borsu@gmail.com";
+    github = "aborsu";
+    name = "Augustin Borsu";
+  };
   aboseley = {
     email = "adam.boseley@gmail.com";
     github = "aboseley";
@@ -318,6 +323,11 @@
     email = "miloradovsky@gmail.com";
     github = "amiloradovsky";
     name = "Andrew Miloradovsky";
+  };
+  aminechikhaoui = {
+    email = "amine.chikhaoui91@gmail.com";
+    github = "AmineChikhaoui";
+    name = "Amine Chikhaoui";
   };
   amorsillo = {
     email = "andrew.morsillo@gmail.com";
@@ -1543,6 +1553,11 @@
     github = "iblech";
     name = "Ingo Blechschmidt";
   };
+  idontgetoutmuch = {
+    email = "dominic@steinitz.org";
+    github = "idontgetoutmuch";
+    name = "Dominic Steinitz";
+  };
   igsha = {
     email = "igor.sharonov@gmail.com";
     github = "igsha";
@@ -1719,6 +1734,11 @@
     email = "git@danielschaefer.me";
     github = "johnazoidberg";
     name = "Daniel Schäfer";
+  };
+  johnchildren = {
+    email = "john.a.children@gmail.com";
+    github = "johnchildren";
+    name = "John Children";
   };
   johnmh = {
     email = "johnmh@openblox.org";
