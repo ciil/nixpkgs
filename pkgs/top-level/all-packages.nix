@@ -1298,7 +1298,9 @@ with pkgs;
 
   mathics = pythonPackages.mathics;
 
-  masscan = callPackage ../tools/security/masscan { };
+  masscan = callPackage ../tools/security/masscan {
+    stdenv = gccStdenv;
+  };
 
   massren = callPackage ../tools/misc/massren { };
 
@@ -6812,6 +6814,7 @@ with pkgs;
     vala_0_34
     vala_0_36
     vala_0_38
+    vala_0_40
     vala;
 
   valadoc = callPackage ../development/tools/valadoc { };
@@ -7793,6 +7796,8 @@ with pkgs;
 
   gnome-desktop-testing = callPackage ../development/tools/gnome-desktop-testing {};
 
+  gnome-usage = callPackage ../applications/misc/gnome-usage {};
+
   gnum4 = callPackage ../development/tools/misc/gnum4 { };
 
   gnumake382 = callPackage ../development/tools/build-managers/gnumake/3.82 { };
@@ -8667,6 +8672,8 @@ with pkgs;
 
   enchant = callPackage ../development/libraries/enchant { };
 
+  enchant2 = callPackage ../development/libraries/enchant/2.x.nix { };
+
   enet = callPackage ../development/libraries/enet { };
 
   epoxy = callPackage ../development/libraries/epoxy {};
@@ -9227,6 +9234,12 @@ with pkgs;
 
   gtk-mac-bundler = callPackage ../development/tools/gtk-mac-bundler {};
 
+  gtksourceview = gtksourceview3;
+
+  gtksourceview3 = callPackage ../development/libraries/gtksourceview/3.x.nix { };
+
+  gtksourceview4 = callPackage ../development/libraries/gtksourceview/4.x.nix { };
+
   gtkspell2 = callPackage ../development/libraries/gtkspell { };
 
   gtkspell3 = callPackage ../development/libraries/gtkspell/3.nix { };
@@ -9623,6 +9636,8 @@ with pkgs;
 
   libdap = callPackage ../development/libraries/libdap { };
 
+  libdazzle = callPackage ../development/libraries/libdazzle { };
+
   libdbi = callPackage ../development/libraries/libdbi { };
 
   libdbiDriversBase = callPackage ../development/libraries/libdbi-drivers {
@@ -9834,8 +9849,10 @@ with pkgs;
 
   libgudev = callPackage ../development/libraries/libgudev { };
 
+  libguestfs-appliance = callPackage ../development/libraries/libguestfs/appliance.nix {};
   libguestfs = callPackage ../development/libraries/libguestfs {
     inherit (perlPackages) libintlperl GetoptLong SysVirt;
+    appliance = libguestfs-appliance;
   };
 
   libhangul = callPackage ../development/libraries/libhangul { };
@@ -9928,7 +9945,9 @@ with pkgs;
 
   libplist = callPackage ../development/libraries/libplist { };
 
-  libqglviewer = callPackage ../development/libraries/libqglviewer { };
+  libqglviewer = callPackage ../development/libraries/libqglviewer {
+    inherit (darwin.apple_sdk.frameworks) AGL;
+  };
 
   libre = callPackage ../development/libraries/libre {};
   librem = callPackage ../development/libraries/librem {};
@@ -11714,7 +11733,7 @@ with pkgs;
 
   wcslib = callPackage ../development/libraries/wcslib { };
 
-  webkitgtk = webkitgtk218x;
+  webkitgtk = webkitgtk220x;
 
   webkitgtk24x-gtk3 = callPackage ../development/libraries/webkitgtk/2.4.nix {
     harfbuzz = harfbuzz-icu-58;
@@ -11722,7 +11741,7 @@ with pkgs;
     inherit (darwin) libobjc;
   };
 
-  webkitgtk218x = callPackage ../development/libraries/webkitgtk/2.18.nix {
+  webkitgtk220x = callPackage ../development/libraries/webkitgtk/2.20.nix {
     harfbuzz = harfbuzz-icu;
     inherit (gst_all_1) gst-plugins-base gst-plugins-bad;
     stdenv = overrideCC stdenv gcc6;
@@ -12585,9 +12604,9 @@ with pkgs;
 
   qboot = callPackage ../applications/virtualization/qboot { stdenv = stdenv_32bit; };
 
-  OVMF = callPackage ../applications/virtualization/OVMF { seabios=false; openssl=null; };
-  OVMF-CSM = callPackage ../applications/virtualization/OVMF { openssl=null; };
-  #WIP: OVMF-secureBoot = callPackage ../applications/virtualization/OVMF { seabios=false; secureBoot=true; };
+  OVMF = callPackage ../applications/virtualization/OVMF { seabios = null; openssl = null; };
+  OVMF-CSM = callPackage ../applications/virtualization/OVMF { openssl = null; };
+  #WIP: OVMF-secureBoot = callPackage ../applications/virtualization/OVMF { seabios = null; secureBoot = true; };
 
   seabios = callPackage ../applications/virtualization/seabios { };
 
@@ -14319,7 +14338,9 @@ with pkgs;
   inherit (callPackages ../data/fonts/noto-fonts {})
     noto-fonts noto-fonts-cjk noto-fonts-emoji;
 
-  nullmailer = callPackage ../servers/mail/nullmailer { };
+  nullmailer = callPackage ../servers/mail/nullmailer {
+    stdenv = gccStdenv;
+  };
 
   numix-icon-theme = callPackage ../data/icons/numix-icon-theme { };
 
@@ -16610,7 +16631,9 @@ with pkgs;
 
   mod-distortion = callPackage ../applications/audio/mod-distortion { };
 
-  monero = callPackage ../applications/altcoins/monero { };
+  monero = callPackage ../applications/altcoins/monero {
+    inherit (darwin.apple_sdk.frameworks) IOKit;
+  };
 
   monero-gui = libsForQt5.callPackage ../applications/altcoins/monero-gui { };
 
@@ -16737,6 +16760,8 @@ with pkgs;
   mrxvt = callPackage ../applications/misc/mrxvt { };
 
   mtpaint = callPackage ../applications/graphics/mtpaint { };
+
+  mucommander = callPackage ../applications/misc/mucommander { };
 
   multimarkdown = callPackage ../tools/typesetting/multimarkdown { };
 
@@ -17023,9 +17048,7 @@ with pkgs;
 
   ncpamixer = callPackage ../applications/audio/ncpamixer { };
 
-  pan = callPackage ../applications/networking/newsreaders/pan {
-    spellChecking = false;
-  };
+  pan = callPackage ../applications/networking/newsreaders/pan { };
 
   panotools = callPackage ../applications/graphics/panotools { };
 
@@ -19459,7 +19482,7 @@ with pkgs;
 
   gtk-engine-murrine = callPackage ../misc/themes/gtk2/gtk-engine-murrine { };
 
-  gnome-themes-standard = gnome3.gnome-themes-standard;
+  gnome-themes-extra = gnome3.gnome-themes-extra;
 
   numix-gtk-theme = callPackage ../misc/themes/numix { };
 
@@ -19474,7 +19497,10 @@ with pkgs;
   };
 
   xfce = xfce4-12;
+  xfceUnstable = xfce4-13;
+
   xfce4-12 = recurseIntoAttrs (callPackage ../desktops/xfce { });
+  xfce4-13 = recurseIntoAttrs (callPackage ../desktops/xfce4-13 { });
 
   xrandr-invert-colors = callPackage ../applications/misc/xrandr-invert-colors { };
 
@@ -20609,7 +20635,6 @@ with pkgs;
 
   sc-controller = pythonPackages.callPackage ../misc/drivers/sc-controller {
     inherit libusb1; # Shadow python.pkgs.libusb1.
-    librsvg = librsvg.override { enableIntrospection = true; };
   };
 
   sct = callPackage ../tools/X11/sct {};
