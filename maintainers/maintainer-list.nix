@@ -572,6 +572,11 @@
     github = "bergey";
     name = "Daniel Bergey";
   };
+  bgamari = {
+    email = "ben@smart-cactus.org";
+    github = "bgamari";
+    name = "Ben Gamari";
+  };
   bhipple = {
     email = "bhipple@protonmail.com";
     github = "bhipple";
@@ -590,6 +595,11 @@
     email = "bjorn.forsman@gmail.com";
     github = "bjornfor";
     name = "Bjørn Forsman";
+  };
+  bkchr = {
+    email = "nixos@kchr.de";
+    github = "bkchr";
+    name = "Bastian Köcher";
   };
   bluescreen303 = {
     email = "mathijs@bluescreen303.nl";
@@ -1990,6 +2000,11 @@
     email = "ml.software@leenaa.rs";
     github = "leenaars";
     name = "Michiel Leenaars";
+  };
+  leo60228 = {
+    email = "iakornfeld@gmail.com";
+    github = "leo60228";
+    name = "leo60228";
   };
   leonardoce = {
     email = "leonardo.cecchi@gmail.com";
@@ -3580,6 +3595,11 @@
     email = "phil@grmr.de";
     github = "tnias";
     name = "Philipp Bartsch";
+  };
+  tobim = {
+    email = "nix@tobim.fastmail.fm";
+    github = "tobimpub";
+    name = "Tobias Mayer";
   };
   tohl = {
     email = "tom@logand.com";

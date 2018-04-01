@@ -941,7 +941,7 @@ with pkgs;
   caddy = callPackage ../servers/caddy { };
   traefik = callPackage ../servers/traefik { };
 
-  calamares = libsForQt59.callPackage ../tools/misc/calamares {
+  calamares = libsForQt5.callPackage ../tools/misc/calamares {
     python = python3;
     boost = pkgs.boost.override { python = python3; };
     libyamlcpp = callPackage ../development/libraries/libyaml-cpp { inherit boost; };
@@ -975,7 +975,11 @@ with pkgs;
 
   image-analyzer = callPackage ../misc/emulators/cdemu/analyzer.nix { };
 
+  cbor-diag = callPackage ../development/tools/cbor-diag { };
+
   ccnet = callPackage ../tools/networking/ccnet { };
+
+  cddl = callPackage ../development/tools/cddl { };
 
   cfdyndns = callPackage ../applications/networking/dyndns/cfdyndns { };
 
@@ -1002,6 +1006,8 @@ with pkgs;
   colord-kde = libsForQt5.callPackage ../tools/misc/colord-kde {};
 
   colpack = callPackage ../applications/science/math/colpack { };
+
+  compactor = callPackage ../applications/networking/compactor { };
 
   consul = callPackage ../servers/consul { };
 
@@ -2574,6 +2580,7 @@ with pkgs;
   gocryptfs = callPackage ../tools/filesystems/gocrypfs { };
 
   godot = callPackage ../development/tools/godot {};
+  godot_headers = callPackage ../development/libraries/godot_headers {};
 
   goklp = callPackage ../tools/networking/goklp {};
 
@@ -2693,9 +2700,7 @@ with pkgs;
 
   sbsigntool = callPackage ../tools/security/sbsigntool { };
 
-  gsmartcontrol = callPackage ../tools/misc/gsmartcontrol {
-    inherit (gnome2) libglademm;
-  };
+  gsmartcontrol = callPackage ../tools/misc/gsmartcontrol { };
 
   gssdp = callPackage ../development/libraries/gssdp {
     inherit (gnome2) libsoup;
@@ -3131,9 +3136,7 @@ with pkgs;
 
   keepalived = callPackage ../tools/networking/keepalived { };
 
-  kexectools = if hostPlatform.isKexecable
-                 then callPackage ../os-specific/linux/kexectools { }
-               else null;
+  kexectools = callPackage ../os-specific/linux/kexectools { };
 
   keybase = callPackage ../tools/security/keybase { };
 
@@ -3433,6 +3436,8 @@ with pkgs;
   libmesode = callPackage ../development/libraries/libmesode { };
 
   libnabo = callPackage ../development/libraries/libnabo { };
+
+  libngspice = callPackage ../development/libraries/libngspice { };
 
   libpointmatcher = callPackage ../development/libraries/libpointmatcher { };
 
@@ -6423,6 +6428,20 @@ with pkgs;
         (lib.addMetaAttrs { outputsToInstall = [ "jre" ]; }
           ((openjdk9.override { minimal = true; }).jre // { outputs = [ "jre" ]; }));
 
+  jdk10 = if stdenv.isArm || stdenv.isAarch64 then oraclejdk10 else openjdk10 // { outputs = [ "out" ]; };
+  jre10 = if stdenv.isArm || stdenv.isAarch64 then oraclejre10 else lib.setName "openjre-${lib.getVersion pkgs.openjdk10.jre}"
+    (lib.addMetaAttrs { outputsToInstall = [ "jre" ]; }
+      (openjdk10.jre // { outputs = [ "jre" ]; }));
+  jre10_headless =
+    if stdenv.isArm || stdenv.isAarch64 then
+      oraclejre10
+    else if stdenv.isDarwin then
+      jre10
+    else
+      lib.setName "openjre-${lib.getVersion pkgs.openjdk10.jre}-headless"
+        (lib.addMetaAttrs { outputsToInstall = [ "jre" ]; }
+          ((openjdk10.override { minimal = true; }).jre // { outputs = [ "jre" ]; }));
+
   jdk = jdk8;
   jre = jre8;
   jre_headless = jre8_headless;
@@ -7604,7 +7623,9 @@ with pkgs;
 
   cl-launch = callPackage ../development/tools/misc/cl-launch {};
 
-  cloudfoundry-cli = callPackage ../development/tools/cloudfoundry-cli { };
+  cloudfoundry-cli = callPackage ../development/tools/cloudfoundry-cli {
+    go = go_1_9;
+  };
 
   coan = callPackage ../development/tools/analysis/coan { };
 
@@ -7654,6 +7675,10 @@ with pkgs;
   cov-build = callPackage ../development/tools/analysis/cov-build {};
 
   cppcheck = callPackage ../development/tools/analysis/cppcheck { };
+
+  cquery = callPackage ../development/tools/misc/cquery {
+    llvmPackages = llvmPackages_6;
+  };
 
   creduce = callPackage ../development/tools/misc/creduce {
     inherit (perlPackages) perl
@@ -7779,7 +7804,7 @@ with pkgs;
   flow = callPackage ../development/tools/analysis/flow {
     inherit (darwin.apple_sdk.frameworks) CoreServices;
     inherit (darwin) cf-private;
-    inherit (ocamlPackages) ocaml findlib camlp4 sedlex ocamlbuild ocaml_lwt
+    inherit (ocamlPackages) ocaml findlib camlp4 sedlex ocamlbuild lwt_ppx
       wtf8 dtoa;
   };
 
@@ -7832,8 +7857,8 @@ with pkgs;
   gnumake42 = callPackage ../development/tools/build-managers/gnumake/4.2 { };
   gnumake = if hostPlatform.isRiscV # Technically this check should be for glibc version.
     then gnumake42HEAD
-  else gnumake42;
-  gnumake42HEAD = callPackage ../development/tools/build-managers/gnumake/4.2/head.nix { };
+    else gnumake42;
+  gnumake42HEAD = lowPrio (callPackage ../development/tools/build-managers/gnumake/4.2/head.nix { });
 
   gnustep = recurseIntoAttrs (callPackage ../desktops/gnustep {});
 
@@ -8167,7 +8192,7 @@ with pkgs;
 
   shards = callPackage ../development/tools/build-managers/shards { };
 
-  shellcheck = haskellPackages.ShellCheck;
+  shellcheck = haskell.lib.justStaticExecutables haskellPackages.ShellCheck;
 
   schemaspy = callPackage ../development/tools/database/schemaspy { };
 
@@ -9072,6 +9097,8 @@ with pkgs;
 
   grpc = callPackage ../development/libraries/grpc { };
 
+  gsettings-qt = libsForQt5.callPackage ../development/libraries/gsettings-qt { };
+
   gst_all_1 = recurseIntoAttrs(callPackage ../development/libraries/gstreamer {
     callPackage = pkgs.newScope (pkgs // { libav = pkgs.ffmpeg; });
   });
@@ -9542,6 +9569,8 @@ with pkgs;
 
   libantlr3c = callPackage ../development/libraries/libantlr3c {};
 
+  libaom = callPackage ../development/libraries/libaom { };
+
   libappindicator-gtk2 = callPackage ../development/libraries/libappindicator { gtkVersion = "2"; };
   libappindicator-gtk3 = callPackage ../development/libraries/libappindicator { gtkVersion = "3"; };
 
@@ -9792,9 +9821,7 @@ with pkgs;
 
   libgroove = callPackage ../development/libraries/libgroove { };
 
-  libseccomp =  if hostPlatform.isSeccomputable
-                  then callPackage ../development/libraries/libseccomp { }
-                else null;
+  libseccomp = callPackage ../development/libraries/libseccomp { };
 
   libsecret = callPackage ../development/libraries/libsecret { };
 
@@ -11002,7 +11029,8 @@ with pkgs;
 
   flatbuffers = callPackage ../development/libraries/flatbuffers { };
 
-  pth = callPackage ../development/libraries/pth { };
+  gnupth = callPackage ../development/libraries/pth { };
+  pth = if stdenv.hostPlatform.isMusl then npth else gnupth;
 
   ptlib = callPackage ../development/libraries/ptlib {};
 
@@ -11389,6 +11417,8 @@ with pkgs;
   SDL2_ttf = callPackage ../development/libraries/SDL2_ttf { };
 
   sblim-sfcc = callPackage ../development/libraries/sblim-sfcc {};
+
+  selinux-sandbox = callPackage ../os-specific/linux/selinux-sandbox { };
 
   serd = callPackage ../development/libraries/serd {};
 
@@ -12714,6 +12744,7 @@ with pkgs;
 
   qpid-cpp = callPackage ../servers/amqp/qpid-cpp {
     boost = boost155;
+    inherit (pythonPackages) buildPythonPackage qpid-python;
   };
 
   quagga = callPackage ../servers/quagga { };
@@ -13465,7 +13496,6 @@ with pkgs;
 
     nvidiaPackages = callPackage ../os-specific/linux/nvidia-x11 { };
 
-    nvidia_x11_legacy173 = nvidiaPackages.legacy_173;
     nvidia_x11_legacy304 = nvidiaPackages.legacy_304;
     nvidia_x11_legacy340 = nvidiaPackages.legacy_340;
     nvidia_x11_beta      = nvidiaPackages.beta;
@@ -14199,6 +14229,8 @@ with pkgs;
 
   docbook5_xsl = docbook_xsl_ns;
 
+  documentation-highlighter = callPackage ../misc/documentation-highlighter { };
+
   cabin = callPackage ../data/fonts/cabin { };
 
   camingo-code = callPackage ../data/fonts/camingo-code { };
@@ -14622,7 +14654,6 @@ with pkgs;
   };
 
   abiword = callPackage ../applications/office/abiword {
-    inherit (gnome2) libglade libgnomecanvas;
     iconTheme = gnome3.defaultIconTheme;
   };
 
@@ -14873,7 +14904,7 @@ with pkgs;
 
   blender = callPackage  ../applications/misc/blender {
     cudaSupport = config.cudaSupport or false;
-    python = python35;
+    pythonPackages = python35Packages;
     stdenv = overrideCC stdenv gcc6;
   };
 
@@ -15617,6 +15648,8 @@ with pkgs;
   gpicview = callPackage ../applications/graphics/gpicview {
     gtk2 = gtk2-x11;
   };
+
+  gpx = callPackage ../applications/misc/gpx { };
 
   gqrx = qt5.callPackage ../applications/misc/gqrx { };
 
@@ -16455,51 +16488,52 @@ with pkgs;
 
   libreoffice = hiPrio libreoffice-still;
 
-  libreoffice-fresh = lowPrio (callPackage ../applications/office/libreoffice {
-    inherit (perlPackages) ArchiveZip CompressZlib;
-    inherit (gnome2) GConf ORBit2 gnome_vfs;
-    inherit (gnome3) defaultIconTheme;
-    zip = zip.override { enableNLS = false; };
-    bluez5 = bluez5_28;
-    fontsConf = makeFontsConf {
-      fontDirectories = [
-        carlito dejavu_fonts
-        freefont_ttf xorg.fontmiscmisc
-        liberation_ttf_v1_binary
-        liberation_ttf_v2_binary
-      ];
-    };
-    clucene_core = clucene_core_2;
-    lcms = lcms2;
-    harfbuzz = harfbuzz.override {
-      withIcu = true; withGraphite2 = true;
-    };
-    # checking whether g++ supports C++14 or C++11... configure: error: no
-    stdenv = overrideCC stdenv gcc5;
-  });
+  libreoffice-fresh = lowPrio (callPackage ../applications/office/libreoffice/wrapper.nix
+    { libreoffice = callPackage ../applications/office/libreoffice {
+      inherit (perlPackages) ArchiveZip CompressZlib;
+      inherit (gnome2) GConf ORBit2 gnome_vfs;
+      inherit (gnome3) defaultIconTheme;
+      zip = zip.override { enableNLS = false; };
+      bluez5 = bluez5_28;
+      fontsConf = makeFontsConf {
+        fontDirectories = [
+          carlito dejavu_fonts
+          freefont_ttf xorg.fontmiscmisc
+          liberation_ttf_v1_binary
+          liberation_ttf_v2_binary
+        ];
+      };
+      clucene_core = clucene_core_2;
+      lcms = lcms2;
+      harfbuzz = harfbuzz.override {
+        withIcu = true; withGraphite2 = true;
+      };
+      # checking whether g++ supports C++14 or C++11... configure: error: no
+      stdenv = overrideCC stdenv gcc5;
+  };});
 
-  libreoffice-still = lowPrio (callPackage ../applications/office/libreoffice/still.nix {
-    inherit (perlPackages) ArchiveZip CompressZlib;
-    inherit (gnome2) GConf ORBit2 gnome_vfs;
-    inherit (gnome3) defaultIconTheme;
-    zip = zip.override { enableNLS = false; };
-    bluez5 = bluez5_28;
-    poppler = poppler_0_61;
-    fontsConf = makeFontsConf {
-      fontDirectories = [
-        freefont_ttf xorg.fontmiscmisc
-      ];
-    };
-    clucene_core = clucene_core_2;
-    lcms = lcms2;
-    harfbuzz = harfbuzz.override {
-      withIcu = true; withGraphite2 = true;
-    };
-    icu = icu58;
-    # checking whether g++ supports C++14 or C++11... configure: error: no
-    stdenv = overrideCC stdenv gcc5;
-  });
-
+  libreoffice-still = lowPrio (callPackage ../applications/office/libreoffice/wrapper.nix
+    { libreoffice = callPackage ../applications/office/libreoffice/still.nix {
+      inherit (perlPackages) ArchiveZip CompressZlib;
+      inherit (gnome2) GConf ORBit2 gnome_vfs;
+      inherit (gnome3) defaultIconTheme;
+      zip = zip.override { enableNLS = false; };
+      bluez5 = bluez5_28;
+      poppler = poppler_0_61;
+      fontsConf = makeFontsConf {
+        fontDirectories = [
+          freefont_ttf xorg.fontmiscmisc
+        ];
+      };
+      clucene_core = clucene_core_2;
+      lcms = lcms2;
+      harfbuzz = harfbuzz.override {
+        withIcu = true; withGraphite2 = true;
+      };
+      icu = icu58;
+      # checking whether g++ supports C++14 or C++11... configure: error: no
+      stdenv = overrideCC stdenv gcc5;
+  };});
 
   liferea = callPackage ../applications/networking/newsreaders/liferea {
     inherit (gnome3) libpeas gsettings-desktop-schemas dconf;
@@ -16685,6 +16719,7 @@ with pkgs;
 
   monero = callPackage ../applications/altcoins/monero {
     inherit (darwin.apple_sdk.frameworks) IOKit;
+    boost = boost15x;
   };
 
   monero-gui = libsForQt5.callPackage ../applications/altcoins/monero-gui { };
@@ -16692,6 +16727,8 @@ with pkgs;
   xmr-stak = callPackage ../applications/misc/xmr-stak {
     hwloc = hwloc-nox;
   };
+
+  xmrig = callPackage ../applications/misc/xmrig { };
 
   monkeysAudio = callPackage ../applications/audio/monkeys-audio { };
 
@@ -19488,10 +19525,12 @@ with pkgs;
     dash-to-dock = callPackage ../desktops/gnome-3/extensions/dash-to-dock { };
     dash-to-panel = callPackage ../desktops/gnome-3/extensions/dash-to-panel { };
     icon-hider = callPackage ../desktops/gnome-3/extensions/icon-hider { };
+    impatience = callPackage ../desktops/gnome-3/extensions/impatience.nix { };
     mediaplayer = callPackage ../desktops/gnome-3/extensions/mediaplayer { };
     nohotcorner = callPackage ../desktops/gnome-3/extensions/nohotcorner { };
     no-title-bar = callPackage ../desktops/gnome-3/extensions/no-title-bar { };
     remove-dropdown-arrows = callPackage ../desktops/gnome-3/extensions/remove-dropdown-arrows { };
+    system-monitor = callPackage ../desktops/gnome-3/extensions/system-monitor { };
     taskwhisperer = callPackage ../desktops/gnome-3/extensions/taskwhisperer { };
     timepp = callPackage ../desktops/gnome-3/extensions/timepp { };
     topicons-plus = callPackage ../desktops/gnome-3/extensions/topicons-plus { };
@@ -20559,7 +20598,7 @@ with pkgs;
     pcre = pcre-cpp;
   });
 
-  redis-desktop-manager = libsForQt59.callPackage ../applications/misc/redis-desktop-manager { };
+  redis-desktop-manager = libsForQt5.callPackage ../applications/misc/redis-desktop-manager { };
 
   robo3t = callPackage ../applications/misc/robo3t { };
 
@@ -20699,6 +20738,11 @@ with pkgs;
   seafile-shared = callPackage ../misc/seafile-shared { };
 
   serviio = callPackage ../servers/serviio {};
+  selinux-python = callPackage ../os-specific/linux/selinux-python {
+    # needs python3 bindings
+    libselinux = libselinux.override { python = python3; };
+    libsemanage = libsemanage.override { python = python3; };
+  };
 
   slock = callPackage ../misc/screensavers/slock {
     conf = config.slock.conf or null;
@@ -20743,6 +20787,8 @@ with pkgs;
   terraform-inventory = callPackage ../applications/networking/cluster/terraform-inventory {};
 
   terraform-landscape = callPackage ../applications/networking/cluster/terraform-landscape {};
+
+  terraform-provider-libvirt = callPackage ../applications/networking/cluster/terraform-provider-libvirt {};
 
   terragrunt = callPackage ../applications/networking/cluster/terragrunt {};
 
