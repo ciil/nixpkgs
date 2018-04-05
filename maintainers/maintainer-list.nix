@@ -2974,6 +2974,11 @@
     github = "redbaron";
     name = "Maxim Ivanov";
   };
+  redfish64 = {
+    email = "engler@gmail.com";
+    github = "redfish64";
+    name = "Tim Engler";
+  };
   redvers = {
     email = "red@infect.me";
     github = "redvers";
@@ -3415,6 +3420,11 @@
     email = "suvash+nixpkgs@gmail.com";
     github = "suvash";
     name = "Suvash Thapaliya";
+  };
+  sveitser = {
+    email = "sveitser@gmail.com";
+    github = "sveitser";
+    name = "Mathis Antony";
   };
   svsdep = {
     email = "svsdep@gmail.com";
@@ -3975,6 +3985,11 @@
     email = "yrashk@gmail.com";
     github = "yrashk";
     name = "Yurii Rashkovskii";
+  };
+  ysndr = {
+    email = "me@ysndr.de";
+    github = "ysndr";
+    name = "Yannik Sander";
   };
   yuriaisaka = {
     email = "yuri.aisaka+nix@gmail.com";
