@@ -111,6 +111,8 @@ with pkgs;
 
   buildMaven = callPackage ../build-support/build-maven.nix {};
 
+  castxml = callPackage ../development/tools/castxml { };
+
   cmark = callPackage ../development/libraries/cmark { };
 
   dhallToNix = callPackage ../build-support/dhall-to-nix.nix {
@@ -4234,6 +4236,8 @@ with pkgs;
 
   pcsc-cyberjack = callPackage ../tools/security/pcsc-cyberjack { };
 
+  pdd = python3Packages.callPackage ../tools/misc/pdd { };
+
   pdf2djvu = callPackage ../tools/typesetting/pdf2djvu { };
 
   pdf2htmlEX = callPackage ../tools/typesetting/pdf2htmlEX { };
@@ -4445,6 +4449,8 @@ with pkgs;
 
   pytrainer = callPackage ../applications/misc/pytrainer { };
 
+  pywal = callPackage ../tools/graphics/pywal {};
+
   remarshal = callPackage ../development/tools/remarshal { };
 
   rtaudio = callPackage ../development/libraries/audio/rtaudio { };
@@ -4647,6 +4653,8 @@ with pkgs;
 
   rpPPPoE = callPackage ../tools/networking/rp-pppoe { };
 
+  rpiboot-unstable = callPackage ../development/misc/rpiboot/unstable.nix { };
+
   rpm = callPackage ../tools/package-management/rpm { };
 
   rpm-ostree = callPackage ../tools/misc/rpm-ostree {
@@ -4656,6 +4664,8 @@ with pkgs;
   rpmextract = callPackage ../tools/archivers/rpmextract { };
 
   rrdtool = callPackage ../tools/misc/rrdtool { };
+
+  rsibreak = libsForQt5.callPackage ../applications/misc/rsibreak { };
 
   rss2email = callPackage ../applications/networking/feedreaders/rss2email {
     pythonPackages = python3Packages;
@@ -8708,6 +8718,8 @@ with pkgs;
   epoxy = callPackage ../development/libraries/epoxy {};
 
   esdl = callPackage ../development/libraries/esdl { };
+
+  libesmtp = callPackage ../development/libraries/libesmtp { };
 
   exiv2 = callPackage ../development/libraries/exiv2 { };
 
@@ -15239,7 +15251,9 @@ with pkgs;
 
   eaglemode = callPackage ../applications/misc/eaglemode { };
 
-  eclipses = recurseIntoAttrs (callPackage ../applications/editors/eclipse { webkitgtk24x-gtk2 = null; });
+  eclipses = recurseIntoAttrs (callPackage ../applications/editors/eclipse {
+    jdk = jdk10;
+  });
 
   ecs-agent = callPackage ../applications/virtualization/ecs-agent { };
 
@@ -17917,6 +17931,8 @@ with pkgs;
     vte = gnome2.vte.override { pythonSupport = true; };
   };
 
+  terminus = callPackage ../applications/misc/terminus { inherit (gnome2) GConf; };
+
   lxterminal = callPackage ../applications/misc/lxterminal {
     vte = gnome3.vte;
   };
@@ -19865,6 +19881,8 @@ with pkgs;
 
   aspino = callPackage ../applications/science/logic/aspino {};
 
+  beluga = callPackage ../applications/science/logic/beluga { };
+
   boogie = dotnetPackages.Boogie;
 
   inherit (callPackage ./coq-packages.nix {})
@@ -20187,6 +20205,8 @@ with pkgs;
   golly-beta = callPackage ../applications/science/misc/golly/beta.nix { wxGTK = wxGTK30; };
 
   megam = callPackage ../applications/science/misc/megam { };
+
+  ns-3 = callPackage ../development/libraries/science/networking/ns3 { };
 
   root = callPackage ../applications/science/misc/root {
     inherit (darwin.apple_sdk.frameworks) Cocoa OpenGL;

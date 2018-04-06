@@ -4988,6 +4988,8 @@ in {
 
   jdcal = callPackage ../development/python-modules/jdcal { };
 
+  jieba = callPackage ../development/python-modules/jieba { };
+
   internetarchive = callPackage ../development/python-modules/internetarchive {};
 
   JPype1 = callPackage ../development/python-modules/JPype1 {};
@@ -8809,7 +8811,7 @@ in {
   keyutils = callPackage ../development/python-modules/keyutils { };
 
   klein = callPackage ../development/python-modules/klein { };
- 
+
   koji = callPackage ../development/python-modules/koji { };
 
   kombu = buildPythonPackage rec {
@@ -9176,6 +9178,8 @@ in {
   marisa = callPackage ../development/python-modules/marisa {
     marisa = pkgs.marisa;
   };
+
+  marisa-trie = callPackage ../development/python-modules/marisa-trie { };
 
   markupsafe = buildPythonPackage rec {
     name = "markupsafe-${version}";
@@ -10733,6 +10737,8 @@ in {
     };
   };
 
+  langcodes = callPackage ../development/python-modules/langcodes { };
+
   livestreamer = buildPythonPackage rec {
     version = "1.12.2";
     name = "livestreamer-${version}";
@@ -11319,6 +11325,8 @@ in {
     buildInputs = with self; [ pbr testtools testrepository mock ];
     propagatedBuildInputs = with self; [ six requests ];
   };
+
+  mecab-python3 = callPackage ../development/python-modules/mecab-python3 { };
 
   mox3 = buildPythonPackage rec {
     name = "mox3-${version}";
@@ -17098,6 +17106,8 @@ EOF
 
   widgetsnbextension = callPackage ../development/python-modules/widgetsnbextension { };
 
+  wordfreq = callPackage ../development/python-modules/wordfreq { };
+
   magic-wormhole = callPackage ../development/python-modules/magic-wormhole { };
 
   magic-wormhole-transit-relay = callPackage ../development/python-modules/magic-wormhole-transit-relay { };
@@ -18709,6 +18719,10 @@ EOF
     propagatedBuildInputs = with self; [];
   };
 
+  pybindgen = callPackage ../development/python-modules/pybindgen {};
+
+  pygccxml = callPackage ../development/python-modules/pygccxml {};
+
   pymacaroons-pynacl = callPackage ../development/python-modules/pymacaroons-pynacl { };
 
   pynacl = callPackage ../development/python-modules/pynacl { };
@@ -19769,12 +19783,15 @@ EOF
 
   tensorflow-tensorboard = callPackage ../development/python-modules/tensorflow-tensorboard { };
 
-  tensorflow = callPackage ../development/python-modules/tensorflow rec {
-    cudaSupport = pkgs.config.cudaSupport or false;
-    inherit (pkgs.linuxPackages) nvidia_x11;
-    cudatoolkit = pkgs.cudatoolkit9;
-    cudnn = pkgs.cudnn_cudatoolkit9;
-  };
+  tensorflow =
+    if stdenv.isDarwin
+    then callPackage ../development/python-modules/tensorflow/bin.nix { }
+    else callPackage ../development/python-modules/tensorflow rec {
+      cudaSupport = pkgs.config.cudaSupport or false;
+      inherit (pkgs.linuxPackages) nvidia_x11;
+      cudatoolkit = pkgs.cudatoolkit9;
+      cudnn = pkgs.cudnn_cudatoolkit9;
+    };
 
   tensorflowWithoutCuda = self.tensorflow.override {
     cudaSupport = false;
