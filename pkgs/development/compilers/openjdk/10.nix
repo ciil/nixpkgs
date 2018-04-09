@@ -4,7 +4,7 @@
 , libjpeg, giflib
 , setJavaClassPath
 , minimal ? false
-, enableGnome2 ? true, gtk2, gnome_vfs, glib, GConf
+, enableGnome2 ? true, gtk3, gnome_vfs, glib, GConf
 }:
 
 let
@@ -38,7 +38,7 @@ let
       libjpeg giflib libX11 libICE libXext libXrender libXtst libXt libXtst
       libXi libXinerama libXcursor lndir fontconfig
     ] ++ lib.optionals (!minimal && enableGnome2) [
-      gtk2 gnome_vfs GConf glib
+      gtk3 gnome_vfs GConf glib
     ];
 
     patches = [
@@ -80,7 +80,7 @@ let
     NIX_LDFLAGS= lib.optionals (!minimal) [
       "-lfontconfig" "-lcups" "-lXinerama" "-lXrandr" "-lmagic"
     ] ++ lib.optionals (!minimal && enableGnome2) [
-      "-lgtk-x11-2.0" "-lgio-2.0" "-lgnomevfs-2" "-lgconf-2"
+      "-lgtk-3" "-lgio-2.0" "-lgnomevfs-2" "-lgconf-2"
     ];
 
     buildFlags = [ "all" ];
@@ -113,7 +113,7 @@ let
       rm -rf $out/lib/openjdk/demo
       ${lib.optionalString minimal ''
         for d in $out/lib/openjdk/lib $jre/lib/openjdk/jre/lib; do
-          rm ''${d}/{libjsound,libjsoundalsa,libawt*,libfontmanager}.so
+          rm ''${d}/{libjsound,libjsoundalsa,libfontmanager}.so
         done
       ''}
 
@@ -134,13 +134,6 @@ let
           ln -sfn $jre/lib/openjdk/jre/bin/$i $out/lib/openjdk/bin/$i
         fi
       done
-
-      # Generate certificates.
-      (
-        cd $jre/lib/openjdk/jre/lib/security
-        rm cacerts
-        perl ${./generate-cacerts.pl} $jre/lib/openjdk/jre/bin/keytool ${cacert}/etc/ssl/certs/ca-bundle.crt
-      )
 
       ln -s $out/lib/openjdk/bin $out/bin
       ln -s $jre/lib/openjdk/jre/bin $jre/bin

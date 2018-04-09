@@ -233,6 +233,8 @@ in {
 
   email_validator = callPackage ../development/python-modules/email-validator { };
 
+  ewmh = callPackage ../development/python-modules/ewmh { };
+
   dbus-python = callPackage ../development/python-modules/dbus {
     dbus = pkgs.dbus;
   };
@@ -634,7 +636,7 @@ in {
     meta = {
       description = "Atomic file writes on POSIX";
       homepage = https://pypi.python.org/pypi/atomicwrites/0.1.0;
-      maintainers = with maintainers; [ matthiasbeyer ];
+      maintainers = with maintainers; [ ];
     };
 
   };
@@ -4759,7 +4761,7 @@ in {
       description = "Python humanize utilities";
       homepage = https://github.com/jmoiron/humanize;
       license = licenses.mit;
-      maintainers = with maintainers; [ matthiasbeyer ];
+      maintainers = with maintainers; [ ];
       platforms = platforms.linux; # can only test on linux
     };
 
@@ -4847,7 +4849,7 @@ in {
       description = "WSGI HTTP Digest Authentication middleware";
       homepage = https://github.com/jonashaag/httpauth;
       license = licenses.bsd2;
-      maintainers = with maintainers; [ matthiasbeyer ];
+      maintainers = with maintainers; [ ];
     };
   };
 
@@ -4872,29 +4874,7 @@ in {
 
   };
 
-  imbalanced-learn = buildPythonPackage rec {
-    name = "imbalanced-learn-${version}";
-    version = "0.3.2";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/i/imbalanced-learn/${name}.tar.gz";
-      sha256 = "0j76m0rrsvyqj9bimky9m7b609y5v6crf9apigww3xvcnchhj901";
-    };
-
-    preConfigure = ''
-      export HOME=$PWD
-    '';
-
-    propagatedBuildInputs = with self; [ scikitlearn ];
-    buildInputs = with self; [ nose pytest pandas ];
-
-    meta = {
-      description = "Library offering a number of re-sampling techniques commonly used in datasets showing strong between-class imbalance";
-      homepage = https://github.com/scikit-learn-contrib/imbalanced-learn;
-      license = with licenses; [ mit ];
-    };
-
-  };
+  imbalanced-learn = callPackage ../development/python-modules/imbalanced-learn { };
 
   imread = buildPythonPackage rec {
     name = "python-imread-${version}";
@@ -5009,6 +4989,8 @@ in {
   JayDeBeApi = callPackage ../development/python-modules/JayDeBeApi {};
 
   jdcal = callPackage ../development/python-modules/jdcal { };
+
+  jieba = callPackage ../development/python-modules/jieba { };
 
   internetarchive = callPackage ../development/python-modules/internetarchive {};
 
@@ -6236,34 +6218,7 @@ in {
 
   };
 
-  py3status = buildPythonPackage rec {
-    version = "3.7";
-    name = "py3status-${version}";
-    src = pkgs.fetchFromGitHub {
-      owner = "ultrabug";
-      repo = "py3status";
-      rev = version;
-      sha256 = "1khrvxjjcm1bsswgrdgvyrdrimxx92yhql4gmji6a0kpp59dp541";
-    };
-    doCheck = false;
-    propagatedBuildInputs = with self; [ requests ];
-    buildInputs = with pkgs; [ file ];
-    prePatch = ''
-      sed -i -e "s|'file|'${pkgs.file}/bin/file|" py3status/parse_config.py
-      sed -i -e "s|\[\"acpi\"|\[\"${pkgs.acpi}/bin/acpi\"|" py3status/modules/battery_level.py
-      sed -i -e "s|notify-send|${pkgs.libnotify}/bin/notify-send|" py3status/modules/battery_level.py
-      sed -i -e "s|/usr/bin/whoami|${pkgs.coreutils}/bin/whoami|" py3status/modules/external_script.py
-      sed -i -e "s|'amixer|'${pkgs.alsaUtils}/bin/amixer|" py3status/modules/volume_status.py
-      sed -i -e "s|'i3-nagbar|'${pkgs.i3}/bin/i3-nagbar|" py3status/modules/pomodoro.py
-      sed -i -e "s|'free|'${pkgs.procps}/bin/free|" py3status/modules/sysdata.py
-      sed -i -e "s|'sensors|'${pkgs.lm_sensors}/bin/sensors|" py3status/modules/sysdata.py
-      sed -i -e "s|'setxkbmap|'${pkgs.xorg.setxkbmap}/bin/setxkbmap|" py3status/modules/keyboard_layout.py
-      sed -i -e "s|'xset|'${pkgs.xorg.xset}/bin/xset|" py3status/modules/keyboard_layout.py
-    '';
-    meta = {
-      maintainers = with maintainers; [ garbas ];
-    };
-  };
+  py3status = callPackage ../development/python-modules/py3status {};
 
   multi_key_dict = buildPythonPackage rec {
     name = "multi_key_dict-${version}";
@@ -8831,7 +8786,7 @@ in {
   keyutils = callPackage ../development/python-modules/keyutils { };
 
   klein = callPackage ../development/python-modules/klein { };
- 
+
   koji = callPackage ../development/python-modules/koji { };
 
   kombu = buildPythonPackage rec {
@@ -9198,6 +9153,8 @@ in {
   marisa = callPackage ../development/python-modules/marisa {
     marisa = pkgs.marisa;
   };
+
+  marisa-trie = callPackage ../development/python-modules/marisa-trie { };
 
   markupsafe = buildPythonPackage rec {
     name = "markupsafe-${version}";
@@ -9709,6 +9666,8 @@ in {
       license = stdenv.lib.licenses.bsd2;
     };
   });
+
+  mock-open = callPackage ../development/python-modules/mock-open { };
 
   modestmaps = buildPythonPackage rec {
     name = "ModestMaps-1.4.6";
@@ -10753,6 +10712,8 @@ in {
     };
   };
 
+  langcodes = callPackage ../development/python-modules/langcodes { };
+
   livestreamer = buildPythonPackage rec {
     version = "1.12.2";
     name = "livestreamer-${version}";
@@ -11340,6 +11301,8 @@ in {
     propagatedBuildInputs = with self; [ six requests ];
   };
 
+  mecab-python3 = callPackage ../development/python-modules/mecab-python3 { };
+
   mox3 = buildPythonPackage rec {
     name = "mox3-${version}";
     version = "0.23.0";
@@ -11902,7 +11865,11 @@ in {
   pika-pool = callPackage ../development/python-modules/pika-pool { };
   platformio = callPackage ../development/python-modules/platformio { };
 
-  kmsxx = callPackage ../development/libraries/kmsxx { };
+  kmsxx = (callPackage ../development/libraries/kmsxx {
+    inherit (pkgs.kmsxx) stdenv;
+  }).overrideAttrs (oldAttrs: {
+    name = "${python.libPrefix}-${pkgs.kmsxx.name}";
+  });
 
   pybase64 = callPackage ../development/python-modules/pybase64 { };
 
@@ -14487,6 +14454,8 @@ in {
     };
   };
 
+  Rtree = callPackage ../development/python-modules/Rtree { inherit (pkgs) libspatialindex; };
+
   squaremap = buildPythonPackage rec {
     name = "squaremap-1.0.4";
     disabled = isPy3k;
@@ -16748,7 +16717,7 @@ in {
       homepage = https://github.com/uri-templates/uritemplate-py;
       description = "Python implementation of URI Template";
       license = licenses.asl20;
-      maintainers = with maintainers; [ matthiasbeyer ];
+      maintainers = with maintainers; [ ];
     };
   };
 
@@ -17115,6 +17084,8 @@ EOF
   wheel = callPackage ../development/python-modules/wheel { };
 
   widgetsnbextension = callPackage ../development/python-modules/widgetsnbextension { };
+
+  wordfreq = callPackage ../development/python-modules/wordfreq { };
 
   magic-wormhole = callPackage ../development/python-modules/magic-wormhole { };
 
@@ -18623,6 +18594,8 @@ EOF
     };
   };
 
+  vxi11 = callPackage ../development/python-modules/vxi11 { };
+
   svg2tikz = self.buildPythonPackage {
     name = "svg2tikz-1.0.0";
     disabled = ! isPy27;
@@ -18724,6 +18697,10 @@ EOF
 
     propagatedBuildInputs = with self; [];
   };
+
+  pybindgen = callPackage ../development/python-modules/pybindgen {};
+
+  pygccxml = callPackage ../development/python-modules/pygccxml {};
 
   pymacaroons-pynacl = callPackage ../development/python-modules/pymacaroons-pynacl { };
 
@@ -19785,12 +19762,15 @@ EOF
 
   tensorflow-tensorboard = callPackage ../development/python-modules/tensorflow-tensorboard { };
 
-  tensorflow = callPackage ../development/python-modules/tensorflow rec {
-    cudaSupport = pkgs.config.cudaSupport or false;
-    inherit (pkgs.linuxPackages) nvidia_x11;
-    cudatoolkit = pkgs.cudatoolkit9;
-    cudnn = pkgs.cudnn_cudatoolkit9;
-  };
+  tensorflow =
+    if stdenv.isDarwin
+    then callPackage ../development/python-modules/tensorflow/bin.nix { }
+    else callPackage ../development/python-modules/tensorflow rec {
+      cudaSupport = pkgs.config.cudaSupport or false;
+      inherit (pkgs.linuxPackages) nvidia_x11;
+      cudatoolkit = pkgs.cudatoolkit9;
+      cudnn = pkgs.cudnn_cudatoolkit9;
+    };
 
   tensorflowWithoutCuda = self.tensorflow.override {
     cudaSupport = false;
@@ -20193,6 +20173,8 @@ EOF
   ramlfications = callPackage ../development/python-modules/ramlfications { };
 
   yapf = callPackage ../development/python-modules/yapf { };
+
+  black = callPackage ../development/python-modules/black { };
 
   autobahn = callPackage ../development/python-modules/autobahn { };
 
