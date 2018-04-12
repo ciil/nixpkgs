@@ -3760,6 +3760,11 @@
     github = "twey";
     name = "James ‘Twey’ Kay";
   };
+  typetetris = {
+    email = "ericwolf42@mail.com";
+    github = "typetetris";
+    name = "Eric Wolf";
+  };
   unode = {
     email = "alves.rjc@gmail.com";
     github = "unode";
@@ -4129,5 +4134,10 @@
     email = "diego@zzamboni.org";
     github = "zzamboni";
     name = "Diego Zamboni";
+  };
+  srghma = {
+    email = "srghma@gmail.com";
+    github = "srghma";
+    name = "Sergei Khoma";
   };
 }

@@ -629,9 +629,9 @@ with pkgs;
 
   encryptr = callPackage ../tools/security/encryptr {
     gconf = gnome2.GConf;
- };
+  };
 
- enchive = callPackage ../tools/security/enchive { };
+  enchive = callPackage ../tools/security/enchive { };
 
   enpass = callPackage ../tools/security/enpass { };
 
@@ -4300,6 +4300,10 @@ with pkgs;
     gtk2 = null;
   };
 
+  pinentry_emacs = pinentry_ncurses.override {
+    enableEmacs = true;
+  };
+
   pinentry_gnome = pinentry_ncurses.override {
     gcr = gnome3.gcr;
   };
@@ -4649,11 +4653,7 @@ with pkgs;
     v8 = v8_static;
   };
 
-  rsnapshot = callPackage ../tools/backup/rsnapshot {
-    # For the `logger' command, we can use either `utillinux' or
-    # GNU Inetutils.  The latter is more portable.
-    logger = if stdenv.isLinux then utillinux else inetutils;
-  };
+  rsnapshot = callPackage ../tools/backup/rsnapshot { };
 
   rlwrap = callPackage ../tools/misc/rlwrap { };
 
@@ -4722,6 +4722,8 @@ with pkgs;
   safecopy = callPackage ../tools/system/safecopy { };
 
   safe-rm = callPackage ../tools/system/safe-rm { };
+
+  safeeyes = callPackage ../applications/misc/safeeyes { };
 
   salt = callPackage ../tools/admin/salt {};
 
@@ -7228,6 +7230,8 @@ with pkgs;
     pythonPackages = python3Packages;
   };
 
+  setupcfg2nix = python3Packages.callPackage ../development/tools/setupcfg2nix {};
+
   # These pyside tools do not provide any Python modules and are meant to be here.
   # See ../development/python-modules/pyside/default.nix for details.
   pysideApiextractor = callPackage ../development/python-modules/pyside/apiextractor.nix { };
@@ -7500,33 +7504,17 @@ with pkgs;
 
   bin_replace_string = callPackage ../development/tools/misc/bin_replace_string { };
 
-  binutils =
-    if targetPlatform.isDarwin
-    then darwin.binutils
-    else if targetPlatform.isRiscV
-    then binutils_2_30
-    else binutils-raw;
-
   binutils-unwrapped = callPackage ../development/tools/misc/binutils {
     # FHS sys dirs presumably only have stuff for the build platform
     noSysDirs = (targetPlatform != buildPlatform) || noSysDirs;
   };
-  binutils-raw = wrapBintoolsWith {
+  binutils = wrapBintoolsWith {
     libc = if targetPlatform != hostPlatform then libcCross else stdenv.cc.libc;
     bintools = binutils-unwrapped;
   };
-  binutils-unwrapped_2_30 = callPackage ../development/tools/misc/binutils/2.30.nix {
-    # FHS sys dirs presumably only have stuff for the build platform
-    noSysDirs = (targetPlatform != buildPlatform) || noSysDirs;
-  };
-  binutils-raw_2_30 = wrapBintoolsWith {
+  binutils_nogold = lowPrio (wrapBintoolsWith {
     libc = if targetPlatform != hostPlatform then libcCross else stdenv.cc.libc;
-    bintools = binutils-unwrapped_2_30;
-  };
-  binutils_2_30 = binutils-raw_2_30;
-
-  binutils_nogold = lowPrio (binutils-raw.override {
-    bintools = binutils-raw.bintools.override {
+    bintools = binutils-unwrapped.override {
       gold = false;
     };
   });
@@ -7644,14 +7632,9 @@ with pkgs;
 
   ctodo = callPackage ../applications/misc/ctodo { };
 
-  cmake_2_8 = callPackage ../development/tools/build-managers/cmake/2.8.nix {
-    wantPS = stdenv.isDarwin;
-    inherit (darwin) ps;
-  };
+  cmake_2_8 = callPackage ../development/tools/build-managers/cmake/2.8.nix { };
 
-  cmake = libsForQt5.callPackage ../development/tools/build-managers/cmake {
-    inherit (darwin) ps;
-  };
+  cmake = libsForQt5.callPackage ../development/tools/build-managers/cmake { };
 
   cmakeCurses = cmake.override { useNcurses = true; };
 
@@ -7683,16 +7666,12 @@ with pkgs;
     inherit (perlPackages) perl
       ExporterLite FileWhich GetoptTabular RegexpCommon TermReadKey;
     inherit (llvmPackages_4) llvm clang-unwrapped;
-    utillinux = if stdenv.isLinux then utillinuxMinimal else null;
   };
 
   cscope = callPackage ../development/tools/misc/cscope { };
 
   csmith = callPackage ../development/tools/misc/csmith {
     inherit (perlPackages) perl SysCPU;
-    # Workaround optional dependency on libbsd that's
-    # currently broken on Darwin.
-    libbsd = if stdenv.isDarwin then null else libbsd;
   };
 
   csslint = callPackage ../development/web/csslint { };
@@ -7854,10 +7833,7 @@ with pkgs;
   gnumake382 = callPackage ../development/tools/build-managers/gnumake/3.82 { };
   gnumake3 = gnumake382;
   gnumake42 = callPackage ../development/tools/build-managers/gnumake/4.2 { };
-  gnumake = if hostPlatform.isRiscV # Technically this check should be for glibc version.
-    then gnumake42HEAD
-    else gnumake42;
-  gnumake42HEAD = lowPrio (callPackage ../development/tools/build-managers/gnumake/4.2/head.nix { });
+  gnumake = gnumake42;
 
   gnustep = recurseIntoAttrs (callPackage ../desktops/gnustep {});
 
@@ -8965,12 +8941,10 @@ with pkgs;
   icon-lang = callPackage ../development/interpreters/icon-lang { };
 
   libgit2 = callPackage ../development/libraries/git2 {
-    inherit (darwin) libiconv;
     inherit (darwin.apple_sdk.frameworks) Security;
   };
 
   libgit2_0_25 = callPackage ../development/libraries/git2/0.25.nix {
-    inherit (darwin) libiconv;
     inherit (darwin.apple_sdk.frameworks) Security;
   };
 
@@ -8985,13 +8959,9 @@ with pkgs;
   glfw2 = callPackage ../development/libraries/glfw/2.x.nix { };
   glfw3 = callPackage ../development/libraries/glfw/3.x.nix { };
 
-  glibc_2_26 = callPackage ../development/libraries/glibc {
+  glibc = callPackage ../development/libraries/glibc {
     installLocales = config.glibc.locales or false;
   };
-  glibc_2_27 = callPackage ../development/libraries/glibc/2.27.nix {
-    installLocales = config.glibc.locales or false;
-  };
-  glibc = if hostPlatform.isRiscV then glibc_2_27 else glibc_2_26;
 
   glibc_memusage = callPackage ../development/libraries/glibc {
     installLocales = false;
@@ -8999,11 +8969,7 @@ with pkgs;
   };
 
   # Being redundant to avoid cycles on boot. TODO: find a better way
-  glibcCross = let
-    expr = if hostPlatform.isRiscV
-             then ../development/libraries/glibc/2.27.nix
-           else ../development/libraries/glibc;
-  in callPackage expr {
+  glibcCross = callPackage ../development/libraries/glibc {
     installLocales = config.glibc.locales or false;
     stdenv = crossLibcStdenv;
   };
@@ -9986,11 +9952,7 @@ with pkgs;
     mysql = mysql57;
   };
 
-  libnatspec = callPackage ../development/libraries/libnatspec (
-    stdenv.lib.optionalAttrs stdenv.isDarwin {
-      inherit (darwin) libiconv;
-    }
-  );
+  libnatspec = callPackage ../development/libraries/libnatspec { };
 
   libndp = callPackage ../development/libraries/libndp { };
 
@@ -10048,7 +10010,7 @@ with pkgs;
   # We also provide `libiconvReal`, which will always be a standalone libiconv,
   # just in case you want it regardless of platform.
   libiconv =
-    if hostPlatform.libc == "glibc"
+    if (hostPlatform.libc == "glibc" || hostPlatform.libc == "musl")
       then glibcIconv (if hostPlatform != buildPlatform
                        then libcCross
                        else stdenv.cc.libc)
@@ -10069,7 +10031,7 @@ with pkgs;
   };
 
   # On non-GNU systems we need GNU Gettext for libintl.
-  libintlOrEmpty = stdenv.lib.optional (!stdenv.isLinux || hostPlatform.libc != "glibc") gettext;
+  libintl = if hostPlatform.libc != "glibc" then gettext else null;
 
   libid3tag = callPackage ../development/libraries/libid3tag {
     gperf = gperf_3_0;
@@ -10399,17 +10361,15 @@ with pkgs;
   });
 
   libva = callPackage ../development/libraries/libva { };
-  libva-full = libva.override { minimal = false; };
+  libva-minimal = libva.override { minimal = true; };
   libva-utils = callPackage ../development/libraries/libva-utils { };
 
   libva1 = callPackage ../development/libraries/libva/1.0.0.nix { };
-  libva1-full = libva1.override { minimal = false; };
+  libva1-minimal = libva1.override { minimal = true; };
 
   libvdpau = callPackage ../development/libraries/libvdpau { };
 
-  libvdpau-va-gl = callPackage ../development/libraries/libvdpau-va-gl {
-    libva = libva-full; # also wants libva-{x11}
-  };
+  libvdpau-va-gl = callPackage ../development/libraries/libvdpau-va-gl { };
 
   libvirt = callPackage ../development/libraries/libvirt { };
 
@@ -10569,60 +10529,48 @@ with pkgs;
   ## libGL/libGLU/Mesa stuff
 
   # Default libGL implementation, should provide headers and libGL.so/libEGL.so/... to link agains them
-  # Default implementation is `mesa`, but can be eventually replaced with `libglvnd`,
-  # or other runtime dispatcher
-  libGL = mesa_noglu;
+  libGL = libGLDarwinOr mesa_noglu.stubs;
 
   # Default libGLU
-  libGLU = mesa_glu;
+  libGLU = libGLDarwinOr mesa_glu;
 
   # Combined derivation, contains both libGL and libGLU
   # Please, avoid using this attribute.  It was meant as transitional hack
   # for packages that assume that libGLU and libGL live in the same prefix.
   # libGLU_combined propagates both libGL and libGLU
-  libGLU_combined = mesa;
+  libGLU_combined = libGLDarwinOr (buildEnv {
+    name = "libGLU-combined";
+    paths = [ libGL libGLU ];
+    extraOutputsToInstall = [ "dev" ];
+  });
 
   # Default derivation with libGL.so.1 to link into /run/opengl-drivers (if need)
-  libGL_driver = mesa_drivers;
+  libGL_driver = libGLDarwinOr mesa_drivers;
 
   libGLSupported = lib.elem system lib.platforms.mesaPlatforms;
 
-  libGLDarwinOr = alternative: if stdenv.isDarwin
-    then callPackage ../development/libraries/mesa-darwin {
-      inherit (darwin.apple_sdk.frameworks) OpenGL;
-      inherit (darwin.apple_sdk.libs) Xplugin;
-      inherit (darwin) apple_sdk;
-    }
-    else alternative;
+  libGLDarwin = callPackage ../development/libraries/mesa-darwin {
+    inherit (darwin.apple_sdk.frameworks) OpenGL;
+    inherit (darwin.apple_sdk.libs) Xplugin;
+    inherit (darwin) apple_sdk;
+  };
 
-  # FIXME: should be `libGL = libGLDarwinOr mesa_nonglu` but this change cause mass rebuild,
-  # until all packages will refer to libGL/GLU/GLU combined
-  mesa_noglu = libGLDarwinOr (callPackage ../development/libraries/mesa {
+  libGLDarwinOr = alternative: if stdenv.isDarwin then libGLDarwin else alternative;
+
+  mesa_noglu = callPackage ../development/libraries/mesa {
     # makes it slower, but during runtime we link against just mesa_drivers
     # through /run/opengl-driver*, which is overriden according to config.grsecurity
     # grsecEnabled = true; # no more support in nixpkgs ATM
-  });
+    llvmPackages = llvmPackages_6;
+  };
 
-  mesa_glu =  libGLDarwinOr (callPackage ../development/libraries/mesa-glu { });
-  mesa_drivers = libGLDarwinOr (
+  mesa_glu =  callPackage ../development/libraries/mesa-glu { };
+  mesa_drivers =
     let mo = mesa_noglu.override {
       grsecEnabled = config.grsecurity or false;
       enableTextureFloats = true;
     };
-    in mo.drivers
-  );
-
-  # Please, avoid using this attribute.  It was meant as transitional hack
-  # for packages that assume that libGLU and libGL live in the same prefix.
-  # Otherwise it's better to use mesa_glu or mesa_noglu, depending on whether
-  # you need libGLU or not (_glu propagates _noglu).
-  mesa = libGLDarwinOr (buildEnv {
-    name = "mesa-${mesa_noglu.version}";
-    paths = [ mesa_noglu.dev mesa_noglu.out mesa_glu mesa_glu.dev ];
-    meta = {
-      platforms = lib.platforms.unix;
-    };
-  });
+    in mo.drivers;
 
   ## End libGL/libGLU/Mesa stuff
 
@@ -10738,7 +10686,9 @@ with pkgs;
   };
   libnghttp2 = nghttp2.lib;
 
-  nix-plugins = callPackage ../development/libraries/nix-plugins { };
+  nix-plugins = callPackage ../development/libraries/nix-plugins {
+    nix = nixUnstable;
+  };
 
   nlohmann_json = callPackage ../development/libraries/nlohmann_json { };
 
@@ -11195,9 +11145,7 @@ with pkgs;
 
     libopenshot-audio = callPackage ../applications/video/openshot-qt/libopenshot-audio.nix { };
 
-    libqtav = callPackage ../development/libraries/libqtav {
-      libva = libva-full; # also wants libva-x11
-    };
+    libqtav = callPackage ../development/libraries/libqtav { };
 
     kpmcore = callPackage ../development/libraries/kpmcore { };
 
@@ -11735,13 +11683,9 @@ with pkgs;
 
   v8_static = lowPrio (self.v8.override { static = true; });
 
-  vaapiIntel = callPackage ../development/libraries/vaapi-intel {
-    libva = libva-full; # also wants libva-{x11,drm,wayland}
-  };
+  vaapiIntel = callPackage ../development/libraries/vaapi-intel { };
 
-  vaapiVdpau = callPackage ../development/libraries/vaapi-vdpau {
-    libva = libva-full; # needs libva-{x11,glx}
-  };
+  vaapiVdpau = callPackage ../development/libraries/vaapi-vdpau { };
 
   vale = callPackage ../tools/text/vale { };
 
@@ -11786,9 +11730,7 @@ with pkgs;
     stdenv = overrideCC stdenv gcc6; # upstream code incompatible with gcc7
   };
 
-  wavpack = callPackage ../development/libraries/wavpack {
-    inherit (darwin) libiconv;
-  };
+  wavpack = callPackage ../development/libraries/wavpack { };
 
   wayland = callPackage ../development/libraries/wayland {
     graphviz = graphviz-nox;
@@ -11980,7 +11922,9 @@ with pkgs;
     czmq = czmq3;
   };
 
-  zig = callPackage ../development/compilers/zig {};
+  zig = callPackage ../development/compilers/zig {
+    llvmPackages = llvmPackages_6;
+  };
 
   zimlib = callPackage ../development/libraries/zimlib { };
 
@@ -12417,12 +12361,7 @@ with pkgs;
   jetty = callPackage ../servers/http/jetty { };
 
   knot-dns = callPackage ../servers/dns/knot-dns { };
-  knot-resolver = callPackage ../servers/dns/knot-resolver {
-    # TODO: vimNox after it gets fixed on Darwin or something lighter
-    hexdump = if stdenv.isLinux then utillinux.bin
-              else if stdenv.isDarwin then darwin.shell_cmds
-              else vim/*xxd*/;
-  };
+  knot-resolver = callPackage ../servers/dns/knot-resolver { };
 
   rdkafka = callPackage ../development/libraries/rdkafka { };
 
@@ -12941,12 +12880,11 @@ with pkgs;
     inherit clangStdenv fetchurl fetchgit fetchpatch stdenv intltool freetype fontconfig
       libxslt expat libpng zlib perl mesa_drivers spice-protocol libunwind
       dbus libuuid openssl gperf m4 libevdev tradcpp libinput mcpp makeWrapper autoreconfHook
-      autoconf automake libtool mtdev pixman
+      autoconf automake libtool mtdev pixman libGL
       cairo epoxy;
     inherit (buildPackages) pkgconfig xmlto asciidoc flex bison;
     inherit (darwin) apple_sdk cf-private libobjc;
     bootstrap_cmds = if stdenv.isDarwin then darwin.bootstrap_cmds else null;
-    mesa = libGL;
     python = python2; # Incompatible with Python 3x
     udev = if stdenv.isLinux then udev else null;
     libdrm = if stdenv.isLinux then libdrm else null;
@@ -13143,8 +13081,6 @@ with pkgs;
   lightum = callPackage ../os-specific/linux/lightum { };
 
   ebtables = callPackage ../os-specific/linux/ebtables { };
-
-  eject = utillinux;
 
   facetimehd-firmware = callPackage ../os-specific/linux/firmware/facetimehd-firmware { };
 
@@ -13577,6 +13513,8 @@ with pkgs;
 
     systemtap = callPackage ../development/tools/profiling/systemtap { };
 
+    tmon = callPackage ../os-specific/linux/tmon { };
+
     tp_smapi = callPackage ../os-specific/linux/tp_smapi { };
 
     usbip = callPackage ../os-specific/linux/usbip { };
@@ -13780,7 +13718,8 @@ with pkgs;
     if hostPlatform.isMusl then musl-getconf
     else lib.getBin stdenv.cc.libc;
 
-  nettools = callPackage ../os-specific/linux/net-tools { };
+  nettools = if stdenv.isLinux then callPackage ../os-specific/linux/net-tools { }
+             else unixtools.nettools;
 
   nftables = callPackage ../os-specific/linux/nftables { };
 
@@ -13838,13 +13777,19 @@ with pkgs;
 
   gogoclient = callPackage ../os-specific/linux/gogoclient { };
 
+  linux-pam = callPackage ../os-specific/linux/pam { };
+
   nss_ldap = callPackage ../os-specific/linux/nss_ldap { };
 
   odroid-xu3-bootloader = callPackage ../tools/misc/odroid-xu3-bootloader { };
 
+  openpam = callPackage ../development/libraries/openpam { };
+
+  openbsm = callPackage ../development/libraries/openbsm { };
+
   pagemon = callPackage ../os-specific/linux/pagemon { };
 
-  pam = callPackage ../os-specific/linux/pam { };
+  pam = if stdenv.isLinux then linux-pam else openpam;
 
   # pam_bioapi ( see http://www.thinkwiki.org/wiki/How_to_enable_the_fingerprint_reader )
 
@@ -13903,7 +13848,8 @@ with pkgs;
 
   procps = procps-ng;
 
-  procps-ng = callPackage ../os-specific/linux/procps-ng { };
+  procps-ng = if stdenv.isLinux then callPackage ../os-specific/linux/procps-ng { }
+              else unixtools.procps;
 
   watch = callPackage ../os-specific/linux/procps/watch.nix { };
 
@@ -14097,15 +14043,17 @@ with pkgs;
 
   usermount = callPackage ../os-specific/linux/usermount { };
 
-  utillinux = callPackage ../os-specific/linux/util-linux { };
+  utillinux = if stdenv.isLinux then callPackage ../os-specific/linux/util-linux { }
+              else unixtools.utillinux;
+
   utillinuxCurses = utillinux;
 
-  utillinuxMinimal = appendToName "minimal" (utillinux.override {
+  utillinuxMinimal = if stdenv.isLinux then appendToName "minimal" (utillinux.override {
     minimal = true;
     ncurses = null;
     perl = null;
     systemd = null;
-  });
+  }) else utillinux;
 
   v4l_utils = qt5.callPackage ../os-specific/linux/v4l-utils { };
 
@@ -14850,9 +14798,7 @@ with pkgs;
 
   autopanosiftc = callPackage ../applications/graphics/autopanosiftc { };
 
-  avidemux = libsForQt5.callPackage ../applications/video/avidemux {
-    libva = libva-full;
-  };
+  avidemux = libsForQt5.callPackage ../applications/video/avidemux { };
 
   avogadro = callPackage ../applications/science/chemistry/avogadro {
     eigen = eigen2;
@@ -15075,7 +15021,9 @@ with pkgs;
 
   chromiumDev = lowPrio (chromium.override { channel = "dev"; });
 
-  chuck = callPackage ../applications/audio/chuck { };
+  chuck = callPackage ../applications/audio/chuck {
+    inherit (darwin.apple_sdk.frameworks) AppKit Carbon CoreAudio CoreMIDI CoreServices Kernel;
+  };
 
   cinelerra = callPackage ../applications/video/cinelerra { };
 
@@ -15219,6 +15167,8 @@ with pkgs;
 
   distrho = callPackage ../applications/audio/distrho {};
 
+  dit = callPackage ../applications/editors/dit { };
+
   djvulibre = callPackage ../applications/misc/djvulibre { };
 
   djvu2pdf = callPackage ../tools/typesetting/djvu2pdf { };
@@ -15241,10 +15191,11 @@ with pkgs;
 
   # go 1.9 pin until https://github.com/moby/moby/pull/35739
   inherit (callPackage ../applications/virtualization/docker { go = go_1_9; })
-    docker_18_03;
+    docker_18_03
+    docker_18_04;
 
   docker = docker_18_03;
-  docker-edge = docker_18_03;
+  docker-edge = docker_18_04;
 
   docker-proxy = callPackage ../applications/virtualization/docker/proxy.nix { };
 
@@ -15920,12 +15871,6 @@ with pkgs;
 
   girara = callPackage ../applications/misc/girara {
     gtk = gtk3;
-  };
-
-  girara-light = callPackage ../applications/misc/girara {
-    gtk = gtk3;
-    withBuildColors = false;
-    ncurses = null;
   };
 
   gitAndTools = recurseIntoAttrs (callPackage ../applications/version-management/git-and-tools {});
@@ -16796,6 +16741,8 @@ with pkgs;
 
   xmrig = callPackage ../applications/misc/xmrig { };
 
+  xmrig-proxy = callPackage ../applications/misc/xmrig-proxy { };
+
   monkeysAudio = callPackage ../applications/audio/monkeys-audio { };
 
   monkeysphere = callPackage ../tools/security/monkeysphere { };
@@ -16892,7 +16839,6 @@ with pkgs;
   mpv = callPackage ../applications/video/mpv rec {
     inherit (luaPackages) luasocket;
     youtube-dl = pythonPackages.youtube-dl;
-    libva      = libva-full;
     waylandSupport     = stdenv.isLinux;
     alsaSupport        = !stdenv.isDarwin;
     pulseSupport       = !stdenv.isDarwin;
@@ -17414,7 +17360,9 @@ with pkgs;
 
   qemu-riscv = callPackage ../applications/virtualization/qemu/riscv.nix {};
 
-  qgis = callPackage ../applications/gis/qgis {};
+  qgis = callPackage ../applications/gis/qgis {
+    inherit (darwin.apple_sdk.frameworks) IOKit ApplicationServices;
+  };
 
   qgroundcontrol = libsForQt5.callPackage ../applications/science/robotics/qgroundcontrol { };
 
@@ -17505,8 +17453,8 @@ with pkgs;
 
   quodlibet-xine = quodlibet.override { xineBackend = true; tag = "-xine"; };
 
-  quodlibet-full = callPackage ../applications/audio/quodlibet {
-    inherit (gnome2) gtksourceview;
+  quodlibet-full = quodlibet.override {
+    inherit (gnome3) gtksourceview webkitgtk;
     withDbusPython = true;
     withPyInotify = true;
     withMusicBrainzNgs = true;
@@ -17514,7 +17462,6 @@ with pkgs;
     keybinder3 = keybinder3;
     libmodplug = libmodplug;
     kakasi = kakasi;
-    webkitgtk = webkitgtk24x-gtk3;
     libappindicator-gtk3 = libappindicator-gtk3;
     tag = "-full";
   };
@@ -18316,7 +18263,6 @@ with pkgs;
 
   vlc = callPackage ../applications/video/vlc {
     ffmpeg = ffmpeg_2;
-    libva = libva-full; # also wants libva-x11
   };
 
   vlc_npapi = callPackage ../applications/video/vlc/plugin.nix {
@@ -18574,9 +18520,7 @@ with pkgs;
     gtk = gtk2;
   };
 
-  kodiPlain = callPackage ../applications/video/kodi {
-    libva = libva-full;
-  };
+  kodiPlain = callPackage ../applications/video/kodi { };
   xbmcPlain = kodiPlain;
 
   kodiPlugins = recurseIntoAttrs (callPackage ../applications/video/kodi/plugins.nix {});
@@ -18879,9 +18823,7 @@ with pkgs;
 
   bastet = callPackage ../games/bastet {};
 
-  beancount = callPackage ../applications/office/beancount {
-      pythonPackages = python3Packages;
-  };
+  beancount = with python3.pkgs; toPythonApplication beancount;
 
   bean-add = callPackage ../applications/office/beancount/bean-add.nix { };
 
@@ -20030,6 +19972,7 @@ with pkgs;
   lean = callPackage ../applications/science/logic/lean {};
   lean2 = callPackage ../applications/science/logic/lean2 {};
   lean3 = lean;
+  elan = callPackage ../applications/science/logic/elan {};
 
   leo2 = callPackage ../applications/science/logic/leo2 {
      ocaml = ocamlPackages_4_01_0.ocaml;};
@@ -20188,6 +20131,8 @@ with pkgs;
   fricas = callPackage ../applications/science/math/fricas { };
 
   gap = callPackage ../applications/science/math/gap { };
+
+  gap-minimal = lowPrio (gap.override { keepAllPackages = false; });
 
   geogebra = callPackage ../applications/science/math/geogebra { };
 
@@ -21291,4 +21236,9 @@ with pkgs;
   xml2rfc = callPackage ../tools/typesetting/xml2rfc { };
 
   mmark = callPackage ../tools/typesetting/mmark { };
+
+  # Unix tools
+  unixtools = recurseIntoAttrs (callPackages ./unix-tools.nix { });
+  inherit (unixtools) hexdump ps logger eject modprobe umount
+                      mount wall hostname more sysctl;
 }
