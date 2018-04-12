@@ -19781,6 +19781,8 @@ with pkgs;
 
   liblbfgs = callPackage ../development/libraries/science/math/liblbfgs { };
 
+  m4ri = callPackage ../development/libraries/science/math/m4ri { };
+
   nasc = callPackage ../applications/science/math/nasc { };
 
   openblas = callPackage ../development/libraries/science/math/openblas { };
@@ -20168,13 +20170,7 @@ with pkgs;
     inherit (gnome3) gtksourceview;
   };
 
-  singular = callPackage ../applications/science/math/singular {
-    stdenv = overrideCC stdenv gcc5;
-  };
-  libsingular = callPackage ../applications/science/math/singular {
-    asLibsingular = true;
-    stdenv = overrideCC stdenv gcc5;
-  };
+  singular = callPackage ../applications/science/math/singular { };
 
   scilab = callPackage ../applications/science/math/scilab {
     withXaw3d = false;
