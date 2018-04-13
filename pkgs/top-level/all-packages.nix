@@ -414,6 +414,8 @@ with pkgs;
 
   acct = callPackage ../tools/system/acct { };
 
+  acme-sh = callPackage ../tools/admin/acme.sh { };
+
   acoustidFingerprinter = callPackage ../tools/audio/acoustid-fingerprinter {
     ffmpeg = ffmpeg_1;
   };
@@ -524,14 +526,6 @@ with pkgs;
   argtable = callPackage ../tools/misc/argtable {};
 
   argyllcms = callPackage ../tools/graphics/argyllcms {};
-
-  arm-frc-linux-gnueabi-eglibc = callPackage ../development/libraries/arm-frc-linux-gnueabi-eglibc {};
-
-  arm-frc-linux-gnueabi-linux-api-headers = callPackage ../development/libraries/arm-frc-linux-gnueabi-linux-api-headers {};
-
-  arm-frc-linux-gnueabi-binutils = callPackage ../development/tools/misc/arm-frc-linux-gnueabi-binutils {};
-
-  arm-frc-linux-gnueabi-gcc = callPackage ../development/compilers/arm-frc-linux-gnueabi-gcc {};
 
   arp-scan = callPackage ../tools/misc/arp-scan { };
 
@@ -1343,6 +1337,8 @@ with pkgs;
   optar = callPackage ../tools/graphics/optar {};
 
   patdiff = callPackage ../tools/misc/patdiff { };
+
+  pbzx = callPackage ../tools/compression/pbzx { };
 
   playerctl = callPackage ../tools/audio/playerctl { };
 
@@ -5315,7 +5311,8 @@ with pkgs;
   vcftools = callPackage ../applications/science/biology/vcftools { };
 
   vcsh = callPackage ../applications/version-management/vcsh {
-    inherit (perlPackages) ShellCommand TestMost;
+    inherit (perlPackages) ShellCommand TestMost TestDifferences TestDeep
+      TestException TestWarn;
   };
 
   vcstool = callPackage ../development/tools/vcstool { };
@@ -13769,6 +13766,8 @@ with pkgs;
 
   gotools = callPackage ../development/tools/gotools { };
 
+  gotop = callPackage ../tools/system/gotop { };
+
   gomodifytags = callPackage ../development/tools/gomodifytags { };
 
   go-langserver = callPackage ../development/tools/go-langserver { };
@@ -17803,6 +17802,9 @@ with pkgs;
     inherit (gnome2) GConf;
     libgcrypt = libgcrypt_1_5;
     libpng = libpng12;
+    curl = curl.override {
+      sslSupport = false; gnutlsSupport = true;
+    };
   };
 
   libspotify = callPackage ../development/libraries/libspotify {
@@ -19607,7 +19609,7 @@ with pkgs;
 
   numix-gtk-theme = callPackage ../misc/themes/numix { };
 
-  numix-solarized-gtk-theme = callPackage ../misc/themes/gtk3/numix-solarized-gtk-theme {  };
+  numix-solarized-gtk-theme = callPackage ../misc/themes/numix-solarized { };
 
   numix-sx-gtk-theme = callPackage ../misc/themes/numix-sx { };
 
@@ -20490,6 +20492,8 @@ with pkgs;
 
   helm = callPackage ../applications/audio/helm { };
 
+  heptio-ark = callPackage ../applications/networking/cluster/heptio-ark { };
+
   hplip = callPackage ../misc/drivers/hplip { };
 
   hplipWithPlugin = hplip.override { withPlugin = true; };
@@ -21235,6 +21239,6 @@ with pkgs;
 
   # Unix tools
   unixtools = recurseIntoAttrs (callPackages ./unix-tools.nix { });
-  inherit (unixtools) hexdump ps logger eject modprobe umount
+  inherit (unixtools) hexdump ps logger eject umount
                       mount wall hostname more sysctl;
 }
