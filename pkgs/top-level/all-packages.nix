@@ -563,6 +563,8 @@ with pkgs;
 
   aws-vault = callPackage ../tools/admin/aws-vault { };
 
+  iamy = callPackage ../tools/admin/iamy { };
+
   azure-cli = nodePackages.azure-cli;
 
   azure-vhd-utils  = callPackage ../tools/misc/azure-vhd-utils { };
@@ -1120,7 +1122,9 @@ with pkgs;
 
   doitlive = callPackage ../tools/misc/doitlive { };
 
-  dosage = pythonPackages.dosage;
+  dosage = callPackage ../applications/graphics/dosage {
+    pythonPackages = python3Packages;
+  };
 
   dpic = callPackage ../tools/graphics/dpic { };
 
@@ -3491,6 +3495,8 @@ with pkgs;
 
   limesurvey = callPackage ../servers/limesurvey { };
 
+  linuxquota = callPackage ../tools/misc/linuxquota { };
+
   localtime = callPackage ../tools/system/localtime { };
 
   logcheck = callPackage ../tools/system/logcheck {
@@ -4512,7 +4518,7 @@ with pkgs;
 
   quilt = callPackage ../development/tools/quilt { };
 
-  quota = callPackage ../tools/misc/quota { };
+  quota = if stdenv.isLinux then linuxquota else unixtools.quota;
 
   wiggle = callPackage ../development/tools/wiggle { };
 
@@ -4728,6 +4734,8 @@ with pkgs;
   samplicator = callPackage ../tools/networking/samplicator { };
 
   sasview = callPackage ../applications/science/misc/sasview {};
+
+  scallion = callPackage ../tools/security/scallion { };
 
   scanbd = callPackage ../tools/graphics/scanbd { };
 
@@ -5914,8 +5922,13 @@ with pkgs;
 
   clang-sierraHack = clang.override {
     name = "clang-wrapper-with-reexport-hack";
-    bintools = clang.bintools.override {
+    bintools = darwin.binutils.override {
       useMacosReexportHack = true;
+      bintools = darwin.binutils.bintools.override {
+        cctools = darwin.cctools.override {
+          enableDumpNormalizedLibArgs = true;
+        };
+      };
     };
   };
 
@@ -9432,6 +9445,8 @@ with pkgs;
 
   jemalloc = callPackage ../development/libraries/jemalloc { };
 
+  jemalloc450 = callPackage ../development/libraries/jemalloc/jemalloc450.nix { };
+
   jshon = callPackage ../development/tools/parsing/jshon { };
 
   json2hcl = callPackage ../development/tools/json2hcl { };
@@ -11116,10 +11131,6 @@ with pkgs;
 
     grantlee = callPackage ../development/libraries/grantlee/5 { };
 
-    inherit (callPackage ../development/libraries/kirigami { })
-      kirigami_1
-      kirigami_2;
-
     kdb = callPackage ../development/libraries/kdb { };
 
     kdiagram = callPackage ../development/libraries/kdiagram { };
@@ -11127,8 +11138,6 @@ with pkgs;
     kproperty = callPackage ../development/libraries/kproperty { };
 
     kreport = callPackage ../development/libraries/kreport { };
-
-    kirigami = kirigami_1;
 
     libcommuni = callPackage ../development/libraries/libcommuni { };
 
@@ -11295,7 +11304,7 @@ with pkgs;
 
   rlog = callPackage ../development/libraries/rlog { };
 
-  rocksdb = callPackage ../development/libraries/rocksdb { };
+  rocksdb = callPackage ../development/libraries/rocksdb { jemalloc = jemalloc450; };
 
   rocksdb_lite = rocksdb.override { enableLite = true; };
 
@@ -12969,9 +12978,6 @@ with pkgs;
 
   bluez5 = callPackage ../os-specific/linux/bluez { };
 
-  # Needed for LibreOffice
-  bluez5_28 = lowPrio (callPackage ../os-specific/linux/bluez/bluez5_28.nix { });
-
   bluez = bluez5;
 
   inherit (python3Packages) bedup;
@@ -13344,6 +13350,7 @@ with pkgs;
         # when adding a new linux version
         # kernelPatches.cpu-cgroup-v2."4.11"
         kernelPatches.modinst_arg_list_too_long
+        kernelPatches.bcm2835_mmal_v4l2_camera_driver # Only needed for 4.16!
       ]
       ++ lib.optionals ((platform.kernelArch or null) == "mips")
       [ kernelPatches.mips_fpureg_emu
@@ -16494,7 +16501,6 @@ with pkgs;
       inherit (gnome2) GConf ORBit2 gnome_vfs;
       inherit (gnome3) defaultIconTheme;
       zip = zip.override { enableNLS = false; };
-      bluez5 = bluez5_28;
       fontsConf = makeFontsConf {
         fontDirectories = [
           carlito dejavu_fonts
@@ -16509,6 +16515,7 @@ with pkgs;
         withIcu = true; withGraphite2 = true;
       };
       # checking whether g++ supports C++14 or C++11... configure: error: no
+      # Still relevant: 2018-04-13
       stdenv = overrideCC stdenv gcc5;
   };});
 
@@ -16518,11 +16525,13 @@ with pkgs;
       inherit (gnome2) GConf ORBit2 gnome_vfs;
       inherit (gnome3) defaultIconTheme;
       zip = zip.override { enableNLS = false; };
-      bluez5 = bluez5_28;
       poppler = poppler_0_61;
       fontsConf = makeFontsConf {
         fontDirectories = [
+          carlito dejavu_fonts
           freefont_ttf xorg.fontmiscmisc
+          liberation_ttf_v1_binary
+          liberation_ttf_v2_binary
         ];
       };
       clucene_core = clucene_core_2;
@@ -16530,8 +16539,8 @@ with pkgs;
       harfbuzz = harfbuzz.override {
         withIcu = true; withGraphite2 = true;
       };
-      icu = icu58;
       # checking whether g++ supports C++14 or C++11... configure: error: no
+      # Still relevant: 2018-04-13; gcc6 is not enough!
       stdenv = overrideCC stdenv gcc5;
   };});
 
@@ -17248,6 +17257,8 @@ with pkgs;
 
   pidgin-window-merge = callPackage ../applications/networking/instant-messengers/pidgin-plugins/window-merge { };
 
+  purple-discord = callPackage ../applications/networking/instant-messengers/pidgin-plugins/purple-discord { };
+
   purple-hangouts = callPackage ../applications/networking/instant-messengers/pidgin-plugins/purple-hangouts { };
 
   purple-matrix = callPackage ../applications/networking/instant-messengers/pidgin-plugins/purple-matrix { };
@@ -17356,7 +17367,7 @@ with pkgs;
     inherit (darwin.stubs) rez setfile;
   };
 
-  qemu-riscv = callPackage ../applications/virtualization/qemu/riscv.nix {};
+  qemu-riscv = lowPrio (callPackage ../applications/virtualization/qemu/riscv.nix {});
 
   qgis = callPackage ../applications/gis/qgis {
     inherit (darwin.apple_sdk.frameworks) IOKit ApplicationServices;
@@ -17945,9 +17956,7 @@ with pkgs;
 
   terminal-notifier = callPackage ../applications/misc/terminal-notifier {};
 
-  terminator = callPackage ../applications/misc/terminator {
-    vte = gnome2.vte.override { pythonSupport = true; };
-  };
+  terminator = callPackage ../applications/misc/terminator { };
 
   terminus = callPackage ../applications/misc/terminus { inherit (gnome2) GConf; };
 
@@ -19497,6 +19506,13 @@ with pkgs;
 
   xsokoban = callPackage ../games/xsokoban { };
 
+  inherit (callPackage ../games/quake2/yquake2 { })
+    yquake2
+    yquake2-ctf
+    yquake2-ground-zero
+    yquake2-the-reckoning
+    yquake2-all-games;
+
   zandronum = callPackage ../games/zandronum { };
 
   zandronum-server = zandronum.override {
@@ -19767,6 +19783,8 @@ with pkgs;
 
   clblas = callPackage ../development/libraries/science/math/clblas { };
 
+  cliquer = callPackage ../development/libraries/science/math/cliquer { };
+
   jags = callPackage ../applications/science/math/jags { };
 
 
@@ -19784,6 +19802,8 @@ with pkgs;
   liblbfgs = callPackage ../development/libraries/science/math/liblbfgs { };
 
   m4ri = callPackage ../development/libraries/science/math/m4ri { };
+
+  m4rie = callPackage ../development/libraries/science/math/m4rie { };
 
   nasc = callPackage ../applications/science/math/nasc { };
 

@@ -1,4 +1,4 @@
-{ pkgs, buildEnv, runCommand, hostPlatform }:
+{ pkgs, buildEnv, runCommand, hostPlatform, lib }:
 
 # These are some unix tools that are commonly included in the /usr/bin
 # and /usr/sbin directory under more normal distributions. Along with
@@ -13,7 +13,7 @@
 let
 
   singleBinary = cmd: providers: let
-      provider = "${providers.${hostPlatform.parsed.kernel.name} or "missing-package"}/bin/${cmd}";
+      provider = "${lib.getBin providers.${hostPlatform.parsed.kernel.name}}/bin/${cmd}";
     in runCommand cmd {
       meta.platforms = map (n: { kernel.name = n; }) (pkgs.lib.attrNames providers);
     } ''
@@ -40,6 +40,10 @@ in rec {
   arp = singleBinary "arp" {
     linux = pkgs.nettools;
     darwin = pkgs.darwin.network_cmds;
+  };
+  col = singleBinary "col" {
+    linux = pkgs.utillinux;
+    darwin = pkgs.darwin.text_cmds;
   };
   eject = singleBinary "eject" {
     linux = pkgs.utillinux;
@@ -92,7 +96,7 @@ in rec {
     darwin = pkgs.darwin.ps;
   };
   quota = singleBinary "quota" {
-    linux = pkgs.utillinux;
+    linux = pkgs.linuxquota;
     darwin = pkgs.darwin.diskdev_cmds;
   };
   route = singleBinary "route" {
@@ -138,7 +142,7 @@ in rec {
   utillinux = buildEnv {
     name = "utillinux-compat";
     paths = [ fsck fdisk getopt hexdump mount
-              quota script umount whereis write ];
+              script umount whereis write col ];
   };
 
   nettools = buildEnv {
