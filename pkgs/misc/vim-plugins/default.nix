@@ -54,11 +54,13 @@ rec {
   # aliasess
   airline             = vim-airline;
   alternative         = a-vim; # backwards compat, added 2014-10-21
+  bats                = bats-vim;
   calendar            = calendar-vim;
   coffee-script       = vim-coffee-script;
   coffeeScript        = coffee-script; # backwards compat, added 2014-10-18
   Solarized           = vim-colors-solarized;
   solarized           = vim-colors-solarized;
+  colors-solarized    = vim-colors-solarized;
   caw                 = caw-vim;
   colorsamplerpack    = Colour_Sampler_Pack;
   Colour_Sampler_Pack = Colour-Sampler-Pack;
@@ -122,7 +124,7 @@ rec {
   snipmate            = vim-snipmate;
   sourcemap           = sourcemap-vim;
   "sourcemap.vim"     = sourcemap-vim;
-  sourround           = vim-surround;
+  surround            = vim-surround;
   sleuth              = vim-sleuth;
   solidity            = vim-solidity;
   stylish-haskell     = vim-stylish-haskell;
@@ -142,7 +144,7 @@ rec {
   tmuxNavigator       = tmux-navigator; # backwards compat, added 2014-10-18
   tslime              = tslime-vim;
   unite               = unite-vim;
-  Ultisnips           = ultisnips;
+  UltiSnips           = ultisnips;
   vim-grepper         = vim-grepper-git;
   vim-test            = vim-test-git;
   vimproc             = vimproc-vim;
@@ -1497,6 +1499,17 @@ rec {
     };
     dependencies = [];
     postInstall = false;
+  };
+
+  julia-vim = buildVimPluginFrom2Nix { # created by nix#NixDerivation
+    name = "julia-vim-2018-03-27";
+    src = fetchgit {
+      url = "https://github.com/JuliaEditorSupport/julia-vim";
+      rev = "4593c8b1ffe20022677e524487c8554d96cf8f84";
+      sha256 = "0yrdzkxyg6cg2i4bd6bqbq0w63hssh3nd0f0qnfl7v5pkq9yba4w";
+    };
+    dependencies = [];
+
   };
 
   fzf-vim = buildVimPluginFrom2Nix { # created by nix#NixDerivation
@@ -3029,6 +3042,17 @@ rec {
       url = "https://github.com/vim-scripts/argtextobj.vim";
       rev = "f3fbe427f7b4ec436416a5816d714dc917dc530b";
       sha256 = "1l4jh5hdmky1qj5z26jpnk49a6djjcvzyyr6pknrrgb8rzkiln48";
+    };
+    dependencies = [];
+
+  };
+
+  bats-vim = buildVimPluginFrom2Nix { # created by nix#NixDerivation
+    name = "bats-vim-2013-07-03";
+    src = fetchgit {
+      url = "https://github.com/vim-scripts/bats.vim";
+      rev = "3c283f594ff8bc7fb0c25cd07ebef0f17385f94a";
+      sha256 = "06f3hdf7y5gpwmc6inrhk938qmn7cr6mbk00amrnl1qjvk09givx";
     };
     dependencies = [];
 
