@@ -311,6 +311,10 @@ in {
 
   pyamf = callPackage ../development/python-modules/pyamf { };
 
+  pyarrow = callPackage ../development/python-modules/pyarrow {
+    inherit (pkgs) arrow-cpp cmake pkgconfig;
+  };
+
   pyatspi = disabledIf (!isPy3k) (callPackage ../development/python-modules/pyatspi { });
 
   pyaxmlparser = callPackage ../development/python-modules/pyaxmlparser { };
@@ -1036,6 +1040,7 @@ in {
 
       homepage = https://github.com/skarra/CalDAVClientLibrary/tree/asynkdev/;
       maintainers = with maintainers; [ pjones ];
+      broken = true; # 2018-04-11
     };
   };
 
@@ -3354,6 +3359,7 @@ in {
     pname = "lightblue";
     version = "0.4";
     name = "${pname}-${version}";
+    disabled = isPy3k; # build fails, 2018-04-11
 
     src = pkgs.fetchurl {
       url = "mirror://sourceforge/${pname}/${name}.tar.gz";
@@ -3540,6 +3546,8 @@ in {
       license  = licenses.lgpl21;
     };
   };
+
+  misaka = callPackage ../development/python-modules/misaka {};
 
   mt-940 = callPackage ../development/python-modules/mt-940 { };
 
@@ -8847,7 +8855,7 @@ in {
   dynd = buildPythonPackage rec {
     version = "0.7.2";
     name = "dynd-${version}";
-    disabled = isPyPy;
+    disabled = isPyPy || !isPy3k; # tests fail on python2, 2018-04-11
 
     src = pkgs.fetchFromGitHub {
       owner = "libdynd";
@@ -10469,6 +10477,7 @@ in {
     meta = {
       description = "Interface for working with block devices";
       license = licenses.gpl2Plus;
+      broken = isPy3k; # doesn't build on python 3, 2018-04-11
     };
   };
 
@@ -10531,6 +10540,7 @@ in {
       license = licenses.bsd2;
       platforms = platforms.all;
       homepage = "http://jparyani.github.io/pycapnp/index.html";
+      broken = true; # 2018-04-11
     };
   };
 
