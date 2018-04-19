@@ -5833,6 +5833,8 @@ with pkgs;
 
   dash = callPackage ../shells/dash { };
 
+  dashing = callPackages ../tools/misc/dashing { };
+
   es = callPackage ../shells/es { };
 
   fish = callPackage ../shells/fish { };
@@ -19841,12 +19843,16 @@ with pkgs;
 
   openspecfun = callPackage ../development/libraries/science/math/openspecfun {};
 
+  planarity = callPackage ../development/libraries/science/math/planarity { };
+
   fenics = callPackage ../development/libraries/science/math/fenics {
     inherit (python3Packages) numpy ply pytest python six sympy;
     pythonPackages = python3Packages;
     pythonBindings = true;
     docs = true;
   };
+
+  lrcalc = callPackage ../applications/science/math/lrcalc { };
 
   lie = callPackage ../applications/science/math/LiE { };
 
