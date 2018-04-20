@@ -15692,6 +15692,8 @@ with pkgs;
 
   grass = callPackage ../applications/gis/grass { };
 
+  grepcidr = callPackage ../applications/search/grepcidr { };
+
   grepm = callPackage ../applications/search/grepm { };
 
   grip = callPackage ../applications/misc/grip {
@@ -21043,9 +21045,9 @@ with pkgs;
     staging = base.override { wineRelease = "staging"; };
   };
 
-  wine = winePackages.base;
+  wine = winePackages.full;
 
-  wineStaging = lowPrio (winePackages.full.override {
+  wine-staging = lowPrio (winePackages.full.override {
     wineRelease = "staging";
   });
 
