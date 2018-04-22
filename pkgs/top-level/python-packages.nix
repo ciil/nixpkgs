@@ -1190,6 +1190,8 @@ in {
 
   cysignals = callPackage ../development/python-modules/cysignals { };
 
+  cypari2 = callPackage ../development/python-modules/cypari2 { };
+
   dlib = buildPythonPackage rec {
     inherit (pkgs.dlib) name src nativeBuildInputs meta;
 
@@ -5531,6 +5533,8 @@ in {
 
   flask_assets = callPackage ../development/python-modules/flask-assets { };
 
+  flask-babel = callPackage ../development/python-modules/flask-babel { };
+
   flask_cache = buildPythonPackage rec {
     name = "Flask-Cache-0.13.1";
 
@@ -5579,6 +5583,8 @@ in {
   flask-restplus = callPackage ../development/python-modules/flask-restplus { };
 
   flask_script = callPackage ../development/python-modules/flask-script { };
+
+  flask-silk = callPackage ../development/python-modules/flask-silk { };
 
   flask_sqlalchemy = buildPythonPackage rec {
     name = "Flask-SQLAlchemy-${version}";

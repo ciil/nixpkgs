@@ -587,6 +587,11 @@
     github = "bergey";
     name = "Daniel Bergey";
   };
+  bfortz = {
+    email = "bernard.fortz@gmail.com";
+    github = "bfortz";
+    name = "Bernard Fortz";
+  };
   bgamari = {
     email = "ben@smart-cactus.org";
     github = "bgamari";
@@ -3990,6 +3995,11 @@
     email = "kranium@gikos.net";
     github = "womfoo";
     name = "Kranium Gikos Mendoza";
+  };
+  worldofpeace = {
+    email = "worldofpeace@users.noreply.github.com";
+    github = "worldofpeace";
+    name = "Worldofpeace";
   };
   wscott = {
     email = "wsc9tt@gmail.com";

@@ -288,7 +288,7 @@ with pkgs;
     ... # For hash agility
   }@args: fetchzip ({
     inherit name;
-    url = "https://gitlab.com/${owner}/${repo}/repository/archive.tar.gz?ref=${rev}";
+    url = "https://gitlab.com/${owner}/${repo}/-/archive/${rev}/${repo}-${rev}.tar.gz";
     meta.homepage = "https://gitlab.com/${owner}/${repo}/";
   } // removeAttrs args [ "owner" "repo" "rev" ]) // { inherit rev; };
 
@@ -518,6 +518,8 @@ with pkgs;
   };
 
   apitrace = libsForQt5.callPackage ../applications/graphics/apitrace {};
+
+  arguments = callPackage ../development/libraries/arguments { };
 
   argus = callPackage ../tools/networking/argus {};
 
@@ -1141,6 +1143,8 @@ with pkgs;
   dynamic-colors = callPackage ../tools/misc/dynamic-colors { };
 
   earlyoom = callPackage ../os-specific/linux/earlyoom { };
+
+  EBTKS = callPackage ../development/libraries/science/biology/EBTKS { };
 
   ecasound = callPackage ../applications/audio/ecasound { };
 
@@ -1774,6 +1778,8 @@ with pkgs;
   cloogppl = callPackage ../development/libraries/cloog-ppl { };
 
   cloud-utils = callPackage ../tools/misc/cloud-utils { };
+
+  cocoapods = callPackage ../development/mobile/cocoapods { };
 
   compass = callPackage ../development/tools/compass { };
 
@@ -3104,6 +3110,8 @@ with pkgs;
 
   jmespath = callPackage ../development/tools/jmespath { };
 
+  jmol = callPackage ../applications/science/chemistry/jmol { };
+
   jmtpfs = callPackage ../tools/filesystems/jmtpfs { };
 
   jnettop = callPackage ../tools/networking/jnettop { };
@@ -3285,6 +3293,8 @@ with pkgs;
 
   memtester = callPackage ../tools/system/memtester { };
 
+  minergate = callPackage ../applications/misc/minergate { };
+
   minidlna = callPackage ../tools/networking/minidlna { };
 
   minisign = callPackage ../tools/security/minisign { };
@@ -3396,6 +3406,8 @@ with pkgs;
   };
 
   ispell = callPackage ../tools/text/ispell {};
+
+  jumanpp = callPackage ../tools/text/jumanpp {};
 
   kindlegen = callPackage ../tools/typesetting/kindlegen { };
 
@@ -5839,7 +5851,7 @@ with pkgs;
 
   dash = callPackage ../shells/dash { };
 
-  dashing = callPackages ../tools/misc/dashing { };
+  dashing = callPackage ../tools/misc/dashing { };
 
   es = callPackage ../shells/es { };
 
@@ -7634,9 +7646,7 @@ with pkgs;
 
   cl-launch = callPackage ../development/tools/misc/cl-launch {};
 
-  cloudfoundry-cli = callPackage ../development/tools/cloudfoundry-cli {
-    go = go_1_9;
-  };
+  cloudfoundry-cli = callPackage ../development/tools/cloudfoundry-cli { };
 
   coan = callPackage ../development/tools/analysis/coan { };
 
@@ -8472,6 +8482,8 @@ with pkgs;
   libbfd = callPackage ../development/libraries/libbfd { };
 
   libopcodes = callPackage ../development/libraries/libopcodes { };
+
+  bicpl = callPackage ../development/libraries/science/biology/bicpl { };
 
   # TODO(@Ericson2314): Build bionic libc from source
   bionic = assert hostPlatform.useAndroidPrebuilt;
@@ -10768,6 +10780,8 @@ with pkgs;
 
   oniguruma = callPackage ../development/libraries/oniguruma { };
 
+  oobicpl = callPackage ../development/libraries/science/biology/oobicpl { };
+
   openal = self.openalSoft;
 
   openalSoft = callPackage ../development/libraries/openal-soft {
@@ -12250,7 +12264,10 @@ with pkgs;
 
   bftpd = callPackage ../servers/ftp/bftpd {};
 
-  bind = callPackage ../servers/dns/bind { };
+  bind = callPackage ../servers/dns/bind {
+    enablePython = config.bind.enablePython or false;
+    python3 = python3.withPackages (ps: with ps; [ ply ]);
+  };
   dnsutils = bind.dnsutils;
 
   inherit (callPackages ../servers/bird { })
@@ -12932,6 +12949,7 @@ with pkgs;
   zabbix20 = callPackage ../servers/monitoring/zabbix/2.0.nix { };
   zabbix22 = callPackage ../servers/monitoring/zabbix/2.2.nix { };
 
+  zipkin = callPackage ../servers/monitoring/zipkin { };
 
   ### OS-SPECIFIC
 
@@ -13868,6 +13886,8 @@ with pkgs;
   policycoreutils = callPackage ../os-specific/linux/policycoreutils { };
 
   powerdns = callPackage ../servers/dns/powerdns { };
+
+  dnsdist = callPackage ../servers/dns/dnsdist { };
 
   pdns-recursor = callPackage ../servers/dns/pdns-recursor { };
 
@@ -15635,6 +15655,8 @@ with pkgs;
   geany-with-vte = callPackage ../applications/editors/geany/with-vte.nix { };
 
   ghostwriter = libsForQt5.callPackage ../applications/editors/ghostwriter { };
+
+  gitweb = callPackage ../applications/version-management/git-and-tools/gitweb/default.nix { };
 
   gksu = callPackage ../applications/misc/gksu { };
 
@@ -19077,6 +19099,8 @@ with pkgs;
 
   gnujump = callPackage ../games/gnujump { };
 
+  gnushogi = callPackage ../games/gnushogi { };
+
   gogui = callPackage ../games/gogui {};
 
   gtetrinet = callPackage ../games/gtetrinet {
@@ -19733,9 +19757,15 @@ with pkgs;
 
   emboss = callPackage ../applications/science/biology/emboss { };
 
+  ezminc = callPackage ../applications/science/biology/EZminc { };
+
   htslib = callPackage ../development/libraries/science/biology/htslib { };
 
   igv = callPackage ../applications/science/biology/igv { };
+
+  inormalize = callPackage ../applications/science/biology/inormalize {
+    inherit (perlPackages) GetoptTabular MNI-Perllib;
+  };
 
   iv = callPackage ../applications/science/biology/iv {
     neuron-version = neuron.version;
@@ -19744,6 +19774,10 @@ with pkgs;
   kallisto = callPackage ../applications/science/biology/kallisto { };
 
   muscle = callPackage ../applications/science/biology/muscle/default.nix { };
+
+  n3 = callPackage ../applications/science/biology/N3 {
+    inherit (perlPackages) perl GetoptTabular MNI-Perllib;
+  };
 
   neuron = callPackage ../applications/science/biology/neuron {
     python = null;
@@ -19757,7 +19791,17 @@ with pkgs;
 
   mrbayes = callPackage ../applications/science/biology/mrbayes { };
 
-  minc-tools = callPackage ../applications/science/biology/minc-tools { };
+  minc_tools = callPackage ../applications/science/biology/minc-tools {
+    inherit (perlPackages) TextFormat;
+  };
+
+  minc_widgets = callPackage ../applications/science/biology/minc-widgets {
+    inherit (perlPackages) GetoptTabular MNI-Perllib;
+  };
+
+  mni_autoreg = callPackage ../applications/science/biology/mni_autoreg {
+    inherit (perlPackages) GetoptTabular MNI-Perllib;
+  };
 
   ncbi_tools = callPackage ../applications/science/biology/ncbi-tools { };
 
@@ -19820,6 +19864,8 @@ with pkgs;
 
   cliquer = callPackage ../development/libraries/science/math/cliquer { };
 
+  flintqs = callPackage ../development/libraries/science/math/flintqs { };
+
   jags = callPackage ../applications/science/math/jags { };
 
 
@@ -19861,6 +19907,8 @@ with pkgs;
     docs = true;
   };
 
+  lcalc = callPackage ../development/libraries/science/math/lcalc { };
+
   lrcalc = callPackage ../applications/science/math/lrcalc { };
 
   lie = callPackage ../applications/science/math/LiE { };
@@ -19875,6 +19923,8 @@ with pkgs;
 
   nauty = callPackage ../applications/science/math/nauty {};
 
+  rubiks = callPackage ../development/libraries/science/math/rubiks { };
+
   petsc = callPackage ../development/libraries/science/math/petsc { };
 
   sage = callPackage ../applications/science/math/sage { };
@@ -19886,6 +19936,8 @@ with pkgs;
   superlu = callPackage ../development/libraries/science/math/superlu {};
 
   symmetrica = callPackage ../applications/science/math/symmetrica {};
+
+  sympow = callPackage ../development/libraries/science/math/sympow { };
 
   ipopt = callPackage ../development/libraries/science/math/ipopt { openblas = openblasCompat; };
 
@@ -20222,6 +20274,8 @@ with pkgs;
   gp2c = callPackage ../applications/science/math/pari/gp2c.nix { };
   pari-unstable = callPackage ../applications/science/math/pari/unstable.nix {};
 
+  palp = callPackage ../applications/science/math/palp { };
+
   ratpoints = callPackage ../applications/science/math/ratpoints {};
 
   calc = callPackage ../applications/science/math/calc { };
@@ -20233,6 +20287,8 @@ with pkgs;
   pspp = callPackage ../applications/science/math/pspp {
     inherit (gnome3) gtksourceview;
   };
+
+  pynac = callPackage ../applications/science/math/pynac { };
 
   singular = callPackage ../applications/science/math/singular { };
 
@@ -21298,6 +21354,8 @@ with pkgs;
   xml2rfc = callPackage ../tools/typesetting/xml2rfc { };
 
   mmark = callPackage ../tools/typesetting/mmark { };
+
+  wire-desktop = callPackage ../applications/networking/instant-messengers/wire-desktop { };
 
   # Unix tools
   unixtools = recurseIntoAttrs (callPackages ./unix-tools.nix { });
