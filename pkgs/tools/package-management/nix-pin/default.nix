@@ -17,9 +17,12 @@ let self = stdenv.mkDerivation rec {
     cp -r bin share "$out"
   '';
   passthru =
-    let api = import "${self}/share/nix/api.nix" { inherit pkgs; }; in
-    {
-      inherit (api) augmentedPkgs pins callPackage;
+    let
+      defaults = import "${self}/share/nix/defaults.nix";
+    in {
+      api = { pinConfig ? defaults.pinConfig }:
+        let impl = import "${self}/share/nix/api.nix" { inherit pkgs pinConfig; }; in
+        { inherit (impl) augmentedPkgs pins callPackage; };
       updateScript = ''
         set -e
         echo
