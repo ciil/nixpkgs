@@ -5533,6 +5533,8 @@ in {
 
   flask_assets = callPackage ../development/python-modules/flask-assets { };
 
+  flask-autoindex = callPackage ../development/python-modules/flask-autoindex { };
+
   flask-babel = callPackage ../development/python-modules/flask-babel { };
 
   flask_cache = buildPythonPackage rec {
@@ -7639,6 +7641,8 @@ in {
   };
 
   micawber = callPackage ../development/python-modules/micawber { };
+
+  milksnake = callPackage ../development/python-modules/milksnake { };
 
   minimock = buildPythonPackage rec {
     version = "1.2.8";
