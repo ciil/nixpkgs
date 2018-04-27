@@ -1,5 +1,21 @@
 /* Build configuration used to build glibc, Info files, and locale
-   information.  */
+   information.
+
+   Note that this derivation has multiple outputs and does not respect the
+   standard convention of putting the executables into the first output. The
+   first output is `lib` so that the libraries provided by this derivation
+   can be accessed directly, e.g.
+
+     "${pkgs.glibc}/lib/ld-linux-x86_64.so.2"
+
+   The executables are put into `bin` output and need to be referenced via
+   the `bin` attribute of the main package, e.g.
+
+     "${pkgs.glibc.bin}/bin/ldd".
+
+  The executables provided by glibc typically include `ldd`, `locale`, `iconv`
+  but the exact set depends on the library version and the configuration.
+*/
 
 { stdenv, lib
 , buildPlatform, hostPlatform
@@ -79,12 +95,7 @@ stdenv.mkDerivation ({
       ./allow-kernel-2.6.32.patch
     ]
     ++ lib.optional stdenv.isx86_64 ./fix-x64-abi.patch
-    ++ lib.optional stdenv.hostPlatform.isMusl
-      (fetchpatch {
-        name = "fix-with-musl.patch";
-        url = "https://sourceware.org/bugzilla/attachment.cgi?id=10151&action=diff&collapsed=&headers=1&format=raw";
-        sha256 = "18kk534k6da5bkbsy1ivbi77iin76lsna168mfcbwv4ik5vpziq2";
-      });
+    ++ lib.optional stdenv.hostPlatform.isMusl ./fix-rpc-types-musl-conflicts.patch;
 
   postPatch =
     ''
@@ -116,7 +127,7 @@ stdenv.mkDerivation ({
       (if cross ? float && cross.float == "soft" then "--without-fp" else "--with-fp")
     ] ++ lib.optionals (cross != null) [
       "--with-__thread"
-    ] ++ lib.optionals (cross == null && stdenv.isArm) [
+    ] ++ lib.optionals (cross == null && stdenv.isAarch32) [
       "--host=arm-linux-gnueabi"
       "--build=arm-linux-gnueabi"
 

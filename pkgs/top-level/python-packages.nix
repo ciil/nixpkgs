@@ -315,7 +315,7 @@ in {
     inherit (pkgs) arrow-cpp cmake pkgconfig;
   };
 
-  pyatspi = disabledIf (!isPy3k) (callPackage ../development/python-modules/pyatspi { });
+  pyatspi = callPackage ../development/python-modules/pyatspi { };
 
   pyaxmlparser = callPackage ../development/python-modules/pyaxmlparser { };
 
@@ -1190,6 +1190,8 @@ in {
 
   cysignals = callPackage ../development/python-modules/cysignals { };
 
+  cypari2 = callPackage ../development/python-modules/cypari2 { };
+
   dlib = buildPythonPackage rec {
     inherit (pkgs.dlib) name src nativeBuildInputs meta;
 
@@ -1199,6 +1201,8 @@ in {
   };
 
   datadog = callPackage ../development/python-modules/datadog {};
+
+  dataclasses = callPackage ../development/python-modules/dataclasses { };
 
   debian = callPackage ../development/python-modules/debian {};
 
@@ -2557,20 +2561,7 @@ in {
 
   fritzconnection = callPackage ../development/python-modules/fritzconnection { };
 
-  frozendict = buildPythonPackage rec {
-    name = "frozendict-0.5";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/f/frozendict/${name}.tar.gz";
-      sha256 = "0m4kg6hbadvf99if78nx01q7qnbyhdw3x4znl5dasgciyi54432n";
-    };
-
-    meta = {
-      homepage = https://github.com/slezica/python-frozendict;
-      description = "An immutable dictionary";
-      license = stdenv.lib.licenses.mit;
-    };
-  };
+  frozendict = callPackage ../development/python-modules/frozendict { };
 
   ftputil = callPackage ../development/python-modules/ftputil { };
 
@@ -5531,6 +5522,10 @@ in {
 
   flask_assets = callPackage ../development/python-modules/flask-assets { };
 
+  flask-autoindex = callPackage ../development/python-modules/flask-autoindex { };
+
+  flask-babel = callPackage ../development/python-modules/flask-babel { };
+
   flask_cache = buildPythonPackage rec {
     name = "Flask-Cache-0.13.1";
 
@@ -5579,6 +5574,8 @@ in {
   flask-restplus = callPackage ../development/python-modules/flask-restplus { };
 
   flask_script = callPackage ../development/python-modules/flask-script { };
+
+  flask-silk = callPackage ../development/python-modules/flask-silk { };
 
   flask_sqlalchemy = buildPythonPackage rec {
     name = "Flask-SQLAlchemy-${version}";
@@ -7634,6 +7631,8 @@ in {
 
   micawber = callPackage ../development/python-modules/micawber { };
 
+  milksnake = callPackage ../development/python-modules/milksnake { };
+
   minimock = buildPythonPackage rec {
     version = "1.2.8";
     name = "minimock-${version}";
@@ -8220,6 +8219,8 @@ in {
       maintainers = with maintainers; [ sjourdois ];
     };
   };
+
+  pytaglib = callPackage ../development/python-modules/pytaglib { };
 
   pyte = callPackage ../development/python-modules/pyte { };
 
@@ -13057,13 +13058,13 @@ in {
   };
 
   TheanoWithoutCuda = self.Theano.override {
-    cudaSupport = true;
-    cudnnSupport = true;
+    cudaSupport = false;
+    cudnnSupport = false;
   };
 
   TheanoWithCuda = self.Theano.override {
-    cudaSupport = false;
-    cudnnSupport = false;
+    cudaSupport = true;
+    cudnnSupport = true;
   };
 
   thespian = callPackage ../development/python-modules/thespian { };
@@ -16638,20 +16639,7 @@ EOF
     };
   };
 
-  canonicaljson = buildPythonPackage rec {
-    name = "canonicaljson-${version}";
-    version = "1.0.0";
-
-    src = pkgs.fetchgit {
-      url = "https://github.com/matrix-org/python-canonicaljson.git";
-      rev = "refs/tags/v${version}";
-      sha256 = "0r82zlip93y169ijkn8xpbp0yr22mf92pni6dw420vb53l27sprq";
-    };
-
-    propagatedBuildInputs = with self; [
-      frozendict simplejson
-    ];
-  };
+  canonicaljson = callPackage ../development/python-modules/canonicaljson { };
 
   daemonize = buildPythonPackage rec {
     name = "daemonize-${version}";
