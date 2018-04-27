@@ -8220,6 +8220,8 @@ in {
     };
   };
 
+  pytaglib = callPackage ../development/python-modules/pytaglib { };
+
   pyte = callPackage ../development/python-modules/pyte { };
 
   graphviz = buildPythonPackage rec {
@@ -13056,13 +13058,13 @@ in {
   };
 
   TheanoWithoutCuda = self.Theano.override {
-    cudaSupport = true;
-    cudnnSupport = true;
+    cudaSupport = false;
+    cudnnSupport = false;
   };
 
   TheanoWithCuda = self.Theano.override {
-    cudaSupport = false;
-    cudnnSupport = false;
+    cudaSupport = true;
+    cudnnSupport = true;
   };
 
   thespian = callPackage ../development/python-modules/thespian { };

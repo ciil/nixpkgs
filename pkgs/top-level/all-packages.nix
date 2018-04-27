@@ -4560,6 +4560,8 @@ with pkgs;
 
   rarcrack = callPackage ../tools/security/rarcrack { };
 
+  rarian = callPackage ../development/libraries/rarian { };
+
   ratools = callPackage ../tools/networking/ratools { };
 
   rawdog = callPackage ../applications/networking/feedreaders/rawdog { };
@@ -5105,9 +5107,7 @@ with pkgs;
 
   ted = callPackage ../tools/typesetting/ted { };
 
-  teamviewer = callPackage ../applications/networking/remote/teamviewer {
-    stdenv = stdenv_32bit;
-  };
+  teamviewer = libsForQt5.callPackage ../applications/networking/remote/teamviewer { };
 
   telnet = callPackage ../tools/networking/telnet { };
 
@@ -6469,12 +6469,12 @@ with pkgs;
 
   openjdk = openjdk8;
 
-  jdk8 = if stdenv.isArm || stdenv.isAarch64 then oraclejdk8 else openjdk8 // { outputs = [ "out" ]; };
-  jre8 = if stdenv.isArm || stdenv.isAarch64 then oraclejre8 else lib.setName "openjre-${lib.getVersion pkgs.openjdk8.jre}"
+  jdk8 = if stdenv.isAarch32 || stdenv.isAarch64 then oraclejdk8 else openjdk8 // { outputs = [ "out" ]; };
+  jre8 = if stdenv.isAarch32 || stdenv.isAarch64 then oraclejre8 else lib.setName "openjre-${lib.getVersion pkgs.openjdk8.jre}"
     (lib.addMetaAttrs { outputsToInstall = [ "jre" ]; }
       (openjdk8.jre // { outputs = [ "jre" ]; }));
   jre8_headless =
-    if stdenv.isArm || stdenv.isAarch64 then
+    if stdenv.isAarch32 || stdenv.isAarch64 then
       oraclejre8
     else if stdenv.isDarwin then
       jre8
@@ -6483,12 +6483,12 @@ with pkgs;
         (lib.addMetaAttrs { outputsToInstall = [ "jre" ]; }
           ((openjdk8.override { minimal = true; }).jre // { outputs = [ "jre" ]; }));
 
-  jdk10 = if stdenv.isArm || stdenv.isAarch64 then oraclejdk10 else openjdk10 // { outputs = [ "out" ]; };
-  jre10 = if stdenv.isArm || stdenv.isAarch64 then oraclejre10 else lib.setName "openjre-${lib.getVersion pkgs.openjdk10.jre}"
+  jdk10 = if stdenv.isAarch32 || stdenv.isAarch64 then oraclejdk10 else openjdk10 // { outputs = [ "out" ]; };
+  jre10 = if stdenv.isAarch32 || stdenv.isAarch64 then oraclejre10 else lib.setName "openjre-${lib.getVersion pkgs.openjdk10.jre}"
     (lib.addMetaAttrs { outputsToInstall = [ "jre" ]; }
       (openjdk10.jre // { outputs = [ "jre" ]; }));
   jre10_headless =
-    if stdenv.isArm || stdenv.isAarch64 then
+    if stdenv.isAarch32 || stdenv.isAarch64 then
       oraclejre10
     else if stdenv.isDarwin then
       jre10
@@ -7592,7 +7592,9 @@ with pkgs;
   buildbot-ui = buildbot.withPlugins (with self.buildbot-plugins; [ www ]);
   buildbot-full = buildbot.withPlugins (with self.buildbot-plugins; [ www console-view waterfall-view grid-view wsgi-dashboards ]);
 
-  buildkite-agent = callPackage ../development/tools/continuous-integration/buildkite-agent { };
+  buildkite-agent = buildkite-agent2;
+  buildkite-agent2 = callPackage ../development/tools/continuous-integration/buildkite-agent/2.x.nix { };
+  buildkite-agent3 = callPackage ../development/tools/continuous-integration/buildkite-agent/3.x.nix { };
 
   byacc = callPackage ../development/tools/parsing/byacc { };
 
@@ -9243,7 +9245,7 @@ with pkgs;
 
   cairo = callPackage ../development/libraries/cairo {
     glSupport = config.cairo.gl or (stdenv.isLinux &&
-      !stdenv.isArm && !stdenv.isMips);
+      !stdenv.isAarch32 && !stdenv.isMips);
   };
 
 
@@ -14349,6 +14351,8 @@ with pkgs;
 
   input-fonts = callPackage ../data/fonts/input-fonts { };
 
+  inziu-iosevka = callPackage ../data/fonts/inziu-iosevka { };
+
   iosevka = callPackage ../data/fonts/iosevka {
     nodejs = nodejs-8_x;
   };
@@ -14505,6 +14509,8 @@ with pkgs;
   proggyfonts = callPackage ../data/fonts/proggyfonts { };
 
   sampradaya = callPackage ../data/fonts/sampradaya { };
+
+  sarasa-gothic = callPackage ../data/fonts/sarasa-gothic { };
 
   scowl = callPackage ../data/misc/scowl { };
 
@@ -18788,6 +18794,8 @@ with pkgs;
 
   yarp = callPackage ../applications/science/robotics/yarp {};
 
+  yarssr = callPackage ../applications/misc/yarssr { };
+
   yate = callPackage ../applications/misc/yate { };
 
   yed = callPackage ../applications/graphics/yed {};
@@ -19006,6 +19014,8 @@ with pkgs;
   eduke32 = callPackage ../games/eduke32 { };
 
   egoboo = callPackage ../games/egoboo { };
+
+  EmptyEpsilon = callPackage ../games/empty-epsilon { };
 
   endless-sky = callPackage ../games/endless-sky { };
 

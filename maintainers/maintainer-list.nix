@@ -1241,7 +1241,7 @@
     name = "Mabry Cervin";
   };
   eqyiel = {
-    email = "r@rkm.id.au";
+    email = "ruben@maher.fyi";
     github = "eqyiel";
     name = "Ruben Maher";
   };
@@ -2520,6 +2520,11 @@
     email = "fr.st-amour@gmail.com";
     github = "fstamour";
     name = "Francis St-Amour";
+  };
+  mrkkrp = {
+    email = "markkarpov92@gmail.com";
+    github = "mrkkrp";
+    name = "Mark Karpov";
   };
   mrVanDalo = {
     email = "contact@ingolf-wagner.de";
