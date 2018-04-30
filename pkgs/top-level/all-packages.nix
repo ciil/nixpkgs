@@ -80,7 +80,7 @@ with pkgs;
     ../build-support/setup-hooks/autoreconf.sh;
 
   autoPatchelfHook = makeSetupHook
-    { deps = [ file ]; }
+    { name = "auto-patchelf-hook"; deps = [ file ]; }
     ../build-support/setup-hooks/auto-patchelf.sh;
 
   ensureNewerSourcesHook = { year }: makeSetupHook {}
@@ -688,6 +688,8 @@ with pkgs;
     pkgs_i686 = pkgsi686Linux;
   };
 
+  abootimg = callPackage ../development/mobile/abootimg {};
+
   adbfs-rootless = callPackage ../development/mobile/adbfs-rootless {
     adb = androidenv.platformTools;
   };
@@ -837,6 +839,8 @@ with pkgs;
   blitz = callPackage ../development/libraries/blitz {
     boost = boost160;
   };
+
+  blobfuse = callPackage ../tools/filesystems/blobfuse { };
 
   blockdiag = pythonPackages.blockdiag;
 
@@ -1321,6 +1325,8 @@ with pkgs;
   meson = callPackage ../development/tools/build-managers/meson { };
 
   metabase = callPackage ../servers/metabase { };
+
+  monetdb = callPackage ../servers/sql/monetdb { };
 
   mp3blaster = callPackage ../applications/audio/mp3blaster { };
 
@@ -3873,9 +3879,7 @@ with pkgs;
 
   netcat = netcat-openbsd;
 
-  netcat-gnu = callPackage ../tools/networking/netcat-gnu { };
-
-  netcat-openbsd = callPackage ../tools/networking/netcat-openbsd { };
+  netcat-gnu = callPackage ../tools/networking/netcat { };
 
   nethogs = callPackage ../tools/networking/nethogs { };
 
@@ -5214,7 +5218,7 @@ with pkgs;
 
   torsocks = callPackage ../tools/security/tor/torsocks.nix { };
 
-  toxvpn = callPackage ../tools/networking/toxvpn { };
+  toxvpn = callPackage ../tools/networking/toxvpn { libtoxcore = libtoxcore_0_1; };
 
   tpmmanager = callPackage ../applications/misc/tpmmanager { };
 
@@ -5268,6 +5272,10 @@ with pkgs;
   turses = callPackage ../applications/networking/instant-messengers/turses { };
 
   oysttyer = callPackage ../applications/networking/instant-messengers/oysttyer { };
+
+  twilight = callPackage ../tools/graphics/twilight/default.nix {
+    libX11 = xorg.libX11;
+  };
 
   twitterBootstrap = callPackage ../development/web/twitter-bootstrap {};
   twitterBootstrap3 = callPackage ../development/web/twitter-bootstrap/v3.nix {};
@@ -6696,12 +6704,12 @@ with pkgs;
 
   mlton = callPackage ../development/compilers/mlton { };
 
-  mono = mono40;
+  mono = mono58;
 
-  mono40 = callPackage ../development/compilers/mono/4.0.nix {
+  mono40 = lowPrio (callPackage ../development/compilers/mono/4.0.nix {
     inherit (darwin) libobjc;
     inherit (darwin.apple_sdk.frameworks) Foundation;
-  };
+  });
 
   mono44 = lowPrio (callPackage ../development/compilers/mono/4.4.nix {
     inherit (darwin) libobjc;
@@ -6728,10 +6736,10 @@ with pkgs;
     inherit (darwin.apple_sdk.frameworks) Foundation;
   });
 
-  mono58 = lowPrio (callPackage ../development/compilers/mono/5.8.nix {
+  mono58 = callPackage ../development/compilers/mono/5.8.nix {
     inherit (darwin) libobjc;
     inherit (darwin.apple_sdk.frameworks) Foundation;
-  });
+  };
 
   monoDLLFixer = callPackage ../build-support/mono-dll-fixer { };
 
@@ -8939,6 +8947,10 @@ with pkgs;
     gtk = self.gtk2;
   };
 
+  gegl_0_4 = callPackage ../development/libraries/gegl/4.0.nix {
+    gtk = self.gtk2;
+  };
+
   geoclue = callPackage ../development/libraries/geoclue {};
 
   geoclue2 = callPackage ../development/libraries/geoclue/2.0.nix {};
@@ -10348,9 +10360,12 @@ with pkgs;
 
   libtorrentRasterbar = callPackage ../development/libraries/libtorrent-rasterbar { };
 
+  # this is still the new version of the old API
   libtoxcore-new = callPackage ../development/libraries/libtoxcore/new-api.nix { };
 
-  libtoxcore = callPackage ../development/libraries/libtoxcore { };
+  inherit (callPackages ../development/libraries/libtoxcore {})
+    libtoxcore_0_1 libtoxcore_0_2;
+  libtoxcore = libtoxcore_0_2;
 
   libtap = callPackage ../development/libraries/libtap { };
 
@@ -12903,6 +12918,7 @@ with pkgs;
   axis2 = callPackage ../servers/http/tomcat/axis2 { };
 
   unifi = callPackage ../servers/unifi { };
+  unifiLTS = callPackage ../servers/unifi { useLTS=true; };
 
   virtuoso6 = callPackage ../servers/sql/virtuoso/6.x.nix { };
 
@@ -12952,6 +12968,8 @@ with pkgs;
   yaws = callPackage ../servers/http/yaws {
     erlang = erlangR18;
   };
+
+  youtrack = callPackage ../servers/jetbrains/youtrack.nix { };
 
   zabbix = recurseIntoAttrs (callPackages ../servers/monitoring/zabbix {});
 
@@ -13308,11 +13326,19 @@ with pkgs;
       ];
   };
 
-  linux_copperhead = callPackage ../os-specific/linux/kernel/linux-copperhead-hardened.nix {
+  linux_copperhead_lts = callPackage ../os-specific/linux/kernel/linux-copperhead-lts.nix {
     kernelPatches = with kernelPatches; [
-      kernelPatches.bridge_stp_helper
-      kernelPatches.modinst_arg_list_too_long
-      kernelPatches.tag_hardened
+      bridge_stp_helper
+      modinst_arg_list_too_long
+      tag_hardened
+    ];
+  };
+
+  linux_copperhead_stable = callPackage ../os-specific/linux/kernel/linux-copperhead-stable.nix {
+    kernelPatches = with kernelPatches; [
+      bridge_stp_helper
+      modinst_arg_list_too_long
+      tag_hardened
     ];
   };
 
@@ -13648,9 +13674,8 @@ with pkgs;
 
   linuxPackages_latest_xen_dom0_hardened = recurseIntoAttrs (hardenedLinuxPackagesFor (pkgs.linux_latest.override { features.xen_dom0=true; }));
 
-  linuxPackages_copperhead_hardened = recurseIntoAttrs (hardenedLinuxPackagesFor pkgs.linux_copperhead);
-  linux_copperhead_hardened = linuxPackages_copperhead_hardened.kernel;
-  linux_hardened_copperhead = linux_copperhead_hardened; # alias for backward compatibility
+  linuxPackages_copperhead_lts = recurseIntoAttrs (hardenedLinuxPackagesFor pkgs.linux_copperhead_lts);
+  linuxPackages_copperhead_stable = recurseIntoAttrs (hardenedLinuxPackagesFor pkgs.linux_copperhead_stable);
 
   # Samus kernels
   linuxPackages_samus_4_12 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_samus_4_12);
@@ -14351,8 +14376,6 @@ with pkgs;
 
   input-fonts = callPackage ../data/fonts/input-fonts { };
 
-  inziu-iosevka = callPackage ../data/fonts/inziu-iosevka { };
-
   iosevka = callPackage ../data/fonts/iosevka {
     nodejs = nodejs-8_x;
   };
@@ -14671,28 +14694,6 @@ with pkgs;
 
   aacgain = callPackage ../applications/audio/aacgain { };
 
-  aangifte2006 = callPackage_i686 ../applications/taxes/aangifte-2006 { };
-
-  aangifte2007 = callPackage_i686 ../applications/taxes/aangifte-2007 { };
-
-  aangifte2008 = callPackage_i686 ../applications/taxes/aangifte-2008 { };
-
-  aangifte2009 = callPackage_i686 ../applications/taxes/aangifte-2009 { };
-
-  aangifte2010 = callPackage_i686 ../applications/taxes/aangifte-2010 { };
-
-  aangifte2011 = callPackage_i686 ../applications/taxes/aangifte-2011 { };
-
-  aangifte2012 = callPackage_i686 ../applications/taxes/aangifte-2012 { };
-
-  aangifte2013 = callPackage_i686 ../applications/taxes/aangifte-2013 { };
-
-  aangifte2014 = callPackage_i686 ../applications/taxes/aangifte-2014 { };
-
-  aangifte2013wa = callPackage_i686 ../applications/taxes/aangifte-2013-wa { };
-
-  aangifte2014wa = callPackage_i686 ../applications/taxes/aangifte-2014-wa { };
-
   abcde = callPackage ../applications/audio/abcde {
     inherit (perlPackages) DigestSHA MusicBrainz MusicBrainzDiscID;
     inherit (pythonPackages) eyeD3;
@@ -14780,6 +14781,8 @@ with pkgs;
   arora = callPackage ../applications/networking/browsers/arora { };
 
   artha = callPackage ../applications/misc/artha { };
+
+  atlassian-cli = callPackage ../applications/office/atlassian-cli { };
 
   atomEnv = callPackage ../applications/editors/atom/env.nix {
     gconf = gnome2.GConf;
@@ -15910,16 +15913,14 @@ with pkgs;
 
   ghq = gitAndTools.ghq;
 
-  gimp_2_8 = callPackage ../applications/graphics/gimp/2.8.nix {
-    webkit = null;
+  gimp = callPackage ../applications/graphics/gimp {
+    gegl = gegl_0_4;
     lcms = lcms2;
+    inherit (gnome3) gexiv2;
     inherit (darwin.apple_sdk.frameworks) AppKit Cocoa;
   };
 
-  gimp = gimp_2_8;
-
   gimp-with-plugins = callPackage ../applications/graphics/gimp/wrapper.nix {
-    gimp = gimp_2_8;
     plugins = null; # All packaged plugins enabled, if not explicit plugin list supplied
   };
 
@@ -16027,6 +16028,8 @@ with pkgs;
   gnumeric = callPackage ../applications/office/gnumeric { };
 
   gnunet = callPackage ../applications/networking/p2p/gnunet { };
+
+  gnunet_git = lowPrio (callPackage ../applications/networking/p2p/gnunet/git.nix { });
 
   gnunet_svn = lowPrio (callPackage ../applications/networking/p2p/gnunet/svn.nix { });
 
@@ -17082,6 +17085,8 @@ with pkgs;
 
   mypaint = callPackage ../applications/graphics/mypaint { };
 
+  mypaint-brushes = callPackage ../development/libraries/mypaint-brushes { };
+
   mythtv = libsForQt5.callPackage ../applications/video/mythtv { };
 
   micro = callPackage ../applications/editors/micro { };
@@ -17426,8 +17431,6 @@ with pkgs;
     inherit (darwin.stubs) rez setfile;
   };
 
-  qemu-riscv = lowPrio (callPackage ../applications/virtualization/qemu/riscv.nix {});
-
   qgis = callPackage ../applications/gis/qgis {
     inherit (darwin.apple_sdk.frameworks) IOKit ApplicationServices;
   };
@@ -17467,7 +17470,7 @@ with pkgs;
 
   qtbitcointrader = callPackage ../applications/misc/qtbitcointrader { };
 
-  qtox = libsForQt5.callPackage ../applications/networking/instant-messengers/qtox { ffmpeg = ffmpeg_2; };
+  qtox = libsForQt5.callPackage ../applications/networking/instant-messengers/qtox { };
 
   qtpass = libsForQt5.callPackage ../applications/misc/qtpass { };
 
@@ -18224,7 +18227,7 @@ with pkgs;
 
   vimNox = lowPrio (vim_configurable.override { source = "vim-nox"; });
 
-  qpdfview = callPackage ../applications/misc/qpdfview {};
+  qpdfview = libsForQt5.callPackage ../applications/misc/qpdfview {};
 
   qtile = callPackage ../applications/window-managers/qtile {
     inherit (xorg) libxcb;
@@ -19697,6 +19700,8 @@ with pkgs;
 
   numix-sx-gtk-theme = callPackage ../misc/themes/numix-sx { };
 
+  onestepback = callPackage ../misc/themes/onestepback { };
+
   theme-vertex = callPackage ../misc/themes/vertex { };
 
   rox-filer = callPackage ../desktops/rox/rox-filer {
@@ -20468,6 +20473,8 @@ with pkgs;
 
   cups-kyocera = callPackage ../misc/cups/drivers/kyocera {};
 
+  cups-kyodialog3 = callPackage ../misc/cups/drivers/kyodialog3 {};
+
   cups-dymo = callPackage ../misc/cups/drivers/dymo {};
 
   cups-toshiba-estudio = callPackage ../misc/cups/drivers/estudio {};
@@ -20964,6 +20971,8 @@ with pkgs;
   terraform = terraform_0_11;
   terraform-full = terraform_0_11-full;
 
+  terraform-provider-ibm = callPackage ../applications/networking/cluster/terraform-provider-ibm {};
+
   terraform-inventory = callPackage ../applications/networking/cluster/terraform-inventory {};
 
   terraform-provider-nixos = callPackage ../applications/networking/cluster/terraform-provider-nixos {};
@@ -21379,5 +21388,5 @@ with pkgs;
                       mount wall hostname more sysctl;
 
   inherit (recurseIntoAttrs (callPackages ../os-specific/bsd { }))
-          netbsd openbsd;
+          netbsd;
 }
