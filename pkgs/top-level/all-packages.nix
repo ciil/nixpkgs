@@ -288,7 +288,7 @@ with pkgs;
     ... # For hash agility
   }@args: fetchzip ({
     inherit name;
-    url = "https://gitlab.com/${owner}/${repo}/-/archive/${rev}/${repo}-${rev}.tar.gz";
+    url = "https://gitlab.com/api/v4/projects/${owner}%2F${repo}/repository/archive.tar.gz?sha=${rev}";
     meta.homepage = "https://gitlab.com/${owner}/${repo}/";
   } // removeAttrs args [ "owner" "repo" "rev" ]) // { inherit rev; };
 
@@ -1358,6 +1358,8 @@ with pkgs;
 
   ps_mem = callPackage ../tools/system/ps_mem { };
 
+  psstop = callPackage ../tools/system/psstop { };
+
   parallel-rust = callPackage ../tools/misc/parallel-rust { };
 
   socklog = callPackage ../tools/system/socklog { };
@@ -2105,6 +2107,8 @@ with pkgs;
 
   mcrcon = callPackage ../tools/networking/mcrcon {};
 
+  tealdeer = callPackage ../tools/misc/tealdeer/default.nix { };
+
   uudeview = callPackage ../tools/misc/uudeview { };
 
   uutils-coreutils = callPackage ../tools/misc/uutils-coreutils {
@@ -2776,8 +2780,6 @@ with pkgs;
 
   gvolicon = callPackage ../tools/audio/gvolicon {};
 
-  gwyddion = callPackage ../applications/science/chemistry/gwyddion {};
-
   gzip = callPackage ../tools/compression/gzip { };
 
   gzrt = callPackage ../tools/compression/gzrt { };
@@ -3119,8 +3121,6 @@ with pkgs;
   jl = haskellPackages.callPackage ../development/tools/jl { };
 
   jmespath = callPackage ../development/tools/jmespath { };
-
-  jmol = callPackage ../applications/science/chemistry/jmol { };
 
   jmtpfs = callPackage ../tools/filesystems/jmtpfs { };
 
@@ -3750,8 +3750,6 @@ with pkgs;
 
   modsecurity_standalone = callPackage ../tools/security/modsecurity { };
 
-  molden = callPackage ../applications/science/chemistry/molden { };
-
   molly-guard = callPackage ../os-specific/linux/molly-guard { };
 
   moneyplex = callPackage ../applications/office/moneyplex { };
@@ -4283,6 +4281,8 @@ with pkgs;
   fmodex = callPackage ../games/zandronum/fmod.nix { };
 
   pdfmod = callPackage ../applications/misc/pdfmod { };
+
+  pdf-quench = callPackage ../applications/misc/pdf-quench { };
 
   jbig2enc = callPackage ../tools/graphics/jbig2enc { };
 
@@ -5605,6 +5605,8 @@ with pkgs;
   varnishPackages = varnish5Packages;
   varnish = varnishPackages.varnish;
 
+  hitch = callPackage ../servers/hitch { };
+
   venus = callPackage ../tools/misc/venus {
     python = python27;
   };
@@ -5729,6 +5731,8 @@ with pkgs;
   libxfs = xfsprogs.dev;
 
   xml2 = callPackage ../tools/text/xml/xml2 { };
+
+  xmlformat = callPackage ../tools/text/xml/xmlformat { };
 
   xmlroff = callPackage ../tools/typesetting/xmlroff { };
 
@@ -7156,8 +7160,6 @@ with pkgs;
   }));
 
   ocropus = callPackage ../applications/misc/ocropus { };
-
-  octopus = callPackage ../applications/science/chemistry/octopus { openblas=openblasCompat; };
 
   inherit (callPackages ../development/interpreters/perl {}) perl perl522 perl524 perl526;
 
@@ -12441,6 +12443,8 @@ with pkgs;
 
   lwan = callPackage ../servers/http/lwan { };
 
+  labelImg = callPackage ../applications/science/machine-learning/labelimg { };
+
   mailman = callPackage ../servers/mail/mailman { };
 
   mattermost = callPackage ../servers/mattermost { };
@@ -12917,8 +12921,11 @@ with pkgs;
 
   axis2 = callPackage ../servers/http/tomcat/axis2 { };
 
-  unifi = callPackage ../servers/unifi { };
-  unifiLTS = callPackage ../servers/unifi { useLTS=true; };
+  inherit (callPackages ../servers/unifi { })
+    unifiLTS
+    unifiStable
+    unifiTesting;
+  unifi = unifiStable;
 
   virtuoso6 = callPackage ../servers/sql/virtuoso/6.x.nix { };
 
@@ -14847,10 +14854,6 @@ with pkgs;
 
   avidemux = libsForQt5.callPackage ../applications/video/avidemux { };
 
-  avogadro = callPackage ../applications/science/chemistry/avogadro {
-    eigen = eigen2;
-  };
-
   avrdudess = callPackage ../applications/misc/avrdudess { };
 
   avxsynth = callPackage ../applications/video/avxsynth {
@@ -15957,11 +15960,7 @@ with pkgs;
   gmrun = callPackage ../applications/misc/gmrun {};
 
   gnucash = callPackage ../applications/office/gnucash {
-    inherit (gnome2) libgnomeui libgtkhtml gtkhtml libbonoboui libgnomeprint libglade libart_lgpl;
-    gconf = gnome2.GConf;
-    guile = guile_1_8;
-    slibGuile = slibGuile.override { scheme = guile_1_8; };
-    goffice = goffice_0_8;
+    inherit (gnome3) dconf;
   };
 
   gnucash26 = lowPrio (callPackage ../applications/office/gnucash/2.6.nix {
@@ -17410,8 +17409,6 @@ with pkgs;
   puredata-with-plugins = plugins: callPackage ../applications/audio/puredata/wrapper.nix { inherit plugins; };
 
   puremapping = callPackage ../applications/audio/pd-plugins/puremapping { };
-
-  pymol = callPackage ../applications/science/chemistry/pymol { };
 
   pybitmessage = callPackage ../applications/networking/instant-messengers/pybitmessage { };
 
@@ -19458,6 +19455,8 @@ with pkgs;
 
   tremulous = callPackage ../games/tremulous { };
 
+  tuxpaint = callPackage ../games/tuxpaint { };
+
   speed_dreams = callPackage ../games/speed-dreams {
     # Torcs wants to make shared libraries linked with plib libraries (it provides static).
     # i686 is the only platform I know than can do that linking without plib built with -fPIC
@@ -19741,6 +19740,22 @@ with pkgs;
 
   ### SCIENCE
 
+  ### SCIENCE/CHEMISTY
+
+  avogadro = callPackage ../applications/science/chemistry/avogadro {
+    eigen = eigen2;
+  };
+
+  gwyddion = callPackage ../applications/science/chemistry/gwyddion {};
+
+  jmol = callPackage ../applications/science/chemistry/jmol { };
+
+  molden = callPackage ../applications/science/chemistry/molden { };
+
+  octopus = callPackage ../applications/science/chemistry/octopus { openblas=openblasCompat; };
+
+  pymol = callPackage ../applications/science/chemistry/pymol { };
+
   ### SCIENCE/GEOMETRY
 
   drgeo = callPackage ../applications/science/geometry/drgeo {
@@ -19764,6 +19779,10 @@ with pkgs;
   bedtools = callPackage ../applications/science/biology/bedtools/default.nix { };
 
   bcftools = callPackage ../applications/science/biology/bcftools { };
+
+  conglomerate = callPackage ../applications/science/biology/conglomerate {
+    inherit (perlPackages) GetoptTabular MNI-Perllib;
+  };
 
   dcm2niix = callPackage ../applications/science/biology/dcm2niix { };
 
@@ -20639,7 +20658,7 @@ with pkgs;
 
   hplip_3_16_11 = callPackage ../misc/drivers/hplip/3.16.11.nix { };
 
-  hplipWithPlugin_3_16_11 = hplip.override { withPlugin = true; };
+  hplipWithPlugin_3_16_11 = hplip_3_16_11.override { withPlugin = true; };
 
   hyperfine = callPackage ../tools/misc/hyperfine { };
 

@@ -20,10 +20,21 @@ has the following highlights: </para>
 <itemizedlist>
   <listitem>
     <para>
-      TODO
+      User channels are now in the default <literal>NIX_PATH</literal>,
+      allowing users to use their personal <command>nix-channel</command>
+      defined channels in <command>nix-build</command> and
+      <command>nix-shell</command> commands, as well as in imports like
+      <code>import &lt;mychannel&gt;</code>.
     </para>
+    <para>For example</para>
+    <programlisting>
+$ nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgsunstable
+$ nix-channel --update
+$ nix-build '&lt;nixpkgsunstable&gt;' -A gitFull
+$ nix run -f '&lt;nixpkgsunstable&gt;' gitFull
+$ nix-instantiate -E '(import &lt;nixpkgsunstable&gt; {}).gitFull'
+</programlisting>
   </listitem>
-
 </itemizedlist>
 
 </section>
@@ -131,6 +142,11 @@ following incompatible changes:</para>
     <para>
       <literal>lib.traceCallXml</literal> has been deprecated. Please complain
       if you use the function regularly.
+    </para>
+    <para>
+      The attribute <literal>lib.nixpkgsVersion</literal> has been deprecated in favor of
+      <literal>lib.version</literal>. Please refer to the discussion in
+      <link xlink:href="https://github.com/NixOS/nixpkgs/pull/39416#discussion_r183845745">NixOS/nixpkgs#39416</link> for further reference.
     </para>
   </listitem>
 </itemizedlist>

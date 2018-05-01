@@ -271,6 +271,8 @@ in {
 
   intelhex = callPackage ../development/python-modules/intelhex { };
 
+  jira = callPackage ../development/python-modules/jira { };
+
   lmtpd = callPackage ../development/python-modules/lmtpd { };
 
   logster = callPackage ../development/python-modules/logster { };
@@ -6412,21 +6414,7 @@ in {
 
   httpbin = callPackage ../development/python-modules/httpbin { };
 
-  httplib2 = buildPythonPackage rec {
-    name = "httplib2-0.9.2";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/h/httplib2/${name}.tar.gz";
-      sha256 = "126rsryvw9vhbf3qmsfw9lf4l4xm2srmgs439lgma4cpag4s3ay3";
-    };
-
-    meta = {
-      homepage = http://code.google.com/p/httplib2;
-      description = "A comprehensive HTTP client library";
-      license = licenses.mit;
-      maintainers = with maintainers; [ garbas ];
-    };
-  };
+  httplib2 = callPackage ../development/python-modules/httplib2 { };
 
   hvac = callPackage ../development/python-modules/hvac { };
 
@@ -17861,15 +17849,7 @@ EOF
     };
   };
 
-  rocket-errbot = buildPythonPackage rec {
-    name = "rocket-errbot-${version}";
-    version = "1.2.5";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/r/rocket-errbot/${name}.tar.gz";
-      sha256 = "181y1wqjvlry5xdzbliajvrxvswzh3myh795jnj1pm92r5grqzda";
-    };
-  };
+  rocket-errbot = callPackage ../development/python-modules/rocket-errbot {  };
 
   Yapsy = buildPythonPackage rec {
     name = "Yapsy-${version}";
