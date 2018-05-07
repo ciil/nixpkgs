@@ -1,5 +1,5 @@
 { stdenv, hostPlatform, fetchcvs, lib, groff, mandoc, zlib, coreutils
-, yacc, flex, libressl, bash }:
+, yacc, flex, libressl, bash, less, writeText }:
 
 let
   fetchNetBSD = path: version: sha256: fetchcvs {
@@ -10,10 +10,11 @@ let
   };
 
   netBSDDerivation = attrs: stdenv.mkDerivation ((rec {
-    name = "${attrs.pname or (baseNameOf attrs.path)}-netbsd-${attrs.version}";
+    name = "bsd-${attrs.pname or (baseNameOf attrs.path)}-netbsd-${attrs.version}";
     src = attrs.src or fetchNetBSD attrs.path attrs.version attrs.sha256;
 
     extraPaths = [ ];
+    setOutputFlags = false;
 
     nativeBuildInputs = [ makeMinimal mandoc groff install stat
                           yacc flex tsort lorder ];
@@ -25,25 +26,34 @@ let
     DESTDIR = "$(out)";
     TOOLDIR = "$(out)";
     USETOOLS = "never";
-    NOCLANGERROR="yes";
-    NOGCCERROR="yes";
+    NOCLANGERROR = "yes";
+    NOGCCERROR = "yes";
     LEX = "flex";
+    MKUNPRIVED = "yes";
+    HOST_SH = "${bash}/bin/sh";
+    OBJCOPY = if stdenv.isDarwin then "true" else "objcopy";
+    MACHINE_ARCH = hostPlatform.parsed.cpu.name;
+    MACHINE_CPU = hostPlatform.parsed.cpu.name;
+
+    INSTALL_FILE = "install -U -c";
+    INSTALL_DIR = "xinstall -U -d";
+    INSTALL_LINK = "install -U -l h";
+    INSTALL_SYMLINK = "install -U -l s";
 
     # libs will be provided by cc-wrapper
-    LIBCRT0="";
-    LIBCRTI="";
-    LIBCRTEND="";
-    LIBCRTBEGIN="";
-    LIBC="";
-    LIBUTIL="";
+    LIBCRT0 = "";
+    LIBCRTI = "";
+    LIBCRTEND = "";
+    LIBCRTBEGIN = "";
+    LIBC = "";
+    LIBUTIL = "";
     LIBSSL = "";
     LIBCRYPTO = "";
     LIBCRYPT = "";
     LIBCURSES = "";
     LIBTERMINFO = "";
     LIBM = "";
-    "LIBDO.terminfo" = "_external";
-    "LIBDO.curses" = "_external";
+    LIBL = "";
     _GCC_CRTBEGIN = "";
     _GCC_CRTBEGINS = "";
     _GCC_CRTEND = "";
@@ -53,10 +63,14 @@ let
     _GCC_CRTDIR = "";
     _GCC_CRTN = "";
 
+    "LIBDO.terminfo" = "_external";
+    "LIBDO.curses" = "_external";
+
     # all dirs will be prefixed with DESTDIR
     BINDIR = "/bin";
     LIBDIR = "/lib";
     SHLIBDIR = "/lib";
+    INCSDIR = "/include";
     MANDIR = "/share/man";
     INFODIR = "/share/info";
     DOCDIR = "/share/doc";
@@ -64,22 +78,12 @@ let
     X11BINDIR = "/bin";
     X11USRLIBDIR = "/lib";
     X11MANDIR = "/share/man";
-    SHLINKDIR = "/usr/libexec";
-
-    HOST_SH = "${bash}/bin/sh";
-
-    SHLIB_WARNTEXTREL = "no";
-    SHLIB_MKMAP = "no";
-    PRESERVE = "-p";
-    OBJCOPY = if stdenv.isDarwin then "true" else "objcopy";
-
-    MACHINE_ARCH = hostPlatform.parsed.cpu.name;
-    MACHINE_CPU = hostPlatform.parsed.cpu.name;
 
     # NetBSD makefiles should be able to detect this
     # but without they end up using gcc on Darwin stdenv
     preConfigure = ''
       export HAVE_${if stdenv.cc.isGNU then "GCC" else "LLVM"}=${lib.head (lib.splitString "." (lib.getVersion stdenv.cc.cc))}
+
       # Parallel building. Needs the space.
       export makeFlags+=" -j $NIX_BUILD_CORES"
     '';
@@ -90,6 +94,7 @@ let
       sourceRoot=$PWD/$sourceRoot
       export NETBSDSRCDIR=$sourceRoot
       export BSDSRCDIR=$NETBSDSRCDIR
+      export _SRC_TOP_=$NETBSDSRCDIR
       chmod -R u+w $sourceRoot
       for path in $extraPaths; do
         cd $path
@@ -104,19 +109,7 @@ let
       fi
     '';
 
-    # Need to create directories for xinstall to work. Unused ones
-    # will be removed in the postInstall.
-    preInstall = ''
-      mkdir -p $out$BINDIR $out$LIBDIR $out$INFODIR \
-               $out$DOCDIR $out$LOCALEDIR
-      for i in 1 2 3 4 5 6 7 8 9; do
-        mkdir -p $out$MANDIR/man$i $out$MANDIR/html$i \
-                 $out$DOCDIR/reference/ref$i
-      done
-      mkdir -p $out/usr/include
-    '';
-
-    postInstall = ''
+    preFixup = ''
       # Remove lingering /usr references
       if [ -d $out/usr ]; then
         cd $out/usr
@@ -134,7 +127,9 @@ let
     };
   }) // attrs);
 
-  # BOOTSTRAPPING
+  ##
+  ## BOOTSTRAPPING
+  ##
   makeMinimal = netBSDDerivation rec {
     path = "tools/make";
     sha256 = "0l4794zwj2haark3azf9xwcwqlkbrifhb2glaa9iba4dkg2mklsb";
@@ -143,16 +138,26 @@ let
     buildInputs = [];
     nativeBuildInputs = [];
 
-    patchPhase = ''
+    postPatch = ''
       patchShebangs configure
-      ${make.patchPhase}
+      ${make.postPatch}
     '';
-    buildPhase = "sh ./buildmake.sh";
+    buildPhase = ''
+      runHook preBuild
+
+      sh ./buildmake.sh
+
+      runHook postBuild
+    '';
     installPhase = ''
+      runHook preInstall
+
       install -D nbmake $out/bin/nbmake
       ln -s $out/bin/nbmake $out/bin/make
       mkdir -p $out/share
-      cp -r ../../share/mk $out/share/mk
+      cp -r $NETBSDSRCDIR/share/mk $out/share/mk
+
+      runHook postInstall
     '';
     extraPaths = [ make.src ] ++ make.extraPaths;
   };
@@ -170,7 +175,8 @@ let
 
     # temporarily use gnuinstall for bootstrapping
     # bsdinstall will be built later
-    makeFlags = "INSTALL=${coreutils}/bin/install";
+    makeFlags = [ "INSTALL=${coreutils}/bin/install" ];
+    installFlags = [];
     RENAME = "-D";
 
     postInstall = ''
@@ -211,14 +217,30 @@ let
     ] ++ libutil.extraPaths ++ libc.extraPaths;
   };
 
-  install = netBSDDerivation {
+  # HACK to ensure parent directories exist. This emulates GNU
+  # install’s -D option. No alternative seems to exist in BSD install.
+  install = let binstall = writeText "binstall" ''
+    #!/usr/bin/env sh
+    for last in $@; do true; done
+    mkdir -p $(dirname $last)
+    xinstall "$@"
+  ''; in netBSDDerivation {
     path = "usr.bin/xinstall";
     version = "7.1.2";
     sha256 = "0nzhyh714m19h61m45gzc5dszkbafp5iaphbp5mza6w020fzf2y8";
     extraPaths = [ mtree.src make.src ];
     nativeBuildInputs = [ makeMinimal mandoc groff ];
     buildInputs = [ compat fts ];
-    RENAME = "-D";
+    installPhase = ''
+      runHook preInstall
+
+      install -D install.1 $out/share/man/man1/install.1
+      install -D xinstall $out/bin/xinstall
+      install -D -m 0550 ${binstall} $out/bin/binstall
+      ln -s $out/bin/binstall $out/bin/install
+
+      runHook postInstall
+    '';
   };
 
   fts = netBSDDerivation {
@@ -239,10 +261,14 @@ let
       ar -rsc libfts.a lib/libc/gen/fts.o
     '';
     installPhase = ''
+      runHook preInstall
+
       install -D lib/libc/gen/fts.3 $out/share/man/man3/fts.3
       install -D include/fts.h $out/include/fts.h
       install -D lib/libc/include/namespace.h $out/include/namespace.h
       install -D libfts.a $out/lib/libfts.a
+
+      runHook postInstall
     '';
     setupHook = ./fts-setup-hook.sh;
   };
@@ -267,7 +293,9 @@ let
     sha256 = "0rjf9blihhm0n699vr2bg88m4yjhkbxh6fxliaay3wxkgnydjwn2";
     nativeBuildInputs = [ makeMinimal mandoc groff install ];
   };
-  # END BOOTSTRAPPING
+  ##
+  ## END BOOTSTRAPPING
+  ##
 
   libutil = netBSDDerivation {
     path = "lib/libutil";
@@ -291,44 +319,29 @@ let
     path = "usr.bin/make";
     sha256 = "0srkkg6qdzqlccfi4xh19gl766ks6hpss76bnfvwmd0zg4q4zdar";
     version = "7.1.2";
-    patchPhase = ''
+    postPatch = ''
       # make needs this to pick up our sys make files
       export NIX_CFLAGS_COMPILE+=" -D_PATH_DEFSYSPATH=\"$out/share/mk\""
 
-      # can't set owner or group in Nix build
-      # maybe there is a better way to trick it?
       substituteInPlace $NETBSDSRCDIR/share/mk/bsd.prog.mk \
-        --replace '-o ''${SCRIPTSOWN_''${.ALLSRC:T}:U''${SCRIPTSOWN}}' "" \
-        --replace '-g ''${SCRIPTSGRP_''${.ALLSRC:T}:U''${SCRIPTSGRP}}' "" \
-        --replace '-o ''${RUMPBINOWN} -g ''${RUMPBINGRP}' "" \
-        --replace '-o ''${BINOWN} -g ''${BINGRP}' "" \
-        --replace '-o ''${RUMPBINOWN} -g ''${RUMPBINGRP}' "" \
-        --replace '-o ''${DEBUGOWN} -g ''${DEBUGGRP}' ""
-      substituteInPlace $NETBSDSRCDIR/share/mk/bsd.doc.mk \
-        --replace '-o ''${DOCOWN} -g ''${DOCGRP}' ""
-      substituteInPlace $NETBSDSRCDIR/share/mk/bsd.links.mk \
-        --replace '-o ''${LINKSOWN_''${.ALLSRC:T}:U''${LINKSOWN}}' "" \
-        --replace '-g ''${LINKSGRP_''${.ALLSRC:T}:U''${LINKSGRP}}' ""
-      substituteInPlace $NETBSDSRCDIR/share/mk/bsd.man.mk \
-        --replace '-o ''${MANOWN} -g ''${MANGRP}' ""
-      substituteInPlace $NETBSDSRCDIR/share/mk/bsd.files.mk \
-        --replace '-o ''${FILESOWN_''${.ALLSRC:T}:U''${FILESOWN}}' "" \
-        --replace '-g ''${FILESGRP_''${.ALLSRC:T}:U''${FILESGRP}}' ""
-      substituteInPlace $NETBSDSRCDIR/share/mk/bsd.inc.mk \
-        --replace '-o ''${BINOWN} -g ''${BINGRP}' ""
+        --replace '-Wl,-dynamic-linker=''${_SHLINKER}' "" \
+        --replace '-Wl,-rpath,''${SHLIBDIR}' ""
       substituteInPlace $NETBSDSRCDIR/share/mk/bsd.lib.mk \
-        --replace '-o ''${DEBUGOWN} -g ''${DEBUGGRP}' "" \
-        --replace '-o ''${LIBOWN} -g ''${LIBGRP}' ""
+        --replace '_INSTRANLIB=''${empty(PRESERVE):?-a "''${RANLIB} -t":}' '_INSTRANLIB='
     '' + lib.optionalString stdenv.isDarwin ''
       substituteInPlace $NETBSDSRCDIR/share/mk/bsd.sys.mk \
-        --replace '-Wl,--fatal-warnings' ""
+        --replace '-Wl,--fatal-warnings' "" \
+        --replace '-Wl,--warn-shared-textrel' ""
       substituteInPlace $NETBSDSRCDIR/share/mk/bsd.lib.mk \
         --replace '-Wl,-soname,''${_LIB}.so.''${SHLIB_SOVERSION}' "" \
         --replace '-Wl,--whole-archive' "" \
-        --replace '-Wl,--no-whole-archive' ""
+        --replace '-Wl,--no-whole-archive' "" \
+        --replace '-Wl,--warn-shared-textrel' "" \
+        --replace '-Wl,-Map=''${_LIB}.so.''${SHLIB_SOVERSION}.map' "" \
+        --replace '-Wl,-rpath,''${SHLIBDIR}' ""
     '';
     postInstall = ''
-      (cd $NETBSDSRCDIR/share/mk && make install)
+      (cd $NETBSDSRCDIR/share/mk && make FILESDIR=/share/mk install)
     '';
     extraPaths = [
       (fetchNetBSD "share/mk" "7.1.2" "0570v0siv0wygn8ygs1yy9pgk9xjw9x1axr5qg4xrddv3lskf9xa")
@@ -345,12 +358,18 @@ let
     path = "usr.bin/who";
     version = "7.1.2";
     sha256 = "17ffwww957m3qw0b6fkgjpp12pd5ydg2hs9dxkkw0qpv11j00d88";
-    patchPhase = ''
+    postPatch = lib.optionalString stdenv.isLinux ''
+      substituteInPlace $NETBSDSRCDIR/usr.bin/who/utmpentry.c \
+        --replace "utmptime = st.st_mtimespec" "utmptime = st.st_mtim" \
+        --replace "timespeccmp(&st.st_mtimespec, &utmptime, >)" "st.st_mtim.tv_sec == utmptime.tv_sec ? st.st_mtim.tv_nsec > utmptime.tv_nsec : st.st_mtim.tv_sec > utmptime.tv_sec"
+   '' + lib.optionalString stdenv.isDarwin ''
+      substituteInPlace $NETBSDSRCDIR/usr.bin/who/utmpentry.c \
+        --replace "timespeccmp(&st.st_mtimespec, &utmpxtime, >)" "st.st_mtimespec.tv_sec == utmpxtime.tv_sec ? st.st_mtimespec.tv_nsec > utmpxtime.tv_nsec : st.st_mtimespec.tv_sec > utmpxtime.tv_sec"
+   '' + ''
       substituteInPlace $NETBSDSRCDIR/usr.bin/who/utmpentry.c \
         --replace "strncpy(e->name, up->ut_name, sizeof(up->ut_name))" "strncpy(e->name, up->ut_user, sizeof(up->ut_user))" \
-        --replace "utmptime = st.st_mtimespec" "utmptime = st.st_mtim" \
-        --replace "timespeccmp(&st.st_mtimespec, &utmptime, >)" "st.st_mtim.tv_sec == utmptime.tv_sec ? st.st_mtim.tv_nsec > utmptime.tv_nsec : st.st_mtim.tv_sec > utmptime.tv_sec" \
-        --replace "timespecclear(&utmptime)" "utmptime.tv_sec = utmptime.tv_nsec = 0"
+        --replace "timespecclear(&utmptime)" "utmptime.tv_sec = utmptime.tv_nsec = 0" \
+        --replace "timespecclear(&utmpxtime)" "utmpxtime.tv_sec = utmpxtime.tv_nsec = 0"
     '';
   };
 
@@ -370,12 +389,37 @@ in rec {
     version = "7.1.2";
   };
 
+  dict = netBSDDerivation {
+    path = "share/dict";
+    version = "7.1.2";
+    sha256 = "0nickhsjwgnr2h9nvwflvgfz93kqms5hzdnpyq02crpj35w98bh4";
+    makeFlags = [ "BINDIR=/share" ];
+  };
+
   games = netBSDDerivation {
     path = "games";
     sha256 = "04wjsang8f8kxsifiayklbxaaxmm3vx9rfr91hfbxj4hk8gkqzy1";
     version = "7.1.2";
-    patchPhase = ''
+    makeFlags = [ "BINDIR=/bin"
+                  "SCRIPTSDIR=/bin" ];
+    postPatch = ''
       sed -i '1i #include <time.h>' adventure/save.c
+
+      for f in $(find . -name pathnames.h); do
+        substituteInPlace $f \
+          --replace /usr/share/games $out/share/games \
+          --replace /usr/games $out/bin \
+          --replace /usr/libexec $out/libexec \
+          --replace /usr/bin/more ${less}/bin/less \
+          --replace /usr/share/dict ${dict}/share/dict
+      done
+      substituteInPlace boggle/boggle/bog.h \
+        --replace /usr/share/games $out/share/games
+      substituteInPlace ching/ching/ching.sh \
+        --replace /usr/share $out/share \
+        --replace /usr/libexec $out/libexec
+      substituteInPlace hunt/huntd/driver.c \
+        --replace "(void) setpgrp(getpid(), getpid());" ""
 
       # Disable some games that don't build. They should be possible
       # to build but need to look at how to implement stuff in
@@ -386,25 +430,33 @@ in rec {
       }
 
       disableGame atc
-      disableGame boggle
       disableGame dm
-      disableGame fortune
-      disableGame hunt
-      disableGame larn
-      disableGame phantasia
-      disableGame rogue
+      disableGame dab
       disableGame sail
       disableGame trek
-      disableGame dab
+      ${lib.optionalString stdenv.isLinux "disableGame boggle"}
+      ${lib.optionalString stdenv.isLinux "disableGame hunt"}
+      ${lib.optionalString stdenv.isLinux "disableGame larn"}
+      ${lib.optionalString stdenv.isLinux "disableGame phantasia"}
+      ${lib.optionalString stdenv.isLinux "disableGame rogue"}
       ${lib.optionalString stdenv.isDarwin "disableGame adventure"}
       ${lib.optionalString stdenv.isDarwin "disableGame factor"}
       ${lib.optionalString stdenv.isDarwin "disableGame gomoku"}
       ${lib.optionalString stdenv.isDarwin "disableGame mille"}
-
-      substituteInPlace Makefile.inc \
-        --replace 2555 555 \
-        --replace 2550 550
     '';
+
+    # HACK strfile needs to be installed first & in the path. The
+    # Makefile should do this for us but haven't gotten it to work
+    preBuild = ''
+      (cd fortune/strfile && make && make BINDIR=/bin install)
+      export PATH=$out/bin:$PATH
+    '';
+
+    postInstall = ''
+      substituteInPlace $out/usr/share/games/quiz.db/index \
+        --replace /usr $out
+    '';
+
     NIX_CFLAGS_COMPILE = [
       "-D__noinline="
       "-D__scanflike(a,b)="
@@ -412,39 +464,35 @@ in rec {
       "-DOXTABS=XTABS"
       "-DRANDOM_MAX=RAND_MAX"
       "-DINFTIM=-1"
-      (if hostPlatform.isMusl then "-include sys/ttydefaults.h -include sys/file.h" else "")
+      (lib.optionalString hostPlatform.isMusl "-include sys/ttydefaults.h -include sys/file.h")
+      "-DBE32TOH(x)=((void)0)"
+      "-DBE64TOH(x)=((void)0)"
+      "-D__c99inline=__inline"
     ];
-    postBuild = ''
-      mkdir -p $out/usr/games $out/usr/share/games/ching \
-               $out/usr/share/games/quiz.db \
-               $out/usr/libexec/ching $out/var/games/hackdir
-      touch $out/var/games/hackdir/perm
-    '';
-    preFixup = ''
-      mkdir -p $out/bin
-      mv $out/games/* $out/bin
-      rmdir $out/games
-    '';
+
     buildInputs = [ compat libcurses libterminfo libressl ];
-    extraPaths = [
-      (fetchNetBSD "share/dict" "7.1.2" "0nickhsjwgnr2h9nvwflvgfz93kqms5hzdnpyq02crpj35w98bh4")
-      who.src
-    ];
+    extraPaths = [ dict.src who.src ];
   };
 
-  # finger = netBSDDerivation {
-  #   path = "usr.bin/finger";
-  #   sha256 = "0jl672z50f2yf7ikp682b3xrarm6bnrrx9vi94xnp2fav8m8zfyi";
-  #   version = "7.1.2";
-  #   extraPaths = [ who.src ];
-  #   NIX_CFLAGS_COMPILE = [
-  #     "-DSUPPORT_UTMP"
-  #     "-USUPPORT_UTMPX"
-  #   ];
-  #   patchPhase = ''
-  #     ${who.patchPhase}
-  #   '';
-  # };
+  finger = netBSDDerivation {
+    path = "usr.bin/finger";
+    sha256 = "0jl672z50f2yf7ikp682b3xrarm6bnrrx9vi94xnp2fav8m8zfyi";
+    version = "7.1.2";
+    NIX_CFLAGS_COMPILE = [
+      (if stdenv.isLinux then "-DSUPPORT_UTMP" else "-USUPPORT_UTMP")
+      (if stdenv.isDarwin then "-DSUPPORT_UTMPX" else "-USUPPORT_UTMPX")
+    ];
+    postPatch = ''
+      NIX_CFLAGS_COMPILE+=" -I$NETBSDSRCDIR/include"
+
+      substituteInPlace extern.h \
+        --replace psort _psort
+
+      ${who.postPatch}
+    '';
+    extraPaths = [ who.src ]
+              ++ lib.optional stdenv.isDarwin (fetchNetBSD "include/utmp.h" "7.1.2" "05690fzz0825p2bq0sfyb00mxwd0wa06qryqgqkwpqk9y2xzc7px");
+  };
 
   fingerd = netBSDDerivation {
     path = "libexec/fingerd";
@@ -456,8 +504,8 @@ in rec {
     path = "lib/libedit";
     buildInputs = [ libterminfo libcurses ];
     propagatedBuildInputs = [ compat ];
-    postBuild = "mkdir -p $out/usr/include/readline";
-    patchPhase = ''
+    makeFlags = [ "INCSDIR=/include" ];
+    postPatch = ''
       sed -i '1i #undef bool_t' el.h
       substituteInPlace config.h \
         --replace "#define HAVE_STRUCT_DIRENT_D_NAMLEN 1" ""
@@ -477,6 +525,13 @@ in rec {
     sha256 = "06plg0bjqgbb0aghpb9qlk8wkp1l2izdlr64vbr5laqyw8jg84zq";
     buildInputs = [ compat tic nbperf ];
     MKPIC = if stdenv.isDarwin then "no" else "yes";
+    makeFlags = [ "INCSDIR=/include" ];
+    postPatch = ''
+      substituteInPlace term.c --replace /usr/share $out/share
+    '';
+    postInstall = ''
+      (cd $NETBSDSRCDIR/share/terminfo && make && make BINDIR=/share install)
+    '';
     extraPaths = [
       (fetchNetBSD "share/terminfo" "7.1.2" "1z5vzq8cw24j05r6df4vd6r57cvdbv7vbm4h962kplp14xrbg2h3")
     ];
@@ -487,6 +542,7 @@ in rec {
     version = "7.1.2";
     sha256 = "04djah9dadzw74nswn0xydkxn900kav8xdvxlxdl50nbrynxg9yf";
     buildInputs = [ libterminfo ];
+    makeFlags = [ "INCSDIR=/include" ];
     NIX_CFLAGS_COMPILE = [
       "-D__scanflike(a,b)="
       "-D__va_list=va_list"
@@ -495,7 +551,7 @@ in rec {
     propagatedBuildInputs = [ compat ];
     MKDOC = "no"; # missing vfontedpr
     MKPIC = if stdenv.isDarwin then "no" else "yes";
-    patchPhase = lib.optionalString (!stdenv.isDarwin) ''
+    postPatch = lib.optionalString (!stdenv.isDarwin) ''
       substituteInPlace printw.c \
         --replace "funopen(win, NULL, __winwrite, NULL, NULL)" NULL \
         --replace "__strong_alias(vwprintw, vw_printw)" 'extern int vwprintw(WINDOW*, const char*, va_list) __attribute__ ((alias ("vw_printw")));'
@@ -521,6 +577,13 @@ in rec {
       (fetchNetBSD "usr.bin/tic" "7.1.2" "1ghwsaag4gbwvgp3lfxscnh8hn27n8cscwmgjwp3bkx5vl85nfsa")
       (fetchNetBSD "tools/Makefile.host" "7.1.2" "076r3amivb6xranpvqjmg7x5ibj4cbxaa3z2w1fh47h7d55dw9w8")
     ];
+  };
+
+  misc = netBSDDerivation {
+    path = "share/misc";
+    version = "7.1.2";
+    sha256 = "1vyn30js14nnadlls55mg7g1gz8h14l75rbrrh8lgn49qg289665";
+    makeFlags = [ "BINDIR=/share" ];
   };
 
 }
