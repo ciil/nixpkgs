@@ -2108,8 +2108,6 @@ with pkgs;
 
   eid-mw = callPackage ../tools/security/eid-mw { };
 
-  eid-viewer = callPackage ../tools/security/eid-viewer { };
-
   mcrcon = callPackage ../tools/networking/mcrcon {};
 
   tealdeer = callPackage ../tools/misc/tealdeer/default.nix { };
@@ -3335,8 +3333,6 @@ with pkgs;
   most = callPackage ../tools/misc/most { };
 
   motion = callPackage ../applications/video/motion { };
-
-  mkcast = callPackage ../applications/video/mkcast { };
 
   mtail = callPackage ../servers/monitoring/mtail { };
 
@@ -5143,6 +5139,8 @@ with pkgs;
 
   telepresence = callPackage ../tools/networking/telepresence { };
 
+  termplay = callPackage ../tools/misc/termplay { };
+
   tewisay = callPackage ../tools/misc/tewisay { };
 
   texmacs = if stdenv.isDarwin
@@ -5578,6 +5576,8 @@ with pkgs;
 
   xprintidle-ng = callPackage ../tools/X11/xprintidle-ng {};
 
+  xscast = callPackage ../applications/video/xscast { };
+
   xsettingsd = callPackage ../tools/X11/xsettingsd { };
 
   xsensors = callPackage ../os-specific/linux/xsensors { };
@@ -5771,6 +5771,8 @@ with pkgs;
   xmpppy = pythonPackages.xmpppy;
 
   xiccd = callPackage ../tools/misc/xiccd { };
+
+  xidlehook = callPackage ../tools/X11/xidlehook {};
 
   xorriso = callPackage ../tools/cd-dvd/xorriso { };
 
@@ -11229,6 +11231,8 @@ with pkgs;
 
     accounts-qt = callPackage ../development/libraries/accounts-qt { };
 
+    alkimia = callPackage ../development/libraries/alkimia { };
+
     fcitx-qt5 = callPackage ../tools/inputmethods/fcitx/fcitx-qt5.nix { };
 
     qgpgme = callPackage ../development/libraries/gpgme { };
@@ -14896,6 +14900,8 @@ with pkgs;
 
   stellar-core = self.altcoins.stellar-core;
 
+  particl-core = self.altcoins.particl-core;
+
   aumix = callPackage ../applications/audio/aumix {
     gtkGUI = false;
   };
@@ -16532,6 +16538,11 @@ with pkgs;
   kiwix = callPackage ../applications/misc/kiwix { };
 
   kmplayer = libsForQt5.callPackage ../applications/video/kmplayer { };
+
+  kmymoney = libsForQt5.callPackage ../applications/office/kmymoney {
+    inherit (kdeApplications) kidentitymanagement;
+    inherit (kdeFrameworks) kdewebkit;
+  };
 
   kodestudio = callPackage ../applications/editors/kodestudio { };
 
@@ -19936,7 +19947,7 @@ with pkgs;
     # great feature, but it's of limited use with pre-built binaries
     # coming from a central build farm.
     tolerateCpuTimingInaccuracy = true;
-    liblapack = liblapack_3_5_0WithoutAtlas;
+    liblapack = liblapackWithoutAtlas;
     withLapack = false;
   };
 
@@ -19959,10 +19970,7 @@ with pkgs;
   # without atlas. Etc.
   liblapackWithAtlas = callPackage ../development/libraries/science/math/liblapack {};
   liblapackWithoutAtlas = liblapackWithAtlas.override { atlas = null; };
-  liblapack_3_5_0WithAtlas = callPackage ../development/libraries/science/math/liblapack/3.5.0.nix {};
-  liblapack_3_5_0WithoutAtlas = liblapack_3_5_0WithAtlas.override { atlas = null; };
   liblapack = liblapackWithAtlas;
-  liblapack_3_5_0 = liblapack_3_5_0WithAtlas;
 
   liblbfgs = callPackage ../development/libraries/science/math/liblbfgs { };
 

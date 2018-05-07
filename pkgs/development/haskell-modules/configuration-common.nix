@@ -47,12 +47,12 @@ self: super: {
   hoogleLocal = { packages ? [] }: self.callPackage ./hoogle.nix { inherit packages; };
 
   # Break infinite recursions.
+  attoparsec-varword = super.attoparsec-varword.override { bytestring-builder-varword = dontCheck self.bytestring-builder-varword; };
   clock = dontCheck super.clock;
   Dust-crypto = dontCheck super.Dust-crypto;
   hasql-postgres = dontCheck super.hasql-postgres;
   hspec = super.hspec.override { stringbuilder = dontCheck self.stringbuilder; };
   hspec-core = super.hspec-core.override { silently = dontCheck self.silently; temporary = dontCheck self.temporary; };
-
   hspec-expectations = dontCheck super.hspec-expectations;
   HTTP = dontCheck super.HTTP;
   http-streams = dontCheck super.http-streams;
@@ -421,6 +421,9 @@ self: super: {
 
   # https://github.com/evanrinehart/mikmod/issues/1
   mikmod = addExtraLibrary super.mikmod pkgs.libmikmod;
+
+  haskell-gi = dontCheck super.haskell-gi;
+  gi-gdkx11 = super.gi-gdkx11.override { gdk-x11 = pkgs.gtk3; };
 
   # https://github.com/basvandijk/threads/issues/10
   threads = dontCheck super.threads;

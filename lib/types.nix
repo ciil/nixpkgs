@@ -256,7 +256,7 @@ rec {
       functor = (defaultFunctor name) // { wrapped = elemType; };
     };
 
-    nonEmptyListOf = elemType: 
+    nonEmptyListOf = elemType:
       let list = addCheck (types.listOf elemType) (l: l != []);
       in list // { description = "non-empty " + list.description; };
 
@@ -419,16 +419,13 @@ rec {
       assert coercedType.getSubModules == null;
       mkOptionType rec {
         name = "coercedTo";
-        description = "${finalType.description} or ${coercedType.description}";
-        check = x: finalType.check x || coercedType.check x;
+        description = "${finalType.description} or ${coercedType.description} convertible to it";
+        check = x: finalType.check x || (coercedType.check x && finalType.check (coerceFunc x));
         merge = loc: defs:
           let
             coerceVal = val:
               if finalType.check val then val
-              else let
-                coerced = coerceFunc val;
-              in assert finalType.check coerced; coerced;
-
+              else coerceFunc val;
           in finalType.merge loc (map (def: def // { value = coerceVal def.value; }) defs);
         getSubOptions = finalType.getSubOptions;
         getSubModules = finalType.getSubModules;
