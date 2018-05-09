@@ -422,8 +422,8 @@ self: super: {
   # https://github.com/evanrinehart/mikmod/issues/1
   mikmod = addExtraLibrary super.mikmod pkgs.libmikmod;
 
+  # https://github.com/haskell-gi/haskell-gi/pull/163
   haskell-gi = dontCheck super.haskell-gi;
-  gi-gdkx11 = super.gi-gdkx11.override { gdk-x11 = pkgs.gtk3; };
 
   # https://github.com/basvandijk/threads/issues/10
   threads = dontCheck super.threads;
@@ -637,6 +637,8 @@ self: super: {
 
   # Need newer versions of their dependencies than the ones we have in LTS-11.x.
   cabal2nix = super.cabal2nix.overrideScope (self: super: { hpack = self.hpack_0_28_2; hackage-db = self.hackage-db_2_0_1; });
+  dbus-hslogger = super.dbus-hslogger.overrideScope (self: super: { dbus = self.dbus_1_0_1; });
+  status-notifier-item = super.status-notifier-item.overrideScope (self: super: { dbus = self.dbus_1_0_1; });
 
   # https://github.com/bos/configurator/issues/22
   configurator = dontCheck super.configurator;
@@ -1024,6 +1026,9 @@ self: super: {
 
   # https://github.com/dmwit/encoding/pull/3
   encoding = appendPatch super.encoding ./patches/encoding-Cabal-2.0.patch;
+
+  # Work around overspecified constraint on github ==0.18.
+  github-backup = doJailbreak super.github-backup;
 
 }
 

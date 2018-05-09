@@ -18253,6 +18253,14 @@ EOF
   h11 = callPackage ../development/python-modules/h11 { };
 
   python-docx = callPackage ../development/python-modules/python-docx { };
+
+  aiohue = callPackage ../development/python-modules/aiohue { };
+
+  PyMVGLive = callPackage ../development/python-modules/pymvglive { };
+
+  coinmarketcap = callPackage ../development/python-modules/coinmarketcap { };
+
+  pyowm = callPackage ../development/python-modules/pyowm { };
 });
 
 in fix' (extends overrides packages)

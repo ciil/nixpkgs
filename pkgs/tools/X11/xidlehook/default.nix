@@ -1,4 +1,5 @@
-{ lib, rustPlatform, fetchFromGitHub, x11, xorg, libpulseaudio, pkgconfig, patchelf }:
+{ lib, rustPlatform, fetchFromGitHub, x11, xorg, libpulseaudio, pkgconfig, patchelf
+, stdenv}:
 
 rustPlatform.buildRustPackage rec {
   name = "xidlehook-${version}";
@@ -17,7 +18,7 @@ rustPlatform.buildRustPackage rec {
   buildInputs = [ x11 xorg.libXScrnSaver libpulseaudio ];
   nativeBuildInputs = [ pkgconfig patchelf ];
 
-  postFixup = ''
+  postFixup = lib.optionalString stdenv.isLinux ''
     RPATH="$(patchelf --print-rpath $out/bin/xidlehook)"
     patchelf --set-rpath "$RPATH:${libpulseaudio}/lib" $out/bin/xidlehook
   '';

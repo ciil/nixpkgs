@@ -1825,6 +1825,11 @@
     github = "joamaki";
     name = "Jussi Maki";
   };
+  joelburget = {
+    email = "joelburget@gmail.com";
+    github = "joelburget";
+    name = "Joel Burget";
+  };
   joelmo = {
     email = "joel.moberg@gmail.com";
     github = "joelmo";
@@ -3148,6 +3153,11 @@
     email = "rittelle@posteo.de";
     github = "rittelle";
     name = "Lennart Rittel";
+  };
+  rkoe = {
+    email = "rk@simple-is-better.org";
+    github = "rkoe";
+    name = "Roland Koebler";
   };
   rlupton20 = {
     email = "richard.lupton@gmail.com";

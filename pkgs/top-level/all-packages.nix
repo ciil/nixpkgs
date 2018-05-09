@@ -400,6 +400,8 @@ with pkgs;
 
   ### TOOLS
 
+  _1password = callPackage ../applications/misc/1password { };
+
   _9pfs = callPackage ../tools/filesystems/9pfs { };
 
   a2ps = callPackage ../tools/text/a2ps { };
@@ -655,6 +657,8 @@ with pkgs;
 
   lastpass-cli = callPackage ../tools/security/lastpass-cli { };
 
+  pacparser = callPackage ../tools/networking/pacparser { };
+
   pass = callPackage ../tools/security/pass { };
 
   passExtensions = recurseIntoAttrs pass.extensions;
@@ -830,6 +834,8 @@ with pkgs;
   bitbucket-cli = python2Packages.bitbucket-cli;
 
   blink = callPackage ../applications/networking/instant-messengers/blink { };
+
+  bluemix-cli = callPackage ../tools/admin/bluemix-cli { };
 
   libqmatrixclient = libsForQt5.callPackage ../development/libraries/libqmatrixclient { };
 
@@ -2209,6 +2215,8 @@ with pkgs;
 
   exiftool = perlPackages.ImageExifTool;
 
+  ext4magic = callPackage ../tools/filesystems/ext4magic { };
+
   extundelete = callPackage ../tools/filesystems/extundelete { };
 
   expect = callPackage ../tools/misc/expect { };
@@ -3534,6 +3542,8 @@ with pkgs;
   libreswan = callPackage ../tools/networking/libreswan { };
 
   libwebsockets = callPackage ../development/libraries/libwebsockets { };
+
+  limesuite = callPackage ../applications/misc/limesuite { };
 
   limesurvey = callPackage ../servers/limesurvey { };
 
@@ -6848,7 +6858,7 @@ with pkgs;
 
   buildRustCrate = callPackage ../build-support/rust/build-rust-crate.nix { };
 
-  cargo-vendor = callPackage ../build-support/rust/cargo-vendor {};
+  cargo-vendor = callPackage ../build-support/rust/cargo-vendor { };
 
   carnix = (callPackage ../build-support/rust/carnix.nix { }).carnix { };
 
@@ -6872,6 +6882,8 @@ with pkgs;
     });
 
   cargo-edit = callPackage ../tools/package-management/cargo-edit { };
+
+  cargo-fuzz = callPackage ../development/tools/rust/cargo-fuzz { };
 
   rainicorn = callPackage ../development/tools/rust/rainicorn { };
   rustfmt = callPackage ../development/tools/rust/rustfmt { };
@@ -7113,6 +7125,7 @@ with pkgs;
   love_0_8 = callPackage ../development/interpreters/love/0.8.nix { lua=lua5_1; };
   love_0_9 = callPackage ../development/interpreters/love/0.9.nix { };
   love_0_10 = callPackage ../development/interpreters/love/0.10.nix { };
+  love_11 = callPackage ../development/interpreters/love/11.1.nix { };
   love = love_0_10;
 
   ### LUA MODULES
@@ -11527,6 +11540,30 @@ with pkgs;
   };
 
   snappy = callPackage ../development/libraries/snappy { };
+
+  soapyairspy = callPackage ../applications/misc/soapyairspy { };
+
+  soapybladerf = callPackage ../applications/misc/soapybladerf { };
+
+  soapyhackrf = callPackage ../applications/misc/soapyhackrf { };
+
+  soapysdr = callPackage ../applications/misc/soapysdr { inherit (python3Packages) python numpy; };
+
+  soapyremote = callPackage ../applications/misc/soapyremote { };
+
+  soapysdr-with-plugins = callPackage ../applications/misc/soapysdr {
+    inherit (python3Packages) python numpy;
+    extraPackages = [
+      limesuite
+      soapyairspy
+      soapybladerf
+      soapyhackrf
+      soapyremote
+      soapyuhd
+    ];
+  };
+
+  soapyuhd = callPackage ../applications/misc/soapyuhd { };
 
   socket_wrapper = callPackage ../development/libraries/socket_wrapper { };
 
@@ -16021,6 +16058,14 @@ with pkgs;
     inherit (gnome3) dconf;
   };
 
+  gnucash24 = callPackage ../applications/office/gnucash/2.4.nix {
+    inherit (gnome2) libgnomeui libgtkhtml gtkhtml libbonoboui libgnomeprint libglade libart_lgpl;
+    gconf = gnome2.GConf;
+    guile = guile_1_8;
+    slibGuile = slibGuile.override { scheme = guile_1_8; };
+    goffice = goffice_0_8;
+  };
+
   gnucash26 = lowPrio (callPackage ../applications/office/gnucash/2.6.nix {
     inherit (gnome2) libgnomecanvas;
     inherit (gnome3) dconf;
@@ -16106,6 +16151,8 @@ with pkgs;
 
   graphicsmagick = callPackage ../applications/graphics/graphicsmagick { };
   graphicsmagick_q16 = callPackage ../applications/graphics/graphicsmagick { quantumdepth = 16; };
+
+  graphicsmagick-imagemagick-compat = callPackage ../applications/graphics/graphicsmagick/compat.nix { };
 
   grisbi = callPackage ../applications/office/grisbi { gtk = gtk2; };
 
@@ -17925,7 +17972,6 @@ with pkgs;
   };
 
   spotify = callPackage ../applications/audio/spotify {
-    inherit (gnome2) GConf;
     libgcrypt = libgcrypt_1_5;
     libpng = libpng12;
     curl = curl.override {
@@ -19590,7 +19636,7 @@ with pkgs;
 
   wesnoth = callPackage ../games/wesnoth { };
 
-  wesnoth-dev = callPackage ../games/wesnoth/dev.nix { };
+  wesnoth-dev = wesnoth;
 
   widelands = callPackage ../games/widelands {
     lua = lua5_2;
@@ -19952,6 +19998,8 @@ with pkgs;
   };
 
   blas = callPackage ../development/libraries/science/math/blas { };
+
+  brial = callPackage ../development/libraries/science/math/brial { };
 
   clblas = callPackage ../development/libraries/science/math/clblas {
     inherit (darwin.apple_sdk.frameworks) Accelerate CoreGraphics CoreVideo OpenCL;
@@ -20502,7 +20550,9 @@ with pkgs;
 
   pythia = callPackage ../development/libraries/physics/pythia { };
 
-  rivet = callPackage ../development/libraries/physics/rivet { };
+  rivet = callPackage ../development/libraries/physics/rivet {
+    imagemagick = graphicsmagick-imagemagick-compat;
+  };
 
   thepeg = callPackage ../development/libraries/physics/thepeg { };
 
@@ -21166,6 +21216,7 @@ with pkgs;
       fontconfigSupport = true;
       alsaSupport = true;
       openglSupport = true;
+      vulkanSupport = stdenv.isLinux;
       tlsSupport = true;
       cupsSupport = true;
       dbusSupport = true;
