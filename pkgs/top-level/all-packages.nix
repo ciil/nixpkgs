@@ -611,6 +611,8 @@ with pkgs;
 
   bonfire = callPackage ../tools/misc/bonfire { };
 
+  cloud-sql-proxy = callPackage ../tools/misc/cloud-sql-proxy { };
+
   container-linux-config-transpiler = callPackage ../development/tools/container-linux-config-transpiler { };
 
   cconv = callPackage ../tools/text/cconv { };
@@ -3052,6 +3054,8 @@ with pkgs;
   infamousPlugins = callPackage ../applications/audio/infamousPlugins { };
 
   innoextract = callPackage ../tools/archivers/innoextract { };
+
+  input-utils = callPackage ../os-specific/linux/input-utils { };
 
   intecture-agent = callPackage ../tools/admin/intecture/agent.nix { };
 
@@ -5714,28 +5718,14 @@ with pkgs;
 
   x11_ssh_askpass = callPackage ../tools/networking/x11-ssh-askpass { };
 
-  xbursttools = assert stdenv ? glibc; callPackage ../tools/misc/xburst-tools rec {
+  xbursttools = callPackage ../tools/misc/xburst-tools {
     # It needs a cross compiler for mipsel to build the firmware it will
     # load into the Ben Nanonote
-    crossPrefix = "mipsel-unknown-linux-gnu";
     gccCross =
       let
         pkgsCross = nixpkgsFun {
           # Ben Nanonote system
-          crossSystem = {
-            config = crossPrefix;
-            arch = "mips";
-            float = "soft";
-            libc = "uclibc";
-            platform = {
-              name = "ben_nanonote";
-              kernelMajor = "2.6";
-              kernelArch = "mips";
-            };
-            gcc = {
-              arch = "mips32";
-            };
-          };
+          crossSystem = lib.systems.examples.ben-nanonote;
         };
       in
         pkgsCross.buildPackages.gccCrossStageStatic;
@@ -8537,6 +8527,8 @@ with pkgs;
 
   backward-cpp = callPackage ../development/libraries/backward-cpp { };
 
+  bamf = callPackage ../development/libraries/bamf { };
+
   bctoolbox = callPackage ../development/libraries/bctoolbox {
     mbedtls = mbedtls_1_3;
   };
@@ -9105,7 +9097,7 @@ with pkgs;
     # hack fixes the hack, *sigh*.
     /**/ if name == "glibc" then targetPackages.glibcCross or glibcCross
     else if name == "bionic" then targetPackages.bionic
-    else if name == "uclibc" then uclibcCross
+    else if name == "uclibc" then targetPackages.uclibcCross
     else if name == "musl" then targetPackages.muslCross or muslCross
     else if name == "msvcrt" then targetPackages.windows.mingw_w64 or windows.mingw_w64
     else if targetPlatform.useiOSPrebuilt then targetPackages.iosSdkPkgs.libraries
@@ -11514,6 +11506,8 @@ with pkgs;
   simgear = callPackage ../development/libraries/simgear { };
 
   simp_le = callPackage ../tools/admin/simp_le { };
+
+  simpleitk = callPackage ../development/libraries/simpleitk { lua = lua51Packages.lua; };
 
   sfml = callPackage ../development/libraries/sfml { };
   csfml = callPackage ../development/libraries/csfml { };
@@ -14173,10 +14167,9 @@ with pkgs;
 
   uclibc = callPackage ../os-specific/linux/uclibc { };
 
-  uclibcCross = lowPrio (callPackage ../os-specific/linux/uclibc {
-    gccCross = gccCrossStageStatic;
-    cross = assert targetPlatform != buildPlatform; targetPlatform;
-  });
+  uclibcCross = callPackage ../os-specific/linux/uclibc {
+    stdenv = crossLibcStdenv;
+  };
 
   udev = systemd;
   libudev = udev;
@@ -17105,6 +17098,8 @@ with pkgs;
   pig = callPackage ../applications/networking/cluster/pig { };
 
   pijul = callPackage ../applications/version-management/pijul {};
+
+  plank = callPackage ../applications/misc/plank { };
 
   planner = callPackage ../applications/office/planner { };
 
