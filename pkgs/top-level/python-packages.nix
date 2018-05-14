@@ -303,6 +303,8 @@ in {
 
   oauthenticator = callPackage ../development/python-modules/oauthenticator { };
 
+  outcome = callPackage ../development/python-modules/outcome {};
+
   plantuml = callPackage ../tools/misc/plantuml { };
 
   Pmw = callPackage ../development/python-modules/Pmw { };
@@ -435,6 +437,10 @@ in {
   tables = callPackage ../development/python-modules/tables {
     hdf5 = pkgs.hdf5.override { zlib = pkgs.zlib; };
   };
+
+  trustme = callPackage ../development/python-modules/trustme {};
+
+  trio = callPackage ../development/python-modules/trio {};
 
   tokenserver = callPackage ../development/python-modules/tokenserver {};
 
@@ -1628,6 +1634,8 @@ in {
   consul = callPackage ../development/python-modules/consul { };
 
   contexter = callPackage ../development/python-modules/contexter { };
+
+  contextvars = callPackage ../development/python-modules/contextvars {};
 
   contextlib2 = callPackage ../development/python-modules/contextlib2 { };
 
@@ -3119,6 +3127,8 @@ in {
   };
 
   imbalanced-learn = callPackage ../development/python-modules/imbalanced-learn { };
+
+  immutables = callPackage ../development/python-modules/immutables {};
 
   imread = buildPythonPackage rec {
     name = "python-imread-${version}";
@@ -7104,6 +7114,7 @@ in {
   libgpuarray = callPackage ../development/python-modules/libgpuarray {
     clblas = pkgs.clblas.override { boost = self.boost; };
     cudaSupport = pkgs.config.cudaSupport or false;
+    inherit (pkgs.linuxPackages) nvidia_x11;
   };
 
   librepo = toPythonModule (pkgs.librepo.override {
@@ -9089,46 +9100,7 @@ in {
 
   plone-testing = callPackage ../development/python-modules/plone-testing { };
 
-  ply = buildPythonPackage (rec {
-    name = "ply-3.8";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/ply/${name}.tar.gz";
-      sha256 = "e7d1bdff026beb159c9942f7a17e102c375638d9478a7ecd4cc0c76afd8de0b8";
-    };
-
-    checkPhase = ''
-      ${python.interpreter} test/testlex.py
-      ${python.interpreter} test/testyacc.py
-    '';
-
-    # Test suite appears broken
-    doCheck = false;
-
-    meta = {
-      homepage = http://www.dabeaz.com/ply/;
-
-      description = "PLY (Python Lex-Yacc), an implementation of the lex and yacc parsing tools for Python";
-
-      longDescription = ''
-        PLY is an implementation of lex and yacc parsing tools for Python.
-        In a nutshell, PLY is nothing more than a straightforward lex/yacc
-        implementation.  Here is a list of its essential features: It's
-        implemented entirely in Python; It uses LR-parsing which is
-        reasonably efficient and well suited for larger grammars; PLY
-        provides most of the standard lex/yacc features including support for
-        empty productions, precedence rules, error recovery, and support for
-        ambiguous grammars; PLY is straightforward to use and provides very
-        extensive error checking; PLY doesn't try to do anything more or less
-        than provide the basic lex/yacc functionality.  In other words, it's
-        not a large parsing framework or a component of some larger system.
-      '';
-
-      license = licenses.bsd3;
-
-      maintainers = [ ];
-    };
-  });
+  ply = callPackage ../development/python-modules/ply { };
 
   plyvel = buildPythonPackage (rec {
     name = "plyvel-0.9";
@@ -13014,6 +12986,7 @@ in {
   Theano = callPackage ../development/python-modules/Theano rec {
     cudaSupport = pkgs.config.cudaSupport or false;
     cudnnSupport = cudaSupport;
+    inherit (pkgs.linuxPackages) nvidia_x11;
   };
 
   TheanoWithoutCuda = self.Theano.override {
@@ -18222,6 +18195,8 @@ EOF
 
   pyspark = callPackage ../development/python-modules/pyspark { };
 
+  pysensors = callPackage ../development/python-modules/pysensors { };
+
   sseclient = callPackage ../development/python-modules/sseclient { };
 
   warrant = callPackage ../development/python-modules/warrant { };
@@ -18261,6 +18236,8 @@ EOF
   coinmarketcap = callPackage ../development/python-modules/coinmarketcap { };
 
   pyowm = callPackage ../development/python-modules/pyowm { };
+
+  prometheus_client = callPackage ../development/python-modules/prometheus_client { };
 });
 
 in fix' (extends overrides packages)
