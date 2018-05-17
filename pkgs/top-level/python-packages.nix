@@ -277,6 +277,8 @@ in {
 
   logster = callPackage ../development/python-modules/logster { };
 
+  mail-parser = callPackage ../development/python-modules/mail-parser {  };
+
   mpi4py = callPackage ../development/python-modules/mpi4py {
     mpi = pkgs.openmpi;
   };
@@ -2820,56 +2822,11 @@ in {
 
   gpy = callPackage ../development/python-modules/gpy { };
 
-  gitdb = buildPythonPackage rec {
-    name = "gitdb-0.6.4";
+  gitdb = callPackage ../development/python-modules/gitdb { };
 
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/g/gitdb/${name}.tar.gz";
-      sha256 = "0n4n2c7rxph9vs2l6xlafyda5x1mdr8xy16r9s3jwnh3pqkvrsx3";
-    };
+  gitdb2 = callPackage ../development/python-modules/gitdb2 { };
 
-    buildInputs = with self; [ nose ];
-    propagatedBuildInputs = with self; [ smmap ];
-
-    checkPhase = ''
-      nosetests
-    '';
-
-    doCheck = false; # Bunch of tests fail because they need an actual git repo
-
-    meta = {
-      description = "Git Object Database";
-      maintainers = with maintainers; [ ];
-      homepage = https://github.com/gitpython-developers/gitdb;
-      license = licenses.bsd3;
-    };
-
-  };
-
-  GitPython = buildPythonPackage rec {
-    version = "2.0.8";
-    name = "GitPython-${version}";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/G/GitPython/GitPython-${version}.tar.gz";
-      sha256 = "7c03d1130f903aafba6ae5b89ccf8eb433a995cd3120cbb781370e53fc4eb222";
-    };
-
-    buildInputs = with self; [ mock nose ];
-    propagatedBuildInputs = with self; [ gitdb ];
-
-    # All tests error with
-    # InvalidGitRepositoryError: /tmp/nix-build-python2.7-GitPython-1.0.1.drv-0/GitPython-1.0.1
-    # Maybe due to being in a chroot?
-    doCheck = false;
-
-    meta = {
-      description = "Python Git Library";
-      maintainers = with maintainers; [ ];
-      homepage = https://github.com/gitpython-developers/GitPython;
-      license = licenses.bsd3;
-    };
-  };
+  GitPython = callPackage ../development/python-modules/GitPython { };
 
   git-annex-adapter = callPackage ../development/python-modules/git-annex-adapter {
     inherit (pkgs.gitAndTools) git-annex;
@@ -2993,6 +2950,8 @@ in {
 
 
   };
+
+  hiro = callPackage ../development/python-modules/hiro {};
 
   hglib = callPackage ../development/python-modules/hglib {};
 
@@ -3889,6 +3848,8 @@ in {
   plyfile = callPackage ../development/python-modules/plyfile { };
 
   podcastparser = callPackage ../development/python-modules/podcastparser { };
+
+  podcats = callPackage ../development/python-modules/podcats { };
 
   pomegranate = callPackage ../development/python-modules/pomegranate { };
 
@@ -5070,6 +5031,7 @@ in {
     };
   };
 
+  keyrings-alt = callPackage ../development/python-modules/keyrings-alt {};
 
   SPARQLWrapper = buildPythonPackage rec {
     name = "SPARQLWrapper-${version}";
@@ -5633,8 +5595,20 @@ in {
     };
   };
 
-  pytorch = callPackage ../development/python-modules/pytorch {
+  pytorch = let
+    # Fails with CUDA 9.1 and GCC 6.4:
+    # https://github.com/pytorch/pytorch/issues/5831
+    # https://devtalk.nvidia.com/default/topic/1028112
+    # We should be able to remove this when CUDA 9.2 is released.
+    cudatoolkit9 = pkgs.cudatoolkit9.override {
+      gcc6 = pkgs.gcc5;
+    };
+  in callPackage ../development/python-modules/pytorch {
     cudaSupport = pkgs.config.cudaSupport or false;
+    cudatoolkit = cudatoolkit9;
+    cudnn = pkgs.cudnn_cudatoolkit9.override {
+      inherit cudatoolkit9;
+    };
   };
 
   pytorchWithCuda = self.pytorch.override {
@@ -6782,24 +6756,7 @@ in {
 
   iso8601 = callPackage ../development/python-modules/iso8601 { };
 
-  isort = buildPythonPackage rec {
-    name = "${pname}-${version}";
-    pname = "isort";
-    version = "4.2.5";
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/i/${pname}/${name}.tar.gz";
-      sha256 = "0p7a6xaq7zxxq5vr5gizshnsbk2afm70apg97xwfdxiwyi201cjn";
-    };
-    buildInputs = with self; [ mock pytest ];
-    # No tests distributed
-    doCheck = false;
-    meta = {
-      description = "A Python utility / library to sort Python imports";
-      homepage = https://github.com/timothycrosley/isort;
-      license = licenses.mit;
-      maintainers = with maintainers; [ couchemar nand0p ];
-    };
-  };
+  isort = callPackage ../development/python-modules/isort {};
 
   jabberbot = callPackage ../development/python-modules/jabberbot {};
 
@@ -14241,18 +14198,9 @@ in {
 
   tqdm = callPackage ../development/python-modules/tqdm { };
 
-  smmap = buildPythonPackage rec {
-    name = "smmap-0.9.0";
-    disabled = isPyPy;  # This fails the tests if built with pypy
-    meta.maintainers = with maintainers; [ ];
+  smmap = callPackage ../development/python-modules/smmap { };
 
-    buildInputs = with self; [ nosexcover ];
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/s/smmap/${name}.tar.gz";
-      sha256 = "0qlx25f6n2n9ff37w9gg62f217fzj16xlbh0pkz0lpxxjys64aqf";
-    };
-  };
+  smmap2 = callPackage ../development/python-modules/smmap2 { };
 
   traits = buildPythonPackage rec {
     name = "traits-${version}";
@@ -14677,6 +14625,8 @@ in {
   update_checker = callPackage ../development/python-modules/update_checker {};
 
   uritemplate = callPackage ../development/python-modules/uritemplate { };
+
+  uproot = callPackage ../development/python-modules/uproot {};
 
   uptime = buildPythonPackage rec {
     name = "uptime-${version}";
