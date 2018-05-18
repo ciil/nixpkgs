@@ -784,6 +784,8 @@ with pkgs;
 
   basex = callPackage ../tools/text/xml/basex { };
 
+  bashplotlib = callPackage ../tools/misc/bashplotlib { };
+
   babeld = callPackage ../tools/networking/babeld { };
 
   badvpn = callPackage ../tools/networking/badvpn {};
@@ -6894,6 +6896,7 @@ with pkgs;
     });
 
   cargo-edit = callPackage ../tools/package-management/cargo-edit { };
+  cargo-release = callPackage ../tools/package-management/cargo-release { };
 
   cargo-fuzz = callPackage ../development/tools/rust/cargo-fuzz { };
 
@@ -11649,6 +11652,8 @@ with pkgs;
   sqlite = lowPrio (callPackage ../development/libraries/sqlite { });
 
   sqlite3_analyzer = lowPrio (callPackage ../development/libraries/sqlite/sqlite3_analyzer.nix { });
+
+  sqlar = callPackage ../development/libraries/sqlite/sqlar.nix { };
 
   sqlite-interactive = appendToName "interactive" (sqlite.override { interactive = true; }).bin;
 
@@ -17692,6 +17697,8 @@ with pkgs;
 
   ricochet = libsForQt5.callPackage ../applications/networking/instant-messengers/ricochet { };
 
+  ries = callPackage ../applications/science/math/ries { };
+
   ripser = callPackage ../applications/science/math/ripser { };
 
   rkt = callPackage ../applications/virtualization/rkt { };
@@ -21449,6 +21456,10 @@ with pkgs;
   wire-desktop = callPackage ../applications/networking/instant-messengers/wire-desktop { };
 
   teseq = callPackage ../applications/misc/teseq {  };
+
+  ape = callPackage ../applications/misc/ape { };
+  attemptoClex = callPackage ../applications/misc/ape/clex.nix { };
+  apeClex = callPackage ../applications/misc/ape/apeclex.nix { };
 
   # Unix tools
   unixtools = recurseIntoAttrs (callPackages ./unix-tools.nix { });
