@@ -8,7 +8,7 @@ let
     builtins.substring 0 1 x == "/"      # absolute path
     || builtins.substring 0 1 x == "."   # relative path
     || builtins.match "[.*:.*]" == null; # not machine:path
- 
+
   mkExcludeFile = cfg:
     # Write each exclude pattern to a new line
     pkgs.writeText "excludefile" (concatStringsSep "\n" cfg.exclude);
@@ -35,25 +35,26 @@ let
     ${cfg.preHook}
   '' + optionalString cfg.doInit ''
     # Run borg init if the repo doesn't exist yet
-    if ! borg list > /dev/null; then
-      borg init \
+    if ! borg list ${cfg.extraArgs} > /dev/null; then
+      borg init ${cfg.extraArgs} \
         --encryption ${cfg.encryption.mode} \
         $extraInitArgs
       ${cfg.postInit}
     fi
   '' + ''
-    borg create \
+    borg create ${cfg.extraArgs} \
       --compression ${cfg.compression} \
       --exclude-from ${mkExcludeFile cfg} \
       $extraCreateArgs \
       "::$archiveName$archiveSuffix" \
       ${escapeShellArgs cfg.paths}
   '' + optionalString cfg.appendFailedSuffix ''
-    borg rename "::$archiveName$archiveSuffix" "$archiveName"
+    borg rename ${cfg.extraArgs} \
+      "::$archiveName$archiveSuffix" "$archiveName"
   '' + ''
     ${cfg.postCreate}
   '' + optionalString (cfg.prune.keep != { }) ''
-    borg prune \
+    borg prune ${cfg.extraArgs} \
       ${mkKeepArgs cfg} \
       --prefix ${escapeShellArg cfg.prune.prefix} \
       $extraPruneArgs
@@ -67,7 +68,7 @@ let
       { BORG_PASSPHRASE = passphrase; }
     else { };
 
-  mkBackupService = name: cfg: 
+  mkBackupService = name: cfg:
     let
       userHome = config.users.users.${cfg.user}.home;
     in nameValuePair "borgbackup-job-${name}" {
@@ -104,7 +105,7 @@ let
       nameValuePair "borgbackup-job-${name}" (stringAfter [ "users" ] (''
         # Eensure that the home directory already exists
         # We can't assert createHome == true because that's not the case for root
-        cd "${config.users.users.${cfg.user}.home}"                                                                                                         
+        cd "${config.users.users.${cfg.user}.home}"
         ${install} -d .config/borg
         ${install} -d .cache/borg
       '' + optionalString (isLocalPath cfg.repo) ''
@@ -430,6 +431,16 @@ in {
             default = "";
           };
 
+          extraArgs = mkOption {
+            type = types.str;
+            description = ''
+              Additional arguments for all <command>borg</command> calls the
+              service has. Handle with care.
+            '';
+            default = "";
+            example = "--remote-path=borg1";
+          };
+
           extraInitArgs = mkOption {
             type = types.str;
             description = ''
@@ -476,7 +487,7 @@ in {
     type = types.attrsOf (types.submodule (
       { name, config, ... }: {
         options = {
-          
+
           path = mkOption {
             type = types.path;
             description = ''
