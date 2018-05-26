@@ -1289,6 +1289,8 @@ with pkgs;
 
   goa = callPackage ../development/tools/goa { };
 
+  gohai = callPackage ../tools/system/gohai { };
+
   gorilla-bin = callPackage ../tools/security/gorilla-bin { };
 
   gosu = callPackage ../tools/misc/gosu { };
@@ -2317,6 +2319,8 @@ with pkgs;
   fcron = callPackage ../tools/system/fcron { };
 
   fdm = callPackage ../tools/networking/fdm {};
+
+  feedreader = callPackage ../applications/networking/feedreaders/feedreader {};
 
   ferm = callPackage ../tools/networking/ferm { };
 
@@ -4229,6 +4233,8 @@ with pkgs;
 
   owncloud-client = libsForQt5.callPackage ../applications/networking/owncloud-client { };
 
+  oxidized = callPackage ../tools/admin/oxidized { };
+
   oxipng = callPackage ../tools/graphics/oxipng { };
 
   p2pvc = callPackage ../applications/video/p2pvc {};
@@ -6061,18 +6067,6 @@ with pkgs;
 
   clang-analyzer = callPackage ../development/tools/analysis/clang-analyzer { };
 
-  clangSelf = clangWrapSelf llvmPackagesSelf.clang;
-
-  clangWrapSelf = build: ccWrapperFun {
-    cc = build;
-    isClang = true;
-    inherit stdenvNoCC;
-    inherit (targetPackages.stdenv.cc) bintools libc;
-    extraPackages = [ libcxx libcxxabi ];
-    nativeTools = false;
-    nativeLibc = false;
-  };
-
   #Use this instead of stdenv to build with clang
   clangStdenv = if stdenv.cc.isClang then stdenv else lowPrio llvmPackages.stdenv;
   clang-sierraHack-stdenv = overrideCC stdenv clang-sierraHack;
@@ -6475,7 +6469,7 @@ with pkgs;
   };
 
   fstar = callPackage ../development/compilers/fstar {
-    ocamlPackages = ocaml-ng.ocamlPackages_4_02;
+    ocamlPackages = ocaml-ng.ocamlPackages_4_06;
   };
 
   dotnetPackages = recurseIntoAttrs (callPackage ./dotnet-packages.nix {});
@@ -6709,48 +6703,54 @@ with pkgs;
 
   llvmPackages = recurseIntoAttrs llvmPackages_5;
 
-  llvmPackagesSelf = llvmPackages_34.override {
-    stdenv = libcxxStdenv;
-  };
-
   llvmPackages_34 = callPackage ../development/compilers/llvm/3.4 ({
     isl = isl_0_12;
   } // stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
-    stdenv = overrideCC stdenv gcc6;
+    stdenv = overrideCC stdenv buildPackages.gcc6;
   });
 
   llvmPackages_35 = callPackage ../development/compilers/llvm/3.5 ({
     isl = isl_0_14;
   } // stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
-    stdenv = overrideCC stdenv gcc6;
+    stdenv = overrideCC stdenv buildPackages.gcc6;
   });
 
   llvmPackages_37 = callPackage ../development/compilers/llvm/3.7 ({
     inherit (stdenvAdapters) overrideCC;
+    buildLlvmTools = buildPackages.llvmPackages_37.tools;
+    targetLlvmLibraries = targetPackages.llvmPackages_37.libraries;
   } // stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
-    stdenv = overrideCC stdenv gcc6;
+    stdenv = overrideCC stdenv buildPackages.gcc6;
   });
 
   llvmPackages_38 = callPackage ../development/compilers/llvm/3.8 ({
     inherit (stdenvAdapters) overrideCC;
+    buildLlvmTools = buildPackages.llvmPackages_38.tools;
+    targetLlvmLibraries = targetPackages.llvmPackages_38.libraries;
   } // stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
-    stdenv = overrideCC stdenv gcc6;
+    stdenv = overrideCC stdenv buildPackages.gcc6;
   });
 
   llvmPackages_39 = callPackage ../development/compilers/llvm/3.9 ({
     inherit (stdenvAdapters) overrideCC;
+    buildLlvmTools = buildPackages.llvmPackages_39.tools;
+    targetLlvmLibraries = targetPackages.llvmPackages_39.libraries;
   } // stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
-    stdenv = overrideCC stdenv gcc6;
+    stdenv = overrideCC stdenv buildPackages.gcc6;
   });
 
   llvmPackages_4 = callPackage ../development/compilers/llvm/4 ({
     inherit (stdenvAdapters) overrideCC;
+    buildLlvmTools = buildPackages.llvmPackages_4.tools;
+    targetLlvmLibraries = targetPackages.llvmPackages_4.libraries;
   } // stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
-    stdenv = overrideCC stdenv gcc6;
+    stdenv = overrideCC stdenv buildPackages.gcc6;
   });
 
   llvmPackages_5 = callPackage ../development/compilers/llvm/5 ({
     inherit (stdenvAdapters) overrideCC;
+    buildLlvmTools = buildPackages.llvmPackages_5.tools;
+    targetLlvmLibraries = targetPackages.llvmPackages_5.libraries;
   } // stdenv.lib.optionalAttrs stdenv.isDarwin {
     cmake = cmake.override {
       isBootstrap = true;
@@ -6759,13 +6759,15 @@ with pkgs;
     libxml2 = libxml2.override { pythonSupport = false; };
     python2 = callPackage ../development/interpreters/python/cpython/2.7/boot.nix { inherit (darwin) CF configd; };
   } // stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
-    stdenv = overrideCC stdenv gcc6; # with gcc-7: undefined reference to `__divmoddi4'
+    stdenv = overrideCC stdenv buildPackages.gcc6; # with gcc-7: undefined reference to `__divmoddi4'
   });
 
   llvmPackages_6 = callPackage ../development/compilers/llvm/6 ({
     inherit (stdenvAdapters) overrideCC;
+    buildLlvmTools = buildPackages.llvmPackages_6.tools;
+    targetLlvmLibraries = targetPackages.llvmPackages_6.libraries;
   } // stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
-    stdenv = overrideCC stdenv gcc6; # with gcc-7: undefined reference to `__divmoddi4'
+    stdenv = overrideCC stdenv buildPackages.gcc6; # with gcc-7: undefined reference to `__divmoddi4'
   });
 
   manticore = callPackage ../development/compilers/manticore { };
@@ -6930,6 +6932,7 @@ with pkgs;
   rustracer = callPackage ../development/tools/rust/racer { };
   rustracerd = callPackage ../development/tools/rust/racerd { };
   rust-bindgen = callPackage ../development/tools/rust/bindgen { };
+  rust-cbindgen = callPackage ../development/tools/rust/cbindgen { };
   rustup = callPackage ../development/tools/rust/rustup {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
@@ -7017,42 +7020,46 @@ with pkgs;
 
   wla-dx = callPackage ../development/compilers/wla-dx { };
 
-  wrapCCWith = { name ? "", cc, bintools, libc, extraBuildCommands ? "" }:
-      ccWrapperFun rec {
+  wrapCCWith =
+    { cc
+    , # This should be the only bintools runtime dep with this sort of logic. The
+      # Others should instead delegate to the next stage's choice with
+      # `targetPackages.stdenv.cc.bintools`. This one is different just to
+      # provide the default choice, avoiding infinite recursion.
+      bintools ? if targetPlatform.isDarwin then darwin.binutils else binutils
+    , libc ? bintools.libc
+    , ...
+    } @ extraArgs:
+      callPackage ../build-support/cc-wrapper (let self = {
     nativeTools = targetPlatform == hostPlatform && stdenv.cc.nativeTools or false;
     nativeLibc = targetPlatform == hostPlatform && stdenv.cc.nativeLibc or false;
     nativePrefix = stdenv.cc.nativePrefix or "";
-    noLibc = !nativeLibc && (libc == null);
+    noLibc = !self.nativeLibc && (self.libc == null);
 
     isGNU = cc.isGNU or false;
     isClang = cc.isClang or false;
 
-    inherit name cc bintools libc extraBuildCommands;
-  };
-
-  ccWrapperFun = callPackage ../build-support/cc-wrapper;
-  bintoolsWrapperFun = callPackage ../build-support/bintools-wrapper;
+    inherit cc bintools libc;
+  } // extraArgs; in self);
 
   wrapCC = cc: wrapCCWith {
-    name = lib.optionalString (targetPlatform != hostPlatform) "gcc-cross-wrapper";
     inherit cc;
-    # This should be the only bintools runtime dep with this sort of logic. The
-    # Others should instead delegate to the next stage's choice with
-    # `targetPackages.stdenv.cc.bintools`. This one is different just to
-    # provide the default choice, avoiding infinite recursion.
-    bintools = if targetPlatform.isDarwin then darwin.binutils else binutils;
-    libc = if targetPlatform != hostPlatform then libcCross else stdenv.cc.libc;
   };
 
-  wrapBintoolsWith = { bintools, libc, extraBuildCommands ? "" }: bintoolsWrapperFun {
+  wrapBintoolsWith =
+    { bintools
+    , libc ? if targetPlatform != hostPlatform then libcCross else stdenv.cc.libc
+    , ...
+    } @ extraArgs:
+      callPackage ../build-support/bintools-wrapper (let self = {
     nativeTools = targetPlatform == hostPlatform && stdenv.cc.nativeTools or false;
     nativeLibc = targetPlatform == hostPlatform && stdenv.cc.nativeLibc or false;
     nativePrefix = stdenv.cc.nativePrefix or "";
 
-    noLibc = (libc == null);
+    noLibc = (self.libc == null);
 
-    inherit bintools libc extraBuildCommands;
-  };
+    inherit bintools libc;
+  } // extraArgs; in self);
 
   # prolog
   yap = callPackage ../development/compilers/yap { };
@@ -7658,11 +7665,9 @@ with pkgs;
     noSysDirs = (targetPlatform != buildPlatform) || noSysDirs;
   };
   binutils = wrapBintoolsWith {
-    libc = if targetPlatform != hostPlatform then libcCross else stdenv.cc.libc;
     bintools = binutils-unwrapped;
   };
   binutils_nogold = lowPrio (wrapBintoolsWith {
-    libc = if targetPlatform != hostPlatform then libcCross else stdenv.cc.libc;
     bintools = binutils-unwrapped.override {
       gold = false;
     };
@@ -8488,7 +8493,7 @@ with pkgs;
 
   grabserial = callPackage ../development/tools/grabserial { };
 
-  mypy = python3Packages.callPackage ../development/tools/mypy { };
+  mypy = python3Packages.mypy;
 
   ### DEVELOPMENT / LIBRARIES
 
@@ -17258,7 +17263,7 @@ with pkgs;
 
   nedit = callPackage ../applications/editors/nedit { };
 
-  nheko = callPackage ../applications/networking/instant-messengers/nheko { };
+  nheko = libsForQt5.callPackage ../applications/networking/instant-messengers/nheko { };
 
   nomacs = libsForQt5.callPackage ../applications/graphics/nomacs { };
 
@@ -18547,6 +18552,12 @@ with pkgs;
     imlib2 = imlib2-nox;
   };
 
+  # Version without X11 or graphics
+  w3m-nographics = w3m.override {
+    x11Support = false;
+    graphicsSupport = false;
+  };
+
   # Version for batch text processing, not a good browser
   w3m-batch = w3m.override {
     graphicsSupport = false;
@@ -18701,6 +18712,7 @@ with pkgs;
       ++ optionals (config.kodi.enableHyperLauncher or false)
            (with hyper-launcher; [ plugin service pdfreader ])
       ++ optional (config.kodi.enableJoystick or false) joystick
+      ++ optional (config.kodi.enableOSMCskin or false) osmc-skin
       ++ optional (config.kodi.enableSVTPlay or false) svtplay
       ++ optional (config.kodi.enableSteamController or false) steam-controller
       ++ optional (config.kodi.enableSteamLauncher or false) steam-launcher
@@ -20935,6 +20947,8 @@ with pkgs;
   nix-index = callPackage ../tools/package-management/nix-index { };
 
   nix-pin = callPackage ../tools/package-management/nix-pin { };
+
+  nix-prefetch-github = callPackage ../build-support/nix-prefetch-github {};
 
   inherit (callPackages ../tools/package-management/nix-prefetch-scripts { })
     nix-prefetch-bzr

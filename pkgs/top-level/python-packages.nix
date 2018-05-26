@@ -408,6 +408,10 @@ in {
 
   pytest-tornado = callPackage ../development/python-modules/pytest-tornado { };
 
+  python-openid = callPackage (if isPy3k
+    then ../development/python-modules/python3-openid
+    else ../development/python-modules/python-openid) { };
+
   python-sql = callPackage ../development/python-modules/python-sql { };
 
   python-stdnum = callPackage ../development/python-modules/python-stdnum { };
@@ -4709,6 +4713,8 @@ in {
     };
   };
 
+  django-allauth = callPackage ../development/python-modules/django-allauth { };
+
   django_appconf = callPackage ../development/python-modules/django_appconf { };
 
   django_colorful = buildPythonPackage rec {
@@ -4775,6 +4781,8 @@ in {
   };
 
   django_extensions = callPackage ../development/python-modules/django-extensions { };
+
+  django-gravatar2 = callPackage ../development/python-modules/django-gravatar2 { };
 
   django_guardian = callPackage ../development/python-modules/django_guardian { };
 
@@ -5160,6 +5168,7 @@ in {
     };
   };
 
+  effect = callPackage ../development/python-modules/effect {};
 
   elpy = buildPythonPackage rec {
     name = "elpy-${version}";
@@ -8079,6 +8088,8 @@ in {
 
   mysqlclient = callPackage ../development/python-modules/mysqlclient { };
 
+  mypy = callPackage ../development/python-modules/mypy { };
+
   mwclient = buildPythonPackage rec {
     version = "0.8.3";
     pname = "mwclient";
@@ -9091,13 +9102,13 @@ in {
   });
 
   osc = buildPythonPackage {
-    name = "osc-0.159.0-4-g2d44589";
+    name = "osc-0.162.0-55-gb730f88";
     disabled = isPy3k;
     src = pkgs.fetchFromGitHub {
       owner = "openSUSE";
       repo = "osc";
-      rev = "2d44589886845af7da911aaec9403344e396cd91";
-      sha256 = "0s8p7gkp64w6r5rnxpbvl2dgb5p85kq2skcqm6qxn5ddadhw2sfz";
+      rev = "b730f880cfe85a8547f569355a21706f27ebfa78";
+      sha256 = "0hh9j5zd2kc0804d2jmf1q3w5xm9l9s69hhgysbncrv5fw0414lh";
     };
     buildInputs = with pkgs; [ bashInteractive ]; # needed for bash-completion helper
     propagatedBuildInputs = with self; [ urlgrabber m2crypto pyyaml ];
@@ -9887,25 +9898,7 @@ in {
 
   pybase64 = callPackage ../development/python-modules/pybase64 { };
 
-  pylibconfig2 = buildPythonPackage rec {
-    name = "pylibconfig2-${version}";
-    version = "0.2.4";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/pylibconfig2/${name}.tar.gz";
-      sha256 = "0kyg6gldj6hi2jhc5xhi834bb2mcaiy24dvfik963shnldqr7kqg";
-    };
-
-    doCheck = false;
-
-    propagatedBuildInputs = with self ; [ pyparsing ];
-
-    meta = {
-      homepage = https://github.com/heinzK1X/pylibconfig2;
-      description = "Pure python library for libconfig syntax";
-      license = licenses.gpl3;
-    };
-  };
+  pylibconfig2 = callPackage ../development/python-modules/pylibconfig2 { };
 
   pylibmc = callPackage ../development/python-modules/pylibmc {};
 
@@ -11275,9 +11268,17 @@ in {
     buildInputs = with self; [ pyasn1 pycrypto ];
   };
 
+  python-language-server = callPackage ../development/python-modules/python-language-server {};
+
+  pyls-mypy = callPackage ../development/python-modules/pyls-mypy {};
+
+  pyls-isort = callPackage ../development/python-modules/pyls-isort {};
+
   pyudev = callPackage ../development/python-modules/pyudev {
     inherit (pkgs) fetchurl systemd;
   };
+
+  pynmea2 = callPackage ../development/python-modules/pynmea2 {};
 
   pynzb = buildPythonPackage (rec {
     name = "pynzb-0.1.0";
