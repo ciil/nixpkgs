@@ -408,6 +408,9 @@ self: super: {
     jailbreak       = true;
   });
 
+  # https://github.com/jcristovao/enclosed-exceptions/issues/12
+  enclosed-exceptions = dontCheck super.enclosed-exceptions;
+
   # Older versions don't compile.
   base-compat = self.base-compat_0_10_1;
   brick = self.brick_0_37;
@@ -444,5 +447,7 @@ self: super: {
     url = https://raw.githubusercontent.com/lambdabot/lambdabot/ghc-8.4.1/patches/flexible-defaults-0.0.1.2.patch;
     sha256 = "1bpsqq80h6nxm04wddgcgyzn0fjfsmhccmqb211jqswv5209znx8";
   });
+
+  lambdabot-core = appendPatch super.lambdabot-core ./patches/lambdabot-core-ghc-8.4.x-fix.patch;
 
 }

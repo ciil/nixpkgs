@@ -140,6 +140,11 @@
     github = "roosemberth";
     name = "Roosembert (Roosemberth) Palacios";
   };
+  Scriptkiddi = {
+    email = "nixos@scriptkiddi.de";
+    github = "scriptkiddi";
+    name = "Fritz Otlinghaus";
+  };
   SShrike = {
     email = "severen@shrike.me";
     github = "severen";
@@ -1236,6 +1241,11 @@
     github = "ElvishJerricco";
     name = "Will Fancher";
   };
+  emmanuelrosa = {
+      email = "emmanuel_rosa@aol.com";
+      github = "emmanuelrosa";
+      name = "Emmanuel Rosa";
+  };
   endgame = {
     email = "jack@jackkelly.name";
     github = "endgame";
@@ -1853,6 +1863,11 @@
   joelteon = {
     email = "me@joelt.io";
     name = "Joel Taylor";
+  };
+  johanot = {
+    email = "write@ownrisk.dk";
+    github = "johanot";
+    name = "Johan Thomsen";
   };
   johbo = {
     email = "johannes@bornhold.name";
