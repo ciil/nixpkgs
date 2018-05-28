@@ -6,7 +6,7 @@
 let
   verMajor = "1";
   verMinor = "1";
-  verPatch = "442";
+  verPatch = "453";
   version = "${verMajor}.${verMinor}.${verPatch}";
   ginVer = "1.5";
   gwtVer = "2.7.0";
