@@ -12,6 +12,8 @@ stdenv.mkDerivation rec {
     sha256 = "05976h6033v2w7d05qnigxmsrm33bg7gmgyzpvis8910fkxrhvhh";
   };
 
+  phases = [ "unpackPhase" "buildPhase" "installPhase" "fixupPhase" ];
+
   buildPhase = ''
     mv conf/server.xml conf/server.xml.dist
     ln -sf /run/atlassian-jira/server.xml conf/server.xml
