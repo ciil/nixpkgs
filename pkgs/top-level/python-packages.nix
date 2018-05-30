@@ -311,6 +311,8 @@ in {
 
   outcome = callPackage ../development/python-modules/outcome {};
 
+  pdfminer = callPackage ../development/python-modules/pdfminer_six { };
+
   plantuml = callPackage ../tools/misc/plantuml { };
 
   Pmw = callPackage ../development/python-modules/Pmw { };
@@ -1323,7 +1325,7 @@ in {
     #setupPyBuildFlags = [ "--berkeley-db=${pkgs.db}" ];
     # We can also use a variable
     preConfigure = ''
-      export BERKELEYDB_DIR=${pkgs.db};
+      export BERKELEYDB_DIR=${pkgs.db.dev};
     '';
 
     meta = {
@@ -3788,28 +3790,6 @@ in {
       homepage = https://github.com/joeyespo/path-and-address;
       license = licenses.mit;
       maintainers = with maintainers; [ koral];
-    };
-  };
-
-
-  pdfminer = buildPythonPackage rec {
-    version = "20140328";
-    name = "pdfminer-${version}";
-
-    disabled = ! isPy27;
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/pdfminer/pdfminer-${version}.tar.gz";
-      sha256 = "0qpjv4b776dwvpf5a7v19g41qsz97bv0qqsyvm7a31k50n9pn65s";
-    };
-
-    propagatedBuildInputs = with self; [  ];
-
-    meta = {
-      description = "Tool for extracting information from PDF documents";
-      homepage = http://euske.github.io/pdfminer/index.html;
-      license = licenses.mit;
-      maintainers = with maintainers; [ ];
     };
   };
 
@@ -16961,6 +16941,11 @@ EOF
       sha256 = "0v8ziaam2r637v94ra4dbjw6jzxz99gs5x4i585kgag1v204yb9b";
     };
 
+    checkPhase = ''
+      # The tests assume that test_xmlast does not run before test_pyPEG2.
+      python -m unittest pypeg2.test.test_pyPEG2 pypeg2.test.test_xmlast
+    '';
+
     #https://bitbucket.org/fdik/pypeg/issues/36/test-failures-on-py35
     doCheck = !isPy3k;
 
@@ -18169,6 +18154,11 @@ EOF
   pyogg = callPackage ../development/python-modules/pyogg { };
 
   rubymarshal = callPackage ../development/python-modules/rubymarshal { };
+
+  radio_beam = callPackage ../development/python-modules/radio_beam { };
+
+  spectral-cube = callPackage ../development/python-modules/spectral-cube { };
+
 });
 
 in fix' (extends overrides packages)
