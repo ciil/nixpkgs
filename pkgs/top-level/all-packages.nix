@@ -6119,7 +6119,7 @@ with pkgs;
 
   elmPackages = recurseIntoAttrs (callPackage ../development/compilers/elm { });
 
-  adobe_flex_sdk = callPackage ../development/compilers/adobe-flex-sdk { };
+  apache-flex-sdk = callPackage ../development/compilers/apache-flex-sdk { };
 
   fpc = callPackage ../development/compilers/fpc { };
 
@@ -6782,6 +6782,8 @@ with pkgs;
 
   microscheme = callPackage ../development/compilers/microscheme { };
 
+  mint = callPackage ../development/compilers/mint { };
+
   mitscheme = callPackage ../development/compilers/mit-scheme {
    texLive = texlive.combine { inherit (texlive) scheme-small; };
    texinfo = texinfo5;
@@ -7006,6 +7008,8 @@ with pkgs;
 
   bupc = callPackage ../development/compilers/bupc { };
 
+  urn = callPackage ../development/compilers/urn { };
+
   urweb = callPackage ../development/compilers/urweb { };
 
   inherit (callPackage ../development/compilers/vala { })
@@ -7136,7 +7140,13 @@ with pkgs;
 
   guile = guile_2_2;
 
-  hadoop = callPackage ../applications/networking/cluster/hadoop { };
+  inherit (callPackage ../applications/networking/cluster/hadoop { })
+    hadoop_2_7
+    hadoop_2_8
+    hadoop_2_9
+    hadoop_3_0
+    hadoop_3_1;
+  hadoop = hadoop_2_7;
 
   io = callPackage ../development/interpreters/io { };
 
@@ -12599,6 +12609,8 @@ with pkgs;
 
   mlmmj = callPackage ../servers/mail/mlmmj { };
 
+  morty = callPackage ../servers/web-apps/morty { };
+
   myserver = callPackage ../servers/http/myserver { };
 
   nas = callPackage ../servers/nas { };
@@ -12842,6 +12854,7 @@ with pkgs;
   prometheus-blackbox-exporter = callPackage ../servers/monitoring/prometheus/blackbox-exporter.nix { };
   prometheus-collectd-exporter = callPackage ../servers/monitoring/prometheus/collectd-exporter.nix { };
   prometheus-consul-exporter = callPackage ../servers/monitoring/prometheus/consul-exporter.nix { };
+  prometheus-dnsmasq-exporter = callPackage ../servers/monitoring/prometheus/dnsmasq-exporter.nix { };
   prometheus-dovecot-exporter = callPackage ../servers/monitoring/prometheus/dovecot-exporter.nix { };
   prometheus-fritzbox-exporter = callPackage ../servers/monitoring/prometheus/fritzbox-exporter.nix { };
   prometheus-haproxy-exporter = callPackage ../servers/monitoring/prometheus/haproxy-exporter.nix { };
@@ -12925,6 +12938,7 @@ with pkgs;
 
   samba4 = callPackage ../servers/samba/4.x.nix {
     python = python2;
+    libbsd = libbsd-freedesktop;
   };
 
   sambaMaster = callPackage ../servers/samba/master.nix { };
@@ -13892,8 +13906,6 @@ with pkgs;
   gotags = callPackage ../development/tools/gotags { };
 
   golint = callPackage ../development/tools/golint { };
-
-  godep = callPackage ../development/tools/godep { };
 
   godef = callPackage ../development/tools/godef { };
 
@@ -14949,6 +14961,8 @@ with pkgs;
   baresip = callPackage ../applications/networking/instant-messengers/baresip {
     ffmpeg = ffmpeg_1;
   };
+
+  barrier = callPackage ../applications/misc/barrier {};
 
   banshee = callPackage ../applications/audio/banshee {
     gconf = pkgs.gnome2.GConf;
@@ -16774,6 +16788,8 @@ with pkgs;
 
   makeself = callPackage ../applications/misc/makeself { };
 
+  mapmap = libsForQt5.callPackage ../applications/video/mapmap { };
+
   marathon = callPackage ../applications/networking/cluster/marathon { };
   marathonctl = callPackage ../tools/virtualization/marathonctl { } ;
 
@@ -17480,6 +17496,8 @@ with pkgs;
 
   ptask = callPackage ../applications/misc/ptask { };
 
+  pulseaudio-ctl = callPackage ../applications/audio/pulseaudio-ctl { };
+
   pulseaudio-dlna = callPackage ../applications/audio/pulseaudio-dlna { };
 
   pulseview = libsForQt5.callPackage ../applications/science/electronics/pulseview { };
@@ -18010,7 +18028,7 @@ with pkgs;
       saslSupport = false;
       sasl = cyrus_sasl;
     })
-    subversion18 subversion19;
+    subversion18 subversion19 subversion_1_10;
 
   subversion = pkgs.subversion19;
 
@@ -18920,6 +18938,8 @@ with pkgs;
   zeroc_ice = callPackage ../development/libraries/zeroc-ice {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
+
+  zeronet = callPackage ../applications/networking/p2p/zeronet { };
 
   zexy = callPackage ../applications/audio/pd-plugins/zexy  { };
 
@@ -21471,6 +21491,8 @@ with pkgs;
   fts = if hostPlatform.isMusl then netbsd.fts else null;
 
   libbsd = netbsd.compat;
+
+  libbsd-freedesktop = callPackage ../development/libraries/libbsd {};
 
   inherit (recurseIntoAttrs (callPackages ../os-specific/bsd { }))
           netbsd;
