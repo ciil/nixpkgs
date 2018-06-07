@@ -2905,7 +2905,7 @@ let self = _self // overrides; _self = with self; {
       url = "mirror://cpan/authors/id/B/BI/BINGOS/${name}.tar.gz";
       sha256 = "1q4b0fkdn4sh8ym9dig21w96p7kzrhq66lqhn0dy1l3pgx413zlc";
     };
-    doCheck = false;
+    propagatedBuildInputs = [ ArchiveExtract LogMessage ModulePluggable ObjectAccessor PackageConstants TermUI ];
     meta = {
       homepage = https://github.com/jib/cpanplus-devel;
       description = "Ameliorated interface to the CPAN";
@@ -4098,6 +4098,11 @@ let self = _self // overrides; _self = with self; {
   DBDPg = import ../development/perl-modules/DBD-Pg {
     inherit stdenv fetchurl buildPerlPackage DBI;
     inherit (pkgs) postgresql;
+  };
+
+  DBDsybase = import ../development/perl-modules/DBD-sybase {
+    inherit fetchurl buildPerlPackage DBI;
+    inherit (pkgs) freetds;
   };
 
   DBFile = import ../development/perl-modules/DB_File {

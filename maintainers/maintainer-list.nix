@@ -58,6 +58,11 @@
     github = "DamienCassou";
     name = "Damien Cassou";
   };
+  das_j = {
+    email = "janne@hess.ooo";
+    github = "dasJ";
+    name = "Janne Heß";
+  };
   DerGuteMoritz = {
     email = "moritz@twoticketsplease.de";
     github = "DerGuteMoritz";
@@ -2171,6 +2176,11 @@
     github = "limeytexan";
     name = "Michael Brantley";
   };
+  linc01n = {
+    email = "git@lincoln.hk";
+    github = "linc01n";
+    name = "Lincoln Lee";
+  };
   linquize = {
     email = "linquize@yahoo.com.hk";
     github = "linquize";
@@ -2283,6 +2293,11 @@
     email = "georges.dubus@compiletoi.net";
     github = "madjar";
     name = "Georges Dubus";
+  };
+  mafo = {
+    email = "Marc.Fontaine@gmx.de";
+    github = "MarcFontaine";
+    name = "Marc Fontaine";
   };
   magnetophon = {
     email = "bart@magnetophon.nl";

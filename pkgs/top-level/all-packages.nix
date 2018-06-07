@@ -1358,6 +1358,8 @@ with pkgs;
 
   meritous = callPackage ../games/meritous { };
 
+  opendune = callPackage ../games/opendune { };
+
   meson = callPackage ../development/tools/build-managers/meson { };
 
   metabase = callPackage ../servers/metabase { };
@@ -1866,29 +1868,40 @@ with pkgs;
   cron = callPackage ../tools/system/cron { };
 
   inherit (callPackages ../development/compilers/cudatoolkit { })
-    cudatoolkit6
-    cudatoolkit65
-    cudatoolkit7
-    cudatoolkit75
-    cudatoolkit8
-    cudatoolkit9;
+    cudatoolkit_6
+    cudatoolkit_6_5
+    cudatoolkit_7
+    cudatoolkit_7_5
+    cudatoolkit_8
+    cudatoolkit_9_0
+    cudatoolkit_9;
 
-  cudatoolkit = cudatoolkit9;
+  cudatoolkit = cudatoolkit_9;
 
   inherit (callPackages ../development/libraries/science/math/cudnn { })
-    cudnn_cudatoolkit7
-    cudnn_cudatoolkit75
-    cudnn6_cudatoolkit8
-    cudnn_cudatoolkit8
-    cudnn_cudatoolkit9;
+    cudnn_cudatoolkit_7
+    cudnn_cudatoolkit_7_5
+    cudnn6_cudatoolkit_8
+    cudnn_cudatoolkit_8
+    cudnn_cudatoolkit_9
+    cudnn_cudatoolkit_9_0;
 
-  cudnn = cudnn_cudatoolkit9;
+  cudnn = cudnn_cudatoolkit_9;
 
   curlFull = curl.override {
     idnSupport = true;
     ldapSupport = true;
     gssSupport = true;
     brotliSupport = true;
+  };
+
+  curl_7_59 = callPackage ../tools/networking/curl/7_59.nix rec {
+    fetchurl = fetchurlBoot;
+    http2Support = true;
+    zlibSupport = true;
+    sslSupport = zlibSupport;
+    scpSupport = zlibSupport && !stdenv.isSunOS && !stdenv.isCygwin;
+    gssSupport = true;
   };
 
   curl = callPackage ../tools/networking/curl rec {
@@ -2148,7 +2161,7 @@ with pkgs;
 
   mcrcon = callPackage ../tools/networking/mcrcon {};
 
-  s-tar = callPackages ../tools/archivers/s-tar {};
+  s-tar = callPackage ../tools/archivers/s-tar {};
 
   tealdeer = callPackage ../tools/misc/tealdeer { };
 
@@ -2304,6 +2317,8 @@ with pkgs;
       protobuf = pkgs.protobuf.overrideDerivation (oldAttrs: { stdenv = clangStdenv; });
     };
 
+    table-extra = callPackage ../tools/inputmethods/fcitx-engines/fcitx-table-extra { };
+
     table-other = callPackage ../tools/inputmethods/fcitx-engines/fcitx-table-other { };
 
     cloudpinyin = callPackage ../tools/inputmethods/fcitx-engines/fcitx-cloudpinyin { };
@@ -2372,6 +2387,8 @@ with pkgs;
   fluentd = callPackage ../tools/misc/fluentd { };
 
   flvstreamer = callPackage ../tools/networking/flvstreamer { };
+
+  libbsd = callPackage ../development/libraries/libbsd { };
 
   libbladeRF = callPackage ../development/libraries/libbladeRF { };
 
@@ -3370,6 +3387,10 @@ with pkgs;
     inherit (darwin.apple_sdk.frameworks) CoreServices;
   };
 
+  medfile = callPackage ../development/libraries/medfile {
+    hdf5 = hdf5_1_8;
+  };
+
   memtester = callPackage ../tools/system/memtester { };
 
   minergate = callPackage ../applications/misc/minergate { };
@@ -3914,10 +3935,10 @@ with pkgs;
   xnbd = callPackage ../tools/networking/xnbd { };
 
   inherit (callPackages ../development/libraries/science/math/nccl { })
-    nccl_cudatoolkit8
-    nccl_cudatoolkit9;
+    nccl_cudatoolkit_8
+    nccl_cudatoolkit_9;
 
-  nccl = nccl_cudatoolkit9;
+  nccl = nccl_cudatoolkit_9;
 
   ndjbdns = callPackage ../tools/networking/ndjbdns { };
 
@@ -4359,6 +4380,8 @@ with pkgs;
 
   pdf2odt = callPackage ../tools/typesetting/pdf2odt { };
 
+  pdf-redact-tools = callPackage ../tools/graphics/pdfredacttools { };
+
   pdf2svg = callPackage ../tools/graphics/pdf2svg { };
 
   fmodex = callPackage ../games/zandronum/fmod.nix { };
@@ -4399,6 +4422,8 @@ with pkgs;
   pfstools = callPackage ../tools/graphics/pfstools { };
 
   philter = callPackage ../tools/networking/philter { };
+
+  phodav = callPackage ../tools/networking/phodav { };
 
   pinentry = callPackage ../tools/security/pinentry {
     libcap = if stdenv.isDarwin then null else libcap;
@@ -4908,6 +4933,8 @@ with pkgs;
   shadowsocks-libev = callPackage ../tools/networking/shadowsocks-libev { };
 
   sharutils = callPackage ../tools/archivers/sharutils { };
+
+  schema2ldif = callPackage ../tools/text/schema2ldif { };
 
   shocco = callPackage ../tools/text/shocco { };
 
@@ -7797,6 +7824,8 @@ with pkgs;
 
   ctodo = callPackage ../applications/misc/ctodo { };
 
+  ctmg = callPackage ../tools/security/ctmg { };
+
   cmake_2_8 = callPackage ../development/tools/build-managers/cmake/2.8.nix { };
 
   cmake = libsForQt5.callPackage ../development/tools/build-managers/cmake { };
@@ -9772,6 +9801,8 @@ with pkgs;
 
   libcec = callPackage ../development/libraries/libcec { };
   libcec_platform = callPackage ../development/libraries/libcec/platform.nix { };
+
+  libcef = callPackage ../development/libraries/libcef { inherit (gnome2) GConf; };
 
   libcello = callPackage ../development/libraries/libcello {};
 
@@ -12777,7 +12808,8 @@ with pkgs;
 
   monitoring-plugins = callPackage ../servers/monitoring/plugins { };
 
-  inherit (callPackage ../servers/monitoring/plugins/labs_consol_de.nix { inherit (perlPackages) NetSNMP; })
+  inherit (callPackage ../servers/monitoring/plugins/labs_consol_de.nix { inherit (perlPackages) DBDsybase NetSNMP; })
+    check-mssql-health
     check-nwc-health
     check-ups-health;
 
@@ -12938,7 +12970,6 @@ with pkgs;
 
   samba4 = callPackage ../servers/samba/4.x.nix {
     python = python2;
-    libbsd = libbsd-freedesktop;
   };
 
   sambaMaster = callPackage ../servers/samba/master.nix { };
@@ -13457,13 +13488,13 @@ with pkgs;
     ];
   };
 
-  linux_copperhead_stable = callPackage ../os-specific/linux/kernel/linux-copperhead-stable.nix {
-    kernelPatches = with kernelPatches; [
-      bridge_stp_helper
-      modinst_arg_list_too_long
-      tag_hardened
-    ];
-  };
+  linux_copperhead_stable = (linux_4_16.override {
+    kernelPatches = linux_4_16.kernelPatches ++ [
+      kernelPatches.copperhead_4_16
+      kernelPatches.tag_hardened
+     ];
+    modDirVersionArg = linux_4_16.modDirVersion + "-hardened";
+  });
 
   # linux mptcp is based on the 4.4 kernel
   linux_mptcp = callPackage ../os-specific/linux/kernel/linux-mptcp.nix {
@@ -13508,6 +13539,17 @@ with pkgs;
   };
 
   linux_4_16 = callPackage ../os-specific/linux/kernel/linux-4.16.nix {
+    kernelPatches =
+      [ kernelPatches.bridge_stp_helper
+        # See pkgs/os-specific/linux/kernel/cpu-cgroup-v2-patches/README.md
+        # when adding a new linux version
+        # kernelPatches.cpu-cgroup-v2."4.11"
+        kernelPatches.modinst_arg_list_too_long
+        kernelPatches.bcm2835_mmal_v4l2_camera_driver # Only needed for 4.16!
+      ];
+  };
+
+  linux_4_17 = callPackage ../os-specific/linux/kernel/linux-4.17.nix {
     kernelPatches =
       [ kernelPatches.bridge_stp_helper
         # See pkgs/os-specific/linux/kernel/cpu-cgroup-v2-patches/README.md
@@ -13703,7 +13745,7 @@ with pkgs;
   linux = linuxPackages.kernel;
 
   # Update this when adding the newest kernel major version!
-  linuxPackages_latest = linuxPackages_4_16;
+  linuxPackages_latest = linuxPackages_4_17;
   linux_latest = linuxPackages_latest.kernel;
 
   # Build the kernel modules for the some of the kernels.
@@ -13714,6 +13756,7 @@ with pkgs;
   linuxPackages_4_9 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_9);
   linuxPackages_4_14 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_14);
   linuxPackages_4_16 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_16);
+  linuxPackages_4_17 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_17);
   # Don't forget to update linuxPackages_latest!
 
   # Intentionally lacks recurseIntoAttrs, as -rc kernels will quite likely break out-of-tree modules and cause failed Hydra builds.
@@ -14912,7 +14955,6 @@ with pkgs;
   hevm = self.altcoins.hevm;
 
   parity = self.altcoins.parity;
-  parity-beta = self.altcoins.parity-beta;
   parity-ui = self.altcoins.parity-ui;
 
   stellar-core = self.altcoins.stellar-core;
@@ -15331,6 +15373,7 @@ with pkgs;
 
   docker-machine = callPackage ../applications/networking/cluster/docker-machine { };
   docker-machine-kvm = callPackage ../applications/networking/cluster/docker-machine/kvm.nix { };
+  docker-machine-kvm2 = callPackage ../applications/networking/cluster/docker-machine/kvm2.nix { };
   docker-machine-xhyve = callPackage ../applications/networking/cluster/docker-machine/xhyve.nix {
     inherit (darwin.apple_sdk.frameworks) Hypervisor vmnet;
   };
@@ -15969,7 +16012,7 @@ with pkgs;
 
   fomp = callPackage ../applications/audio/fomp { };
 
-  freecad = callPackage ../applications/graphics/freecad { };
+  freecad = callPackage ../applications/graphics/freecad { mpi = openmpi; };
 
   freemind = callPackage ../applications/misc/freemind { };
 
@@ -16097,6 +16140,8 @@ with pkgs;
   libquvi = callPackage ../applications/video/quvi/library.nix { };
 
   linssid = libsForQt5.callPackage ../applications/networking/linssid { };
+
+  m32edit = callPackage ../applications/audio/midas/m32edit.nix {};
 
   manuskript = callPackage ../applications/editors/manuskript { };
 
@@ -17132,6 +17177,8 @@ with pkgs;
     inherit (gnome3) libgee;
   };
 
+  synapse-bt = callPackage ../applications/networking/p2p/synapse-bt { };
+
   synfigstudio = callPackage ../applications/graphics/synfigstudio {
     fontsConf = makeFontsConf { fontDirectories = [ freefont_ttf ]; };
     inherit (gnome3) defaultIconTheme;
@@ -17230,6 +17277,8 @@ with pkgs;
   };
 
   oblogout = callPackage ../tools/X11/oblogout { };
+
+  obs-linuxbrowser = callPackage ../applications/video/obs-studio/linuxbrowser.nix { };
 
   obs-studio = libsForQt5.callPackage ../applications/video/obs-studio {
     alsaSupport = stdenv.isLinux;
@@ -18673,6 +18722,8 @@ with pkgs;
   x2goclient = libsForQt5.callPackage ../applications/networking/remote/x2goclient { };
 
   x2vnc = callPackage ../tools/X11/x2vnc { };
+
+  x32edit = callPackage ../applications/audio/midas/x32edit.nix {};
 
   x42-plugins = callPackage ../applications/audio/x42-plugins { };
 
@@ -20531,6 +20582,7 @@ with pkgs;
 
   vite = callPackage ../applications/science/misc/vite { };
 
+  xearth = callPackage ../applications/science/astronomy/xearth { };
   xplanet = callPackage ../applications/science/astronomy/xplanet { };
 
   ### SCIENCE / PHYSICS
@@ -20856,6 +20908,7 @@ with pkgs;
   inherit (callPackages ../tools/package-management/nix {
       storeDir = config.nix.storeDir or "/nix/store";
       stateDir = config.nix.stateDir or "/nix/var";
+      curl = curl_7_59;
       })
     nix
     nix1
@@ -21490,13 +21543,11 @@ with pkgs;
 
   fts = if hostPlatform.isMusl then netbsd.fts else null;
 
-  libbsd = netbsd.compat;
-
-  libbsd-freedesktop = callPackage ../development/libraries/libbsd {};
-
   inherit (recurseIntoAttrs (callPackages ../os-specific/bsd { }))
           netbsd;
 
   yrd = callPackage ../tools/networking/yrd { };
+
+  powershell = callPackage ../shells/powershell { };
 
 }
