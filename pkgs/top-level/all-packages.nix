@@ -1176,6 +1176,8 @@ with pkgs;
 
   duperemove = callPackage ../tools/filesystems/duperemove { };
 
+  dylibbundler = callPackage ../tools/misc/dylibbundler { };
+
   dynamic-colors = callPackage ../tools/misc/dynamic-colors { };
 
   dyncall = callPackage ../development/libraries/dyncall { };
@@ -4145,6 +4147,8 @@ with pkgs;
   obnam = callPackage ../tools/backup/obnam { };
 
   odpdown = callPackage ../tools/typesetting/odpdown { };
+
+  odpic = callPackage ../development/libraries/odpic { };
 
   odt2txt = callPackage ../tools/text/odt2txt { };
 
@@ -7501,9 +7505,11 @@ with pkgs;
   spidermonkey_1_8_5 = callPackage ../development/interpreters/spidermonkey/1.8.5.nix { };
   spidermonkey_17 = callPackage ../development/interpreters/spidermonkey/17.nix { };
   spidermonkey_31 = callPackage ../development/interpreters/spidermonkey/31.nix { };
-  spidermonkey_38 = callPackage ../development/interpreters/spidermonkey/38.nix {
+  spidermonkey_38 = callPackage ../development/interpreters/spidermonkey/38.nix ({
     inherit (darwin) libobjc;
-  };
+  } // (stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
+      stdenv = overrideCC stdenv gcc6; # with gcc-7: undefined reference to `__divmoddi4'
+  }));
   spidermonkey_52 = callPackage ../development/interpreters/spidermonkey/52.nix { };
   spidermonkey = spidermonkey_31;
 
@@ -7691,6 +7697,11 @@ with pkgs;
 
   bazel_0_4 = callPackage ../development/tools/build-managers/bazel/0.4.nix { };
   bazel = callPackage ../development/tools/build-managers/bazel { };
+
+  bazel-buildtools = callPackage ../development/tools/build-managers/bazel/buildtools { };
+  buildifier = bazel-buildtools;
+  buildozer = bazel-buildtools;
+  unused_deps = bazel-buildtools;
 
   buildBazelPackage = callPackage ../build-support/build-bazel-package { };
 
@@ -16290,6 +16301,7 @@ with pkgs;
   };
 
   hello = callPackage ../applications/misc/hello { };
+  hello-unfree = callPackage ../applications/misc/hello-unfree { };
 
   helmholtz = callPackage ../applications/audio/pd-plugins/helmholtz { };
 
@@ -17177,7 +17189,9 @@ with pkgs;
     inherit (gnome3) libgee;
   };
 
-  synapse-bt = callPackage ../applications/networking/p2p/synapse-bt { };
+  synapse-bt = callPackage ../applications/networking/p2p/synapse-bt {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   synfigstudio = callPackage ../applications/graphics/synfigstudio {
     fontsConf = makeFontsConf { fontDirectories = [ freefont_ttf ]; };

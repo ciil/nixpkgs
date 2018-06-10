@@ -123,11 +123,8 @@ $ nix-instantiate -E '(import &lt;nixpkgsunstable&gt; {}).gitFull'
    </listitem>
    <listitem>
     <para>
-      The GRUB specific option <option>boot.loader.grub.extraInitrd</option>
-      has been replaced with the generic option
-      <option>boot.initrd.secrets</option>. This option creates a secondary
-      initrd from the specified files, rather than using a manually created
-      initrd file.
+     <varname>services.munge</varname> now runs as user (and group) <literal>munge</literal> instead of root.
+     Make sure the key file is accessible to the daemon.
     </para>
    </listitem>
   </itemizedlist>

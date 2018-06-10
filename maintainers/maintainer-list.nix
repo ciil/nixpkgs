@@ -562,6 +562,11 @@
     github = "basvandijk";
     name = "Bas van Dijk";
   };
+  bbarker = {
+    email = "brandon.barker@gmail.com";
+    github = "bbarker";
+    name = "Brandon Elam Barker";
+  };  
   bcarrell = {
     email = "brandoncarrell@gmail.com";
     github = "bcarrell";
@@ -2531,6 +2536,11 @@
     github = "MikePlayle";
     name = "Mike Playle";
   };
+  mkazulak = {
+    email = "kazulakm@gmail.com";
+    github = "mulderr";
+    name = "Maciej Kazulak";
+  };
   mkg = {
     email = "mkg@vt.edu";
     github = "mkgvt";
@@ -3959,6 +3969,11 @@
     email = "root@uralbash.ru";
     github = "uralbash";
     name = "Svintsov Dmitry";
+  };
+  uri-canva = {
+    email = "uri@canva.com";
+    github = "uri-canva";
+    name = "Uri Baghin";
   };
   utdemir = {
     email = "me@utdemir.com";

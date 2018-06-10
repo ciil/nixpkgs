@@ -205,6 +205,8 @@ in {
 
   amazon_kclpy = callPackage ../development/python-modules/amazon_kclpy { };
 
+  ansiconv = callPackage ../development/python-modules/ansiconv { };
+
   backports_csv = callPackage ../development/python-modules/backports_csv {};
 
   bap = callPackage ../development/python-modules/bap {
@@ -1253,6 +1255,8 @@ in {
   py4j = callPackage ../development/python-modules/py4j { };
 
   pyechonest = callPackage ../development/python-modules/pyechonest { };
+
+  pyezminc = callPackage ../development/python-modules/pyezminc { };
 
   billiard = callPackage ../development/python-modules/billiard { };
 
@@ -3728,6 +3732,8 @@ in {
 
   # These used to be here but were moved to all-packages, but I'll leave them around for a while.
   pants = pkgs.pants;
+
+  paperspace = callPackage ../development/python-modules/paperspace { };
 
   paperwork-backend = callPackage ../applications/office/paperwork/backend.nix { };
 
@@ -9889,6 +9895,8 @@ in {
   }).overrideAttrs (oldAttrs: {
     name = "${python.libPrefix}-${pkgs.kmsxx.name}";
   });
+
+  pvlib = callPackage ../development/python-modules/pvlib { };
 
   pybase64 = callPackage ../development/python-modules/pybase64 { };
 
@@ -18170,6 +18178,10 @@ EOF
   radio_beam = callPackage ../development/python-modules/radio_beam { };
 
   spectral-cube = callPackage ../development/python-modules/spectral-cube { };
+
+  astunparse = callPackage ../development/python-modules/astunparse { };
+
+  gast = callPackage ../development/python-modules/gast { };
 
 });
 
