@@ -1340,6 +1340,8 @@ with pkgs;
 
   languagetool = callPackage ../tools/text/languagetool {  };
 
+  loadwatch = callPackage ../tools/system/loadwatch { };
+
   loccount = callPackage ../development/tools/misc/loccount { };
 
   long-shebang = callPackage ../misc/long-shebang {};
@@ -6460,7 +6462,7 @@ with pkgs;
   haskell = callPackage ./haskell-packages.nix { };
 
   haskellPackages = haskell.packages.ghc822.override {
-    overrides = config.haskellPackageOverrides or (self: super: {});
+    overrides = config.haskellPackageOverrides or haskell.packageOverrides;
   };
 
   inherit (haskellPackages) ghc;
@@ -8965,12 +8967,15 @@ with pkgs;
 
   ffmpeg_0_10 = callPackage ../development/libraries/ffmpeg/0.10.nix {
     inherit (darwin.apple_sdk.frameworks) Cocoa;
+    stdenv = gccStdenv;
   };
   ffmpeg_1_2 = callPackage ../development/libraries/ffmpeg/1.2.nix {
     inherit (darwin.apple_sdk.frameworks) Cocoa;
+    stdenv = gccStdenv;
   };
   ffmpeg_2_8 = callPackage ../development/libraries/ffmpeg/2.8.nix {
     inherit (darwin.apple_sdk.frameworks) Cocoa;
+    stdenv = gccStdenv;
   };
   ffmpeg_3_4 = callPackage ../development/libraries/ffmpeg/3.4.nix {
     inherit (darwin.apple_sdk.frameworks) Cocoa CoreMedia;
@@ -8978,6 +8983,7 @@ with pkgs;
   };
   ffmpeg_4 = callPackage ../development/libraries/ffmpeg/4.nix {
     inherit (darwin.apple_sdk.frameworks) Cocoa CoreMedia;
+    stdenv = gccStdenv;
   };
 
   # Aliases
@@ -9803,8 +9809,12 @@ with pkgs;
   };
 
   libcanberra = callPackage ../development/libraries/libcanberra { };
-  libcanberra-gtk3 = pkgs.libcanberra.override { gtk = pkgs.gtk3; };
-  libcanberra-gtk2 = pkgs.libcanberra-gtk3.override { gtk = pkgs.gtk2; };
+  libcanberra-gtk3 = pkgs.libcanberra.override {
+    gtk = gtk3;
+  };
+  libcanberra-gtk2 = pkgs.libcanberra-gtk3.override {
+    gtk = gtk2.override { gdktarget = "x11"; };
+  };
 
   libcanberra_kde = if (config.kde_runtime.libcanberraWithoutGTK or true)
     then pkgs.libcanberra
@@ -11822,6 +11832,8 @@ with pkgs;
 
   tinyxml-2 = callPackage ../development/libraries/tinyxml-2 { };
 
+  tiscamera = callPackage ../os-specific/linux/tiscamera { };
+
   tivodecode = callPackage ../applications/video/tivodecode { };
 
   tix = callPackage ../development/libraries/tix { };
@@ -13491,13 +13503,13 @@ with pkgs;
       ];
   };
 
-  linux_copperhead_lts = callPackage ../os-specific/linux/kernel/linux-copperhead-lts.nix {
-    kernelPatches = with kernelPatches; [
-      bridge_stp_helper
-      modinst_arg_list_too_long
-      tag_hardened
-    ];
-  };
+  linux_copperhead_lts = (linux_4_14.override {
+    kernelPatches = linux_4_14.kernelPatches ++ [
+      kernelPatches.copperhead_4_14
+      kernelPatches.tag_hardened
+     ];
+    modDirVersionArg = linux_4_14.modDirVersion + "-hardened";
+  });
 
   linux_copperhead_stable = (linux_4_16.override {
     kernelPatches = linux_4_16.kernelPatches ++ [
@@ -15433,6 +15445,8 @@ with pkgs;
     patches = config.dwm.patches or [];
   };
 
+  dwm-status = callPackage ../applications/window-managers/dwm/dwm-status.nix { };
+
   dynamips = callPackage ../applications/virtualization/dynamips { };
 
   evilwm = callPackage ../applications/window-managers/evilwm {
@@ -17223,6 +17237,10 @@ with pkgs;
  };
 
   maxlib = callPackage ../applications/audio/pd-plugins/maxlib { };
+
+  maxscale = callPackage ../tools/networking/maxscale {
+    stdenv = overrideCC stdenv gcc6;
+  };
 
   pdfdiff = callPackage ../applications/misc/pdfdiff { };
 
@@ -19569,6 +19587,8 @@ with pkgs;
 
   springLobby = callPackage ../games/spring/springlobby.nix { };
 
+  ssl-cert-check = callPackage ../tools/admin/ssl-cert-check { };
+
   stardust = callPackage ../games/stardust {};
 
   stockfish = callPackage ../games/stockfish { };
@@ -20935,6 +20955,52 @@ with pkgs;
 
   nixops-dns = callPackage ../tools/package-management/nixops/nixops-dns.nix { };
 
+  /*
+   * Evaluate a NixOS configuration using this evaluation of Nixpkgs.
+   *
+   * With this function you can write, for example, a package that
+   * depends on a custom virtual machine image.
+   *
+   * Parameter: A module, path or list of those that represent the
+   *            configuration of the NixOS system to be constructed.
+   *
+   * Result:    An attribute set containing packages produced by this
+   *            evaluation of NixOS, such as toplevel, kernel and
+   *            initialRamdisk.
+   *            The result can be extended in the modules by defining
+   *            extra options in system.build.
+   *
+   * Unlike in plain NixOS, the nixpkgs.config, nixpkgs.overlays and
+   * nixpkgs.system options will be ignored by default. Instead,
+   * nixpkgs.pkgs will have the default value of pkgs as it was
+   * constructed right after invoking the nixpkgs function (e.g. the
+   * value of import <nixpkgs> { overlays = [./my-overlay.nix]; }
+   * but not the value of (import <nixpkgs> {} // { extra = ...; }).
+   *
+   * If you do want to use the config.nixpkgs options, you are
+   * probably better off by calling nixos/lib/eval-config.nix
+   * directly, even though it is possible to set config.nixpkgs.pkgs.
+   *
+   * For more information about writing NixOS modules, see
+   * https://nixos.org/nixos/manual/index.html#sec-writing-modules
+   *
+   * Note that you will need to have called Nixpkgs with the system
+   * parameter set to the right value for your deployment target.
+   */
+  nixos = configuration:
+    (import (self.path + "/nixos/lib/eval-config.nix") {
+      inherit (pkgs) system;
+      modules = [(
+                  { lib, ... }: {
+                    config.nixpkgs.pkgs = lib.mkDefault pkgs;
+                  }
+                )] ++ (
+                  if builtins.isList configuration
+                  then configuration
+                  else [configuration]
+                );
+    }).config.system.build;
+
   nixui = callPackage ../tools/package-management/nixui { node_webkit = nwjs_0_12; };
 
   nix-bundle = callPackage ../tools/package-management/nix-bundle { };
@@ -21256,6 +21322,8 @@ with pkgs;
   utf8proc = callPackage ../development/libraries/utf8proc { };
 
   unicode-paracode = callPackage ../tools/misc/unicode { };
+
+  unixcw = callPackage ../applications/misc/unixcw { };
 
   valauncher = callPackage ../applications/misc/valauncher { };
 

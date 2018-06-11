@@ -6512,6 +6512,18 @@ let self = _self // overrides; _self = with self; {
     doCheck = false; # seems to access the network
   };
 
+  GetoptArgvFile = buildPerlPackage rec {
+    name = "Getopt-ArgvFile-1.11";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/J/JS/JSTENZEL/${name}.tar.gz";
+      sha256 = "3709aa513ce6fd71d1a55a02e34d2f090017d5350a9bd447005653c9b0835b22";
+    };
+    meta = {
+      license = stdenv.lib.licenses.artistic1;
+      maintainers = [ maintainers.pSub ];
+    };
+  };
+
   GetoptLong = buildPerlPackage rec {
     name = "Getopt-Long-2.50";
     src = fetchurl {
@@ -14427,6 +14439,19 @@ let self = _self // overrides; _self = with self; {
       homepage = https://github.com/frioux/Syntax-Keyword-Junction;
       description = "Perl6 style Junction operators in Perl5";
       license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
+    };
+  };
+
+  SysMemInfo = buildPerlPackage rec {
+    name = "Sys-MemInfo-0.99";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/S/SC/SCRESTO/${name}.tar.gz";
+      sha256 = "0786319d3a3a8bae5d727939244bf17e140b714f52734d5e9f627203e4cf3e3b";
+    };
+    meta = {
+      description = "Memory informations";
+      maintainers = [ maintainers.pSub ];
+      license = with stdenv.lib.licenses; [ gpl2Plus ];
     };
   };
 
