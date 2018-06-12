@@ -199,6 +199,8 @@ in {
 
   automat = callPackage ../development/python-modules/automat { };
 
+  aws-sam-translator = callPackage ../development/python-modules/aws-sam-translator { };
+
   aws-xray-sdk = callPackage ../development/python-modules/aws-xray-sdk { };
 
   # packages defined elsewhere
@@ -317,6 +319,8 @@ in {
 
   outcome = callPackage ../development/python-modules/outcome {};
 
+  pdf2image = callPackage ../development/python-modules/pdf2image { };
+
   pdfminer = callPackage ../development/python-modules/pdfminer_six { };
 
   plantuml = callPackage ../tools/misc/plantuml { };
@@ -392,6 +396,8 @@ in {
     inherit (pkgs.llvmPackages) openmp;
   };
 
+  pynisher = callPackage ../development/python-modules/pynisher { };
+
   pyparser = callPackage ../development/python-modules/pyparser { };
 
   pyqt4 = callPackage ../development/python-modules/pyqt/4.x.nix {
@@ -455,6 +461,8 @@ in {
   simpleeval = callPackage ../development/python-modules/simpleeval { };
 
   sip = callPackage ../development/python-modules/sip { };
+
+  spglib = callPackage ../development/python-modules/spglib { };
 
   supervise_api = callPackage ../development/python-modules/supervise_api { };
 

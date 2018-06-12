@@ -344,6 +344,9 @@ with pkgs;
 
   pathsFromGraph = ../build-support/kernel/paths-from-graph.pl;
 
+  pruneLibtoolFiles = makeSetupHook { name = "prune-libtool-files"; }
+    ../build-support/setup-hooks/prune-libtool-files.sh;
+
   closureInfo = callPackage ../build-support/closure-info.nix { };
 
   setupSystemdUnits = callPackage ../build-support/setup-systemd-units.nix { };
@@ -1387,6 +1390,8 @@ with pkgs;
   noteshrink = callPackage ../tools/misc/noteshrink { };
 
   nrsc5 = callPackage ../applications/misc/nrsc5 { };
+
+  nwipe = callPackage ../tools/security/nwipe { };
 
   onboard = callPackage ../applications/misc/onboard { };
 
@@ -4435,23 +4440,23 @@ with pkgs;
     libcap = if stdenv.isDarwin then null else libcap;
   };
 
-  pinentry_ncurses = pinentry.override {
+  pinentry_ncurses = self.pinentry.override {
     gtk2 = null;
   };
 
-  pinentry_emacs = pinentry.override {
+  pinentry_emacs = self.pinentry.override {
     enableEmacs = true;
   };
 
-  pinentry_gnome = pinentry.override {
+  pinentry_gnome = self.pinentry.override {
     gcr = gnome3.gcr;
   };
 
-  pinentry_qt4 = pinentry.override {
+  pinentry_qt4 = self.pinentry.override {
     qt = qt4;
   };
 
-  pinentry_qt5 = pinentry.override {
+  pinentry_qt5 = self.pinentry.override {
     qt = qt5.qtbase;
   };
 
@@ -5513,6 +5518,8 @@ with pkgs;
   vobcopy = callPackage ../tools/cd-dvd/vobcopy { };
 
   vobsub2srt = callPackage ../tools/cd-dvd/vobsub2srt { };
+
+  volume_key = callPackage ../development/libraries/volume-key { };
 
   vorbisgain = callPackage ../tools/misc/vorbisgain { };
 
@@ -6786,8 +6793,8 @@ with pkgs;
     inherit (stdenvAdapters) overrideCC;
     buildLlvmTools = buildPackages.llvmPackages_5.tools;
     targetLlvmLibraries = targetPackages.llvmPackages_5.libraries;
-  } // stdenv.lib.optionalAttrs stdenv.isDarwin {
-    cmake = cmake.override {
+  } // stdenv.lib.optionalAttrs (stdenv.isDarwin && hostPlatform == buildPlatform) {
+    cmake = buildPackages.cmake.override {
       isBootstrap = true;
       majorVersion = "3.9"; # 3.10.2: 'ApplicationServices/ApplicationServices.h' file not found
     };
@@ -8603,7 +8610,9 @@ with pkgs;
 
   assimp = callPackage ../development/libraries/assimp { };
 
-  asio = callPackage ../development/libraries/asio { };
+  asio = asio_1_12;
+  asio_1_10 = callPackage ../development/libraries/asio/1.10.nix { };
+  asio_1_12 = callPackage ../development/libraries/asio/1.12.nix { };
 
   aspell = callPackage ../development/libraries/aspell { };
 
@@ -8723,6 +8732,8 @@ with pkgs;
   ccrtp = callPackage ../development/libraries/ccrtp { };
 
   ccrtp_1_8 = callPackage ../development/libraries/ccrtp/1.8.nix { };
+
+  cctz = callPackage ../development/libraries/cctz { };
 
   celt = callPackage ../development/libraries/celt {};
   celt_0_7 = callPackage ../development/libraries/celt/0.7.nix {};
@@ -9794,6 +9805,8 @@ with pkgs;
 
   libbdplus = callPackage ../development/libraries/libbdplus { };
 
+  libblockdev = callPackage ../development/libraries/libblockdev { };
+
   libblocksruntime = callPackage ../development/libraries/libblocksruntime { };
 
   libbluray = callPackage ../development/libraries/libbluray { };
@@ -9803,6 +9816,8 @@ with pkgs;
   libbson = callPackage ../development/libraries/libbson { };
 
   libburn = callPackage ../development/libraries/libburn { };
+
+  libbytesize = callPackage ../development/libraries/libbytesize { };
 
   libcaca = callPackage ../development/libraries/libcaca {
     inherit (xorg) libX11 libXext;
@@ -10359,6 +10374,8 @@ with pkgs;
   libmwaw = callPackage ../development/libraries/libmwaw { };
 
   libmx = callPackage ../development/libraries/libmx { };
+
+  libndctl = callPackage ../development/libraries/libndctl { };
 
   libnet = callPackage ../development/libraries/libnet { };
 
@@ -12783,6 +12800,7 @@ with pkgs;
   rpcbind = callPackage ../servers/rpcbind { };
 
   mariadb = callPackage ../servers/sql/mariadb {
+    asio = asio_1_10;
     inherit (darwin) cctools;
     inherit (pkgs.darwin.apple_sdk.frameworks) CoreServices;
   };
@@ -19308,6 +19326,8 @@ with pkgs;
 
   gogui = callPackage ../games/gogui {};
 
+  gshogi = python3Packages.callPackage ../games/gshogi {};
+
   gtetrinet = callPackage ../games/gtetrinet {
     inherit (gnome2) GConf libgnome libgnomeui;
   };
@@ -21621,7 +21641,7 @@ with pkgs;
   unixtools = recurseIntoAttrs (callPackages ./unix-tools.nix { });
   inherit (unixtools) hexdump ps logger eject umount
                       mount wall hostname more sysctl getconf
-                      getent;
+                      getent locale;
 
   fts = if hostPlatform.isMusl then netbsd.fts else null;
 

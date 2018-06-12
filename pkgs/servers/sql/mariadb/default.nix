@@ -2,7 +2,7 @@
 , libiconv, openssl, pcre, boost, judy, bison, libxml2
 , libaio, libevent, groff, jemalloc, cracklib, systemd, numactl, perl
 , fixDarwinDylibNames, cctools, CoreServices
-, asio, buildEnv, check, qt4, scons
+, asio, buildEnv, check, scons
 }:
 
 with stdenv.lib;
@@ -167,6 +167,7 @@ everything = stdenv.mkDerivation (common // {
     rm -r "$out"/data # Don't need testing data
     rm "$out"/share/man/man1/mysql-test-run.pl.1
     rm "$out"/bin/rcmysql
+  '' + optionalString (! stdenv.isDarwin) ''
     sed -i 's/-mariadb/-mysql/' "$out"/bin/galera_new_cluster
   '';
 
@@ -224,7 +225,7 @@ galera = stdenv.mkDerivation rec {
     sha256 = "11pfc85z29jk0h6g6bmi3hdv4in4yb00xsr2r0qm1b0y7m2wq3ra";
   };
 
-  buildInputs = [ asio boost check openssl qt4 scons ];
+  buildInputs = [ asio boost check openssl scons ];
 
   patchPhase = ''
     substituteInPlace SConstruct \
@@ -232,7 +233,7 @@ galera = stdenv.mkDerivation rec {
   '';
 
   preConfigure = ''
-    export CPPFLAGS="-I${asio}/include  -I${boost.dev}/include -I${check}/include -I${openssl.dev}/include"
+    export CPPFLAGS="-I${asio}/include -I${boost.dev}/include -I${check}/include -I${openssl.dev}/include"
     export LIBPATH="${galeraLibs}/lib"
   '';
 
