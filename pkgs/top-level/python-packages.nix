@@ -239,6 +239,8 @@ in {
 
   dbfread = callPackage ../development/python-modules/dbfread { };
 
+  deap = callPackage ../development/python-modules/deap { };
+
   dkimpy = callPackage ../development/python-modules/dkimpy { };
 
   diff_cover = callPackage ../development/python-modules/diff_cover { };
@@ -6926,6 +6928,8 @@ in {
   keyutils = callPackage ../development/python-modules/keyutils { };
 
   kiwisolver = callPackage ../development/python-modules/kiwisolver { };
+
+  klaus = callPackage ../development/python-modules/klaus {};
 
   klein = callPackage ../development/python-modules/klein { };
 
@@ -18200,6 +18204,11 @@ EOF
 
   gast = callPackage ../development/python-modules/gast { };
 
+  IBMQuantumExperience = callPackage ../development/python-modules/ibmquantumexperience { };
+
+  qiskit = callPackage ../development/python-modules/qiskit { };
+
+  qasm2image = callPackage ../development/python-modules/qasm2image { };
 });
 
 in fix' (extends overrides packages)
