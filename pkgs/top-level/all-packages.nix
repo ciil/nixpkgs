@@ -8697,7 +8697,8 @@ with pkgs;
   boost164 = callPackage ../development/libraries/boost/1.64.nix { };
   boost165 = callPackage ../development/libraries/boost/1.65.nix { };
   boost166 = callPackage ../development/libraries/boost/1.66.nix { };
-  boost16x = boost166;
+  boost167 = callPackage ../development/libraries/boost/1.67.nix { };
+  boost16x = boost167;
   boost = boost16x;
 
   boost_process = callPackage ../development/libraries/boost-process { };
@@ -11315,10 +11316,10 @@ with pkgs;
 
   libsForQt59 = lib.makeScope qt59.newScope mkLibsForQt5;
 
-  qt510 = recurseIntoAttrs (makeOverridable
-    (import ../development/libraries/qt-5/5.10) {
+  qt511 = recurseIntoAttrs (makeOverridable
+    (import ../development/libraries/qt-5/5.11) {
       inherit newScope;
-      inherit stdenv fetchurl makeSetupHook makeWrapper;
+      inherit stdenv fetchurl fetchFromGitHub makeSetupHook makeWrapper;
       bison = bison2; # error: too few arguments to function 'int yylex(...
       inherit cups;
       harfbuzz = harfbuzz-icu;
@@ -11328,10 +11329,10 @@ with pkgs;
       inherit (gnome3) gtk3 dconf;
     });
 
-  libsForQt510 = recurseIntoAttrs (lib.makeScope qt510.newScope mkLibsForQt5);
+  libsForQt511 = recurseIntoAttrs (lib.makeScope qt511.newScope mkLibsForQt5);
 
-  qt5 = qt510;
-  libsForQt5 = libsForQt510;
+  qt5 = qt511;
+  libsForQt5 = libsForQt511;
 
   qt5ct = libsForQt5.callPackage ../tools/misc/qt5ct { };
 
@@ -16194,6 +16195,8 @@ with pkgs;
 
   linssid = libsForQt5.callPackage ../applications/networking/linssid { };
 
+  lollypop = callPackage ../applications/audio/lollypop { };
+
   m32edit = callPackage ../applications/audio/midas/m32edit.nix {};
 
   manuskript = callPackage ../applications/editors/manuskript { };
@@ -19401,8 +19404,6 @@ with pkgs;
 
   megaglest = callPackage ../games/megaglest {};
 
-  micropolis = callPackage ../games/micropolis { };
-
   minecraft = callPackage ../games/minecraft {
     useAlsa = config.minecraft.alsa or false;
   };
@@ -19973,8 +19974,8 @@ with pkgs;
     bluedevil breeze-gtk breeze-qt5 breeze-grub breeze-plymouth
     kactivitymanagerd kde-cli-tools kde-gtk-config kdeplasma-addons kgamma5
     kinfocenter kmenuedit kscreen kscreenlocker ksshaskpass ksysguard
-    kwallet-pam kwayland-integration kwin kwrited milou oxygen plasma-desktop
-    plasma-integration plasma-nm plasma-pa plasma-vault plasma-workspace
+    kwallet-pam kwayland-integration kwin kwrited milou oxygen plasma-browser-integration
+    plasma-desktop plasma-integration plasma-nm plasma-pa plasma-vault plasma-workspace
     plasma-workspace-wallpapers polkit-kde-agent powerdevil sddm-kcm
     systemsettings user-manager xdg-desktop-portal-kde;
 
