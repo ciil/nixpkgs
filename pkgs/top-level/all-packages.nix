@@ -150,10 +150,6 @@ with pkgs;
 
   ebook2cw = callPackage ../applications/misc/ebook2cw { };
 
-  vsenv = callPackage ../build-support/vsenv {
-    vs = vs90wrapper;
-  };
-
   fetchbower = callPackage ../build-support/fetchbower {
     inherit (nodePackages) bower2nix;
   };
@@ -5044,6 +5040,8 @@ with pkgs;
 
   snort = callPackage ../applications/networking/ids/snort { };
 
+  soapui = callPackage ../applications/networking/soapui { };
+
   sshguard = callPackage ../tools/security/sshguard {};
 
   softhsm = callPackage ../tools/security/softhsm {
@@ -7070,8 +7068,6 @@ with pkgs;
 
   valadoc = callPackage ../development/tools/valadoc { };
 
-  vs90wrapper = callPackage ../development/compilers/vs90wrapper { };
-
   wla-dx = callPackage ../development/compilers/wla-dx { };
 
   wrapCCWith =
@@ -7518,7 +7514,10 @@ with pkgs;
   spark_22 = callPackage ../applications/networking/cluster/spark { version = "2.2.1"; };
 
   spidermonkey_1_8_5 = callPackage ../development/interpreters/spidermonkey/1.8.5.nix { };
-  spidermonkey_17 = callPackage ../development/interpreters/spidermonkey/17.nix { };
+  spidermonkey_17 = callPackage ../development/interpreters/spidermonkey/17.nix {
+    inherit (darwin) libobjc;
+    stdenv = gccStdenv;
+  };
   spidermonkey_31 = callPackage ../development/interpreters/spidermonkey/31.nix { };
   spidermonkey_38 = callPackage ../development/interpreters/spidermonkey/38.nix ({
     inherit (darwin) libobjc;
@@ -15761,9 +15760,7 @@ with pkgs;
 
   eterm = callPackage ../applications/misc/eterm { };
 
-  etherape = callPackage ../applications/networking/sniffers/etherape {
-    inherit (gnome2) libgnomecanvas libglade;
-  };
+  etherape = callPackage ../applications/networking/sniffers/etherape { };
 
   evilvte = callPackage ../applications/misc/evilvte {
     configH = config.evilvte.config or "";
@@ -20732,6 +20729,8 @@ with pkgs;
 
   brgenml1cupswrapper = callPackage ../misc/cups/drivers/brgenml1cupswrapper {};
 
+  brightnessctl = callPackage ../misc/brightnessctl { };
+
   calaos_installer = libsForQt5.callPackage ../misc/calaos/installer {};
 
   click = callPackage ../applications/networking/cluster/click { };
@@ -21377,7 +21376,7 @@ with pkgs;
   vimUtils = callPackage ../misc/vim-plugins/vim-utils.nix { };
 
   vimPlugins = recurseIntoAttrs (callPackage ../misc/vim-plugins {
-    inherit (darwin.apple_sdk.frameworks) Cocoa;
+    inherit (darwin.apple_sdk.frameworks) Cocoa CoreFoundation CoreServices;
     llvmPackages = llvmPackages_39;
   });
 
