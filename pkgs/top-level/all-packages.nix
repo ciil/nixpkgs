@@ -645,6 +645,8 @@ with pkgs;
 
   enpass = callPackage ../tools/security/enpass { };
 
+  esh = callPackage ../tools/text/esh { };
+
   ezstream = callPackage ../tools/audio/ezstream { };
 
   genymotion = callPackage ../development/mobile/genymotion { };
@@ -2654,6 +2656,8 @@ with pkgs;
     stdenv = overrideCC stdenv gcc49;
   };
 
+  gnirehtet = callPackage ../tools/networking/gnirehtet { };
+
   gnome15 = callPackage ../applications/misc/gnome15 {
     inherit (gnome2) gnome_python gnome_python_desktop;
   };
@@ -3028,6 +3032,8 @@ with pkgs;
 
   http-prompt = callPackage ../tools/networking/http-prompt { };
 
+  http-getter = callPackage ../applications/networking/flent/http-getter.nix { };
+
   httpie = callPackage ../tools/networking/httpie { };
 
   httping = callPackage ../tools/networking/httping {};
@@ -3234,6 +3240,8 @@ with pkgs;
   john = callPackage ../tools/security/john { };
 
   journalbeat = callPackage ../tools/system/journalbeat { };
+
+  journaldriver = callPackage ../tools/misc/journaldriver { };
 
   jp = callPackage ../development/tools/jp { };
 
@@ -7171,7 +7179,7 @@ with pkgs;
   beam = callPackage ./beam-packages.nix { };
 
   inherit (beam.interpreters)
-    erlang erlangR18 erlangR19 erlangR20
+    erlang erlangR18 erlangR19 erlangR20 erlangR21
     erlang_odbc erlang_javac erlang_odbc_javac erlang_nox erlang_basho_R16B02
     elixir elixir_1_6 elixir_1_5 elixir_1_4 elixir_1_3
     lfe lfe_1_2;
@@ -8691,7 +8699,7 @@ with pkgs;
 
   # TODO(@Ericson2314): Build bionic libc from source
   bionic = assert hostPlatform.useAndroidPrebuilt;
-    androidenv.androidndkPkgs.libraries;
+    androidenv."androidndkPkgs_${hostPlatform.ndkVer}".libraries;
 
   bobcat = callPackage ../development/libraries/bobcat { };
 
@@ -16553,6 +16561,8 @@ with pkgs;
     inherit (darwin.apple_sdk.frameworks) ApplicationServices;
   });
 
+  inherit (nodePackages) imapnotify;
+  
   # Impressive, formerly known as "KeyJNote".
   impressive = callPackage ../applications/office/impressive { };
 
@@ -17419,6 +17429,8 @@ with pkgs;
 
   osmctools = callPackage ../applications/misc/osmctools { };
 
+  owamp = callPackage ../applications/networking/owamp { };
+
   vivaldi = callPackage ../applications/networking/browsers/vivaldi {};
 
   vivaldi-ffmpeg-codecs = callPackage ../applications/networking/browsers/vivaldi/ffmpeg-codecs.nix {};
@@ -17779,10 +17791,6 @@ with pkgs;
   rakarrack = callPackage ../applications/audio/rakarrack {
     fltk = fltk13;
   };
-
-  inherit (callPackage ../applications/virtualization/rancher-compose {})
-    rancher-compose
-    rancher-compose_0_10;
 
   renoise = callPackage ../applications/audio/renoise {};
 
@@ -18226,7 +18234,7 @@ with pkgs;
     gconf = gnome2.GConf;
   };
 
-  teamspeak_client = libsForQt59.callPackage ../applications/networking/instant-messengers/teamspeak/client.nix { };
+  teamspeak_client = libsForQt5.callPackage ../applications/networking/instant-messengers/teamspeak/client.nix { };
   teamspeak_server = callPackage ../applications/networking/instant-messengers/teamspeak/server.nix { };
 
   uaskjuggler = callPackage ../applications/misc/taskjuggler { };
