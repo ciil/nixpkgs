@@ -233,6 +233,8 @@ in {
 
   cdecimal = callPackage ../development/python-modules/cdecimal { };
 
+  clustershell = callPackage ../development/python-modules/clustershell { };
+
   dendropy = callPackage ../development/python-modules/dendropy { };
 
   dbf = callPackage ../development/python-modules/dbf { };
@@ -291,7 +293,9 @@ in {
 
   logster = callPackage ../development/python-modules/logster { };
 
-  mail-parser = callPackage ../development/python-modules/mail-parser {  };
+  mail-parser = callPackage ../development/python-modules/mail-parser { };
+
+  monty = callPackage ../development/python-modules/monty { };
 
   mpi4py = callPackage ../development/python-modules/mpi4py {
     mpi = pkgs.openmpi;
@@ -434,6 +438,8 @@ in {
     then ../development/python-modules/python3-openid
     else ../development/python-modules/python-openid) { };
 
+  python-periphery = callPackage ../development/python-modules/python-periphery { };
+
   python-sql = callPackage ../development/python-modules/python-sql { };
 
   python-stdnum = callPackage ../development/python-modules/python-stdnum { };
@@ -457,6 +463,8 @@ in {
   rx = callPackage ../development/python-modules/rx { };
 
   salmon-mail = callPackage ../development/python-modules/salmon-mail { };
+
+  seekpath = callPackage ../development/python-modules/seekpath { };
 
   serversyncstorage = callPackage ../development/python-modules/serversyncstorage {};
 
@@ -2285,7 +2293,7 @@ in {
     '';
 
     meta = {
-      homepage = "http://editorconfig.org";
+      homepage = https://editorconfig.org;
       description = "EditorConfig File Locator and Interpreter for Python";
       license = stdenv.lib.licenses.psfl;
     };
@@ -7772,7 +7780,7 @@ in {
 
     meta = {
       description = "EditorConfig File Locator and Interpreter for Python";
-      homepage = "http://editorconfig.org/";
+      homepage = https://editorconfig.org/;
       license = licenses.psfl;
     };
   };
@@ -9147,7 +9155,7 @@ in {
    ];
 
    meta = with stdenv.lib; {
-     homepage = "http://github.com/bcwaldon/warlock";
+     homepage = https://github.com/bcwaldon/warlock;
    };
  };
 
@@ -11591,7 +11599,7 @@ in {
     doCheck = false;
 
     meta = {
-      homepage = "http://github.com/mongodb/mongo-python-driver";
+      homepage = https://github.com/mongodb/mongo-python-driver;
       license = licenses.asl20;
       description = "Python driver for MongoDB ";
     };
@@ -12797,7 +12805,7 @@ in {
 
     meta = {
       description = "sqlite-backed dictionary";
-      homepage = "http://github.com/Yelp/sqlite3dbm";
+      homepage = https://github.com/Yelp/sqlite3dbm;
       license = licenses.asl20;
     };
   };

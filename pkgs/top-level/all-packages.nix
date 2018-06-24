@@ -502,6 +502,8 @@ with pkgs;
     buildTools = androidenv.buildTools;
   };
 
+  appimage-run = callPackage ../tools/package-management/appimage-run {};
+
   apt-cacher-ng = callPackage ../servers/http/apt-cacher-ng { };
 
   apt-offline = callPackage ../tools/misc/apt-offline { };
@@ -5053,6 +5055,8 @@ with pkgs;
   smugline = python3Packages.smugline;
 
   snabb = callPackage ../tools/networking/snabb { } ;
+
+  snapcast = callPackage ../applications/audio/snapcast { };
 
   sng = callPackage ../tools/graphics/sng {
     libpng = libpng12;
@@ -10138,8 +10142,6 @@ with pkgs;
   };
 
   libgssglue = callPackage ../development/libraries/libgssglue { };
-
-  libgsystem = callPackage ../development/libraries/libgsystem { };
 
   libgudev = callPackage ../development/libraries/libgudev { };
 
@@ -16793,7 +16795,7 @@ with pkgs;
 
   libreoffice = hiPrio libreoffice-still;
 
-  libreoffice-unwrapped =callPackage ../applications/office/libreoffice {
+  libreoffice-args = {
     inherit (perlPackages) ArchiveZip CompressZlib;
     inherit (gnome2) GConf ORBit2 gnome_vfs;
     inherit (gnome3) defaultIconTheme;
@@ -16816,12 +16818,20 @@ with pkgs;
     stdenv = overrideCC stdenv gcc5;
   };
 
-  libreoffice-fresh = lowPrio (callPackage ../applications/office/libreoffice/wrapper.nix { libreoffice = libreoffice-unwrapped; });
+  libreoffice-unwrapped =callPackage ../applications/office/libreoffice
+  (libreoffice-args // {
+  });
+  libreoffice-still-unwrapped =callPackage ../applications/office/libreoffice/still.nix
+  (libreoffice-args // {
+      poppler = poppler_0_61;
+  });
+
+  libreoffice-fresh = lowPrio (callPackage ../applications/office/libreoffice/wrapper.nix {
+    libreoffice = libreoffice-unwrapped;
+  });
 
   libreoffice-still = lowPrio (callPackage ../applications/office/libreoffice/wrapper.nix {
-    libreoffice = libreoffice-unwrapped.override {
-      poppler = poppler_0_61;
-    };
+    libreoffice = libreoffice-still-unwrapped;
   });
 
   liferea = callPackage ../applications/networking/newsreaders/liferea {
@@ -19746,8 +19756,6 @@ with pkgs;
   };
 
   unnethack = callPackage ../games/unnethack { };
-
-  unvanquished = callPackage ../games/unvanquished { };
 
   uqm = callPackage ../games/uqm { };
 
