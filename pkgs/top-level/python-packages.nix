@@ -26,6 +26,7 @@ let
   isPy34 = python.pythonVersion == "3.4";
   isPy35 = python.pythonVersion == "3.5";
   isPy36 = python.pythonVersion == "3.6";
+  isPy37 = python.pythonVersion == "3.7";
   isPyPy = python.executable == "pypy";
   isPy3k = strings.substring 0 1 python.pythonVersion == "3";
 
@@ -132,7 +133,7 @@ let
 
 in {
 
-  inherit python bootstrapped-pip pythonAtLeast pythonOlder isPy26 isPy27 isPy33 isPy34 isPy35 isPy36 isPyPy isPy3k buildPythonPackage buildPythonApplication;
+  inherit python bootstrapped-pip pythonAtLeast pythonOlder isPy26 isPy27 isPy33 isPy34 isPy35 isPy36 isPy37 isPyPy isPy3k buildPythonPackage buildPythonApplication;
   inherit fetchPypi callPackage;
   inherit hasPythonModule requiredPythonModules makePythonPath disabledIf;
   inherit toPythonModule toPythonApplication;
@@ -10100,15 +10101,6 @@ in {
   psd-tools = callPackage ../development/python-modules/psd-tools { };
 
   psutil = callPackage ../development/python-modules/psutil { };
-
-  psutil_1 = self.psutil.overrideAttrs (oldAttrs: rec {
-    name = "${oldAttrs.pname}-${version}";
-    version = "1.2.1";
-    src = oldAttrs.src.override {
-      inherit version;
-      sha256 = "0ibclqy6a4qmkjhlk3g8jhpvnk0v9aywknc61xm3hfi5r124m3jh";
-    };
-  });
 
   psycopg2 = buildPythonPackage rec {
     name = "psycopg2-2.7.1";
