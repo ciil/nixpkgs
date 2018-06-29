@@ -1509,6 +1509,8 @@ with pkgs;
 
   appdata-tools = callPackage ../tools/misc/appdata-tools { };
 
+  appleseed = callPackage ../tools/graphics/appleseed { };
+
   arping = callPackage ../tools/networking/arping { };
 
   arpoison = callPackage ../tools/networking/arpoison { };
@@ -2235,6 +2237,8 @@ with pkgs;
     callPackage ../servers/search/elasticsearch/plugins.nix { }
   );
 
+  embree2 = callPackage ../development/libraries/embree/2.x.nix { };
+
   emem = callPackage ../applications/misc/emem { };
 
   emv = callPackage ../tools/misc/emv { };
@@ -2399,6 +2403,8 @@ with pkgs;
 
   fio = callPackage ../tools/system/fio { };
 
+  firebird-emu = libsForQt5.callPackage ../misc/emulators/firebird-emu { };
+
   flamerobin = callPackage ../applications/misc/flamerobin { };
 
   flashtool = callPackage_i686 ../development/mobile/flashtool {
@@ -2428,6 +2434,8 @@ with pkgs;
   fatresize = callPackage ../tools/filesystems/fatresize {};
 
   fdk_aac = callPackage ../development/libraries/fdk-aac { };
+
+  feedgnuplot = callPackage ../tools/graphics/feedgnuplot { };
 
   fim = callPackage ../tools/graphics/fim { };
 
@@ -3220,7 +3228,7 @@ with pkgs;
 
   jd = callPackage ../development/tools/jd { };
 
-  jd-gui = callPackage_i686 ../tools/security/jd-gui { };
+  jd-gui = callPackage ../tools/security/jd-gui { };
 
   jdiskreport = callPackage ../tools/misc/jdiskreport { };
 
@@ -3332,6 +3340,8 @@ with pkgs;
   krunner-pass = libsForQt5.callPackage ../tools/security/krunner-pass { };
 
   kronometer = libsForQt5.callPackage ../tools/misc/kronometer { };
+
+  krop = callPackage ../applications/graphics/krop { };
 
   elisa = libsForQt5.callPackage ../applications/audio/elisa { };
 
@@ -3702,6 +3712,8 @@ with pkgs;
 
   lzip = callPackage ../tools/compression/lzip { };
 
+  luxcorerender = callPackage ../tools/graphics/luxcorerender { };
+  
   xz = callPackage ../tools/compression/xz { };
 
   lz4 = callPackage ../tools/compression/lz4 { };
@@ -4276,6 +4288,8 @@ with pkgs;
   olsrd = callPackage ../tools/networking/olsrd { };
 
   os-prober = callPackage ../tools/misc/os-prober {};
+
+  osl = callPackage ../development/compilers/osl { };
 
   ossec = callPackage ../tools/security/ossec {};
 
@@ -4913,6 +4927,8 @@ with pkgs;
 
   salut_a_toi = callPackage ../applications/networking/instant-messengers/salut-a-toi {};
 
+  saml2aws = callPackage ../tools/security/saml2aws {};
+
   samplicator = callPackage ../tools/networking/samplicator { };
 
   sasview = callPackage ../applications/science/misc/sasview {};
@@ -4961,6 +4977,8 @@ with pkgs;
 
   securefs = callPackage ../tools/filesystems/securefs { };
 
+  seexpr = callPackage ../development/compilers/seexpr { };
+ 
   setroot = callPackage  ../tools/X11/setroot { };
 
   setserial = callPackage ../tools/system/setserial { };
@@ -5035,6 +5053,10 @@ with pkgs;
   skydns = callPackage ../servers/skydns { };
 
   sipcalc = callPackage ../tools/networking/sipcalc { };
+
+  skribilo = callPackage ../tools/typesetting/skribilo {
+    tex = texlive.combined.scheme-small;
+  };
 
   sleuthkit = callPackage ../tools/system/sleuthkit {};
 
@@ -5138,6 +5160,8 @@ with pkgs;
   ssldump = callPackage ../tools/networking/ssldump { };
 
   sstp = callPackage ../tools/networking/sstp {};
+
+  structure-synth = callPackage ../tools/graphics/structure-synth { };
 
   su-exec = callPackage ../tools/security/su-exec {};
 
@@ -5935,6 +5959,8 @@ with pkgs;
   xwinmosaic = callPackage ../tools/X11/xwinmosaic {};
 
   xwinwrap = callPackage ../tools/X11/xwinwrap {};
+
+  yafaray-core = callPackage ../tools/graphics/yafaray-core { };
 
   yaft = callPackage ../applications/misc/yaft { };
 
@@ -7216,7 +7242,7 @@ with pkgs;
 
   guile = guile_2_2;
 
-  inherit (callPackage ../applications/networking/cluster/hadoop { })
+  inherit (callPackages ../applications/networking/cluster/hadoop { })
     hadoop_2_7
     hadoop_2_8
     hadoop_2_9
@@ -7647,6 +7673,8 @@ with pkgs;
 
   guile-opengl = callPackage ../development/guile-modules/guile-opengl { };
 
+  guile-reader = callPackage ../development/guile-modules/guile-reader { };
+
   guile-sdl = callPackage ../development/guile-modules/guile-sdl { };
 
   guile-sdl2 = callPackage ../development/guile-modules/guile-sdl2 { };
@@ -7790,6 +7818,8 @@ with pkgs;
   };
 
   bloaty = callPackage ../development/tools/bloaty { };
+
+  bloop = callPackage ../development/tools/build-managers/bloop { };
 
   bossa = callPackage ../development/tools/misc/bossa {
     wxGTK = wxGTK30;
@@ -8572,8 +8602,7 @@ with pkgs;
 
   xcbuild  = callPackage ../development/tools/xcbuild/wrapper.nix {
     inherit (darwin.apple_sdk.frameworks) CoreServices CoreGraphics ImageIO;
-    inherit (darwin) cctools bootstrap_cmds binutils;
-    stdenv = clangStdenv;
+    stdenv = buildPackages.clangStdenv;
   };
 
   xmlindent = callPackage ../development/web/xmlindent {};
@@ -9282,8 +9311,8 @@ with pkgs;
     else if name == "uclibc" then targetPackages.uclibcCross
     else if name == "musl" then targetPackages.muslCross or muslCross
     else if name == "msvcrt" then targetPackages.windows.mingw_w64 or windows.mingw_w64
-    else if targetPlatform.useiOSPrebuilt then targetPackages.iosSdkPkgs.libraries
-    else if name == "libSystem" then darwin.xcode
+    else if targetPlatform.useiOSPrebuilt then targetPackages.darwin.iosSdkPkgs.libraries
+    else if name == "libSystem" then targetPackages.darwin.xcode
     else throw "Unknown libc";
 
   libcCross = assert targetPlatform != buildPlatform; libcCrossChooser targetPlatform.libc;
@@ -12049,7 +12078,10 @@ with pkgs;
                                           CoreText IOSurface ImageIO OpenGL GLUT;
   };
 
+  vulkan-headers = callPackage ../development/libraries/vulkan-headers { };
   vulkan-loader = callPackage ../development/libraries/vulkan-loader { };
+  vulkan-tools = callPackage ../tools/graphics/vulkan-tools { };
+  vulkan-validation-layers = callPackage ../development/tools/vulkan-validation-layers { };
 
   vtkWithQt4 = vtk.override { qtLib = qt4; };
 
@@ -13606,6 +13638,19 @@ with pkgs;
   linux_mptcp = callPackage ../os-specific/linux/kernel/linux-mptcp.nix {
     kernelPatches =
       [ kernelPatches.bridge_stp_helper
+        kernelPatches.cpu-cgroup-v2."4.11"
+        kernelPatches.modinst_arg_list_too_long
+      ]
+      ++ lib.optionals ((platform.kernelArch or null) == "mips")
+      [ kernelPatches.mips_fpureg_emu
+        kernelPatches.mips_fpu_sigill
+        kernelPatches.mips_ext3_n32
+      ];
+  };
+
+  linux_mptcp_93 = callPackage ../os-specific/linux/kernel/linux-mptcp-93.nix {
+    kernelPatches =
+      [ kernelPatches.bridge_stp_helper
         kernelPatches.p9_fixes
         kernelPatches.cpu-cgroup-v2."4.9"
         kernelPatches.modinst_arg_list_too_long
@@ -14982,7 +15027,8 @@ with pkgs;
 
   msgviewer = callPackage ../applications/networking/mailreaders/msgviewer { };
 
-  amarok-kf5 = libsForQt5.callPackage ../applications/audio/amarok/kf5.nix { };
+  amarok = libsForQt5.callPackage ../applications/audio/amarok { };
+  amarok-kf5 = amarok; # for compatibility
 
   AMB-plugins = callPackage ../applications/audio/AMB-plugins { };
 
@@ -15054,7 +15100,10 @@ with pkgs;
   schismtracker = callPackage ../applications/audio/schismtracker { };
 
   altcoins = recurseIntoAttrs ( callPackage ../applications/altcoins { } );
+
   bitcoin = altcoins.bitcoin;
+  clightning = altcoins.clightning;
+
   bitcoin-xt = altcoins.bitcoin-xt;
   cryptop = altcoins.cryptop;
 
@@ -15930,7 +15979,7 @@ with pkgs;
   gnss-sdr = callPackage ../applications/misc/gnss-sdr { };
 
   gnuradio = callPackage ../applications/misc/gnuradio {
-    inherit (python2Packages) cheetah lxml matplotlib numpy python pyopengl pyqt4 scipy wxPython pygtk;
+    inherit (python2Packages) cheetah lxml Mako matplotlib numpy python pyopengl pyqt4 scipy wxPython pygtk;
     inherit (darwin.apple_sdk.frameworks) CoreAudio;
     fftw = fftwFloat;
     qwt = qwt6_qt4;
@@ -16494,11 +16543,15 @@ with pkgs;
 
   i3-gaps = callPackage ../applications/window-managers/i3/gaps.nix { };
 
+  i3-easyfocus = callPackage ../applications/window-managers/i3/easyfocus.nix { };
+
   i3blocks = callPackage ../applications/window-managers/i3/blocks.nix { };
 
   i3blocks-gaps = callPackage ../applications/window-managers/i3/blocks-gaps.nix { };
 
   i3cat = callPackage ../tools/misc/i3cat { };
+
+  i3ipc-glib = callPackage ../applications/window-managers/i3/i3ipc-glib.nix { };
 
   i3lock = callPackage ../applications/window-managers/i3/lock.nix {
     cairo = cairo.override { xcbSupport = true; };
@@ -16600,7 +16653,7 @@ with pkgs;
   });
 
   inherit (nodePackages) imapnotify;
-  
+
   # Impressive, formerly known as "KeyJNote".
   impressive = callPackage ../applications/office/impressive { };
 
@@ -20189,6 +20242,8 @@ with pkgs;
 
   varscan = callPackage ../applications/science/biology/varscan { };
 
+  hmmer = callPackage ../applications/science/biology/hmmer { };
+
   bwa = callPackage ../applications/science/biology/bwa { };
 
   ### SCIENCE/MACHINE LEARNING
@@ -20696,6 +20751,8 @@ with pkgs;
   cytoscape = callPackage ../applications/science/misc/cytoscape { };
 
   fityk = callPackage ../applications/science/misc/fityk { };
+
+  gildas = callPackage ../applications/science/astronomy/gildas { };
 
   gplates = callPackage ../applications/science/misc/gplates {
     boost = boost160;
@@ -21738,7 +21795,7 @@ with pkgs;
   unixtools = recurseIntoAttrs (callPackages ./unix-tools.nix { });
   inherit (unixtools) hexdump ps logger eject umount
                       mount wall hostname more sysctl getconf
-                      getent locale;
+                      getent locale killall;
 
   fts = if hostPlatform.isMusl then netbsd.fts else null;
 

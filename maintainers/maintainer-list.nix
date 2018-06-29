@@ -1707,6 +1707,11 @@
     github = "igsha";
     name = "Igor Sharonov";
   };
+  iimog = {
+    email = "iimog@iimog.org";
+    github = "iimog";
+    name = "Markus J. Ankenbrand";
+  };
   ikervagyok = {
     email = "ikervagyok@gmail.com";
     github = "ikervagyok";
@@ -3102,6 +3107,11 @@
     github = "pmiddend";
     name = "Philipp Middendorf";
   };
+  pmyjavec = {
+    email = "pauly@myjavec.com";
+    github = "pmyjavec";
+    name = "Pauly Myjavec";
+  };
   pneumaticat = {
     email = "kevin@potatofrom.space";
     github = "pneumaticat";
@@ -3920,6 +3930,11 @@
     email = "git@danielfrank.net";
     github = "tokudan";
     name = "Daniel Frank";
+  };
+  tomahna = {
+    email = "kevin.rauscher@tomahna.fr";
+    github = "Tomahna";
+    name = "Kevin Rauscher";
   };
   tomberek = {
     email = "tomberek@gmail.com";
