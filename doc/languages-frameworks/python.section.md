@@ -328,7 +328,7 @@ when building the bindings and are therefore added as `buildInputs`.
 
     meta = {
       description = "Pythonic binding for the libxml2 and libxslt libraries";
-      homepage = http://lxml.de;
+      homepage = https://lxml.de;
       license = licenses.bsd3;
       maintainers = with maintainers; [ sjourdois ];
     };
@@ -1029,7 +1029,7 @@ To alter a python package using overlays, you would use the following approach:
 
 ```nix
 self: super:
-rec {
+{
   python = super.python.override {
     packageOverrides = python-self: python-super: {
       bepasty-server = python-super.bepasty-server.overrideAttrs ( oldAttrs: {
@@ -1041,7 +1041,7 @@ rec {
       });
     };
   };
-  pythonPackages = python.pkgs;
+  pythonPackages = self.python.pkgs;
 }
 ```
 
