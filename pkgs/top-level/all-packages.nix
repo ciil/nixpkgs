@@ -856,6 +856,8 @@ with pkgs;
 
   blink1-tool = callPackage ../tools/misc/blink1-tool { };
 
+  bliss = callPackage ../applications/science/math/bliss { };
+
   blitz = callPackage ../development/libraries/blitz {
     boost = boost160;
   };
@@ -2505,14 +2507,16 @@ with pkgs;
 
   fuseiso = callPackage ../tools/filesystems/fuseiso { };
 
-  fdbPackages = callPackage ../servers/foundationdb { stdenv = overrideCC stdenv gcc49; };
+  fdbPackages = callPackage ../servers/foundationdb {
+    stdenv49 = overrideCC stdenv gcc49;
+  };
 
   inherit (fdbPackages)
     foundationdb51
     foundationdb52
     foundationdb60;
 
-  foundationdb = callPackage ../servers/foundationdb { stdenv = overrideCC stdenv gcc49; };
+  foundationdb = foundationdb52;
 
   fuse-7z-ng = callPackage ../tools/filesystems/fuse-7z-ng { };
 
@@ -5525,6 +5529,8 @@ with pkgs;
 
   vacuum = callPackage ../applications/networking/instant-messengers/vacuum {};
 
+  vampire = callPackage ../applications/science/logic/vampire {};
+
   volatility = callPackage ../tools/security/volatility { };
 
   vbetool = callPackage ../tools/system/vbetool { };
@@ -6035,6 +6041,8 @@ with pkgs;
   };
 
   bash-completion = callPackage ../shells/bash/bash-completion { };
+
+  gradle-completion = callPackage ../shells/zsh/gradle-completion { };
 
   nix-bash-completions = callPackage ../shells/bash/nix-bash-completions { };
 
@@ -7110,6 +7118,8 @@ with pkgs;
     vala;
 
   valadoc = callPackage ../development/tools/valadoc { };
+
+  wcc = callPackage ../development/compilers/wcc { };
 
   wla-dx = callPackage ../development/compilers/wla-dx { };
 
@@ -10159,6 +10169,8 @@ with pkgs;
   libexttextcat = callPackage ../development/libraries/libexttextcat {};
 
   libf2c = callPackage ../development/libraries/libf2c {};
+
+  libfive = callPackage ../development/libraries/libfive {};
 
   libfixposix = callPackage ../development/libraries/libfixposix {};
 
@@ -13636,14 +13648,6 @@ with pkgs;
     modDirVersionArg = linux_4_14.modDirVersion + "-hardened";
   });
 
-  linux_copperhead_stable = (linux_4_16.override {
-    kernelPatches = linux_4_16.kernelPatches ++ [
-      kernelPatches.copperhead_4_16
-      kernelPatches.tag_hardened
-     ];
-    modDirVersionArg = linux_4_16.modDirVersion + "-hardened";
-  });
-
   # linux mptcp is based on the 4.4 kernel
   linux_mptcp = callPackage ../os-specific/linux/kernel/linux-mptcp.nix {
     kernelPatches =
@@ -13696,17 +13700,6 @@ with pkgs;
         # when adding a new linux version
         kernelPatches.cpu-cgroup-v2."4.11"
         kernelPatches.modinst_arg_list_too_long
-      ];
-  };
-
-  linux_4_16 = callPackage ../os-specific/linux/kernel/linux-4.16.nix {
-    kernelPatches =
-      [ kernelPatches.bridge_stp_helper
-        # See pkgs/os-specific/linux/kernel/cpu-cgroup-v2-patches/README.md
-        # when adding a new linux version
-        # kernelPatches.cpu-cgroup-v2."4.11"
-        kernelPatches.modinst_arg_list_too_long
-        kernelPatches.bcm2835_mmal_v4l2_camera_driver # Only needed for 4.16!
       ];
   };
 
@@ -13924,7 +13917,6 @@ with pkgs;
   linuxPackages_4_4 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_4);
   linuxPackages_4_9 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_9);
   linuxPackages_4_14 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_14);
-  linuxPackages_4_16 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_16);
   linuxPackages_4_17 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_4_17);
   # Don't forget to update linuxPackages_latest!
 
@@ -13977,7 +13969,6 @@ with pkgs;
   linuxPackages_latest_xen_dom0_hardened = recurseIntoAttrs (hardenedLinuxPackagesFor (pkgs.linux_latest.override { features.xen_dom0=true; }));
 
   linuxPackages_copperhead_lts = recurseIntoAttrs (hardenedLinuxPackagesFor pkgs.linux_copperhead_lts);
-  linuxPackages_copperhead_stable = recurseIntoAttrs (hardenedLinuxPackagesFor pkgs.linux_copperhead_stable);
 
   # Samus kernels
   linuxPackages_samus_4_12 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_samus_4_12);
@@ -14220,6 +14211,8 @@ with pkgs;
   pdns-recursor = callPackage ../servers/dns/pdns-recursor { };
 
   powertop = callPackage ../os-specific/linux/powertop { };
+
+  pps-tools = callPackage ../os-specific/linux/pps-tools { };
 
   prayer = callPackage ../servers/prayer { };
 
@@ -16645,6 +16638,8 @@ with pkgs;
     libxml2 = null;
     openjpeg = null;
     libwebp = null;
+    libheif = null;
+    libde265 = null;
   };
 
   imagemagick = callPackage ../applications/graphics/ImageMagick {
@@ -16672,6 +16667,7 @@ with pkgs;
     libxml2 = null;
     openjpeg = null;
     libwebp = null;
+    libheif = null;
   });
 
   imagemagick7 = lowPrio (imagemagick7Big.override {
@@ -16952,6 +16948,8 @@ with pkgs;
   libreoffice-still = lowPrio (callPackage ../applications/office/libreoffice/wrapper.nix {
     libreoffice = libreoffice-still-unwrapped;
   });
+
+  libvmi = callPackage ../development/libraries/libvmi { };
 
   liferea = callPackage ../applications/networking/newsreaders/liferea {
     inherit (gnome3) libpeas gsettings-desktop-schemas dconf;
@@ -17983,7 +17981,9 @@ with pkgs;
 
   rpcs3 = libsForQt5.callPackage ../misc/emulators/rpcs3 { };
 
-  rstudio = libsForQt5.callPackage ../applications/editors/rstudio { };
+  rstudio = libsForQt5.callPackage ../applications/editors/rstudio {
+    boost = boost166;
+  };
 
   rsync = callPackage ../applications/networking/sync/rsync {
     enableACLs = !(stdenv.isDarwin || stdenv.isSunOS || stdenv.isFreeBSD);
@@ -21392,6 +21392,9 @@ with pkgs;
 
   mfcl2720dwcupswrapper = callPackage ../misc/cups/drivers/mfcl2720dwcupswrapper { };
   mfcl2720dwlpr = callPackage ../misc/cups/drivers/mfcl2720dwlpr { };
+
+  mfcl2740dwcupswrapper = callPackage ../misc/cups/drivers/mfcl2740dwcupswrapper { };
+  mfcl2740dwlpr = callPackage ../misc/cups/drivers/mfcl2740dwlpr { };
 
   samsung-unified-linux-driver_1_00_37 = callPackage ../misc/cups/drivers/samsung { };
   samsung-unified-linux-driver_4_01_17 = callPackage ../misc/cups/drivers/samsung/4.01.17.nix { };
