@@ -195,6 +195,8 @@ in {
     inherit (pkgs) augeas;
   };
 
+  authres = callPackage ../development/python-modules/authres { };
+
   autograd = callPackage ../development/python-modules/autograd { };
 
   automat = callPackage ../development/python-modules/automat { };
@@ -8280,6 +8282,8 @@ in {
       license = licenses.mit;
     };
   };
+
+  monosat = disabledIf (!isPy3k) (pkgs.monosat.python { inherit buildPythonPackage; inherit (self) cython; });
 
   monotonic = buildPythonPackage rec {
     pname = "monotonic";

@@ -615,7 +615,7 @@ with pkgs;
 
   dgsh = callPackage ../shells/dgsh { };
 
-  dkimpy = pythonPackages.dkimpy;
+  dkimpy = with pythonPackages; toPythonApplication dkimpy;
 
   ecdsautils = callPackage ../tools/security/ecdsautils { };
 
@@ -1390,6 +1390,8 @@ with pkgs;
   nrsc5 = callPackage ../applications/misc/nrsc5 { };
 
   nwipe = callPackage ../tools/security/nwipe { };
+
+  nyx = callPackage ../tools/networking/nyx { };
 
   onboard = callPackage ../applications/misc/onboard { };
 
@@ -3516,9 +3518,6 @@ with pkgs;
   nodejs-8_x = callPackage ../development/web/nodejs/v8.nix {};
   nodejs-slim-8_x = callPackage ../development/web/nodejs/v8.nix { enableNpm = false; };
 
-  nodejs-9_x = callPackage ../development/web/nodejs/v9.nix {};
-  nodejs-slim-9_x = callPackage ../development/web/nodejs/v9.nix { enableNpm = false; };
-
   nodejs-10_x = callPackage ../development/web/nodejs/v10.nix {
     openssl = openssl_1_1_0;
   };
@@ -4432,6 +4431,8 @@ with pkgs;
   pdf2odt = callPackage ../tools/typesetting/pdf2odt { };
 
   pdf-redact-tools = callPackage ../tools/graphics/pdfredacttools { };
+
+  pdfcrack = callPackage ../tools/security/pdfcrack { };
 
   pdf2svg = callPackage ../tools/graphics/pdf2svg { };
 
@@ -16559,6 +16560,8 @@ with pkgs;
 
   spectrwm = callPackage ../applications/window-managers/spectrwm { };
 
+  super-productivity = callPackage ../applications/networking/super-productivity { };
+
   wlc = callPackage ../development/libraries/wlc { };
   wlroots = callPackage ../development/libraries/wlroots { };
   rootston = wlroots.bin;
@@ -20263,6 +20266,8 @@ with pkgs;
 
   minimap2 = callPackage ../applications/science/biology/minimap2 { };
 
+  mosdepth = callPackage ../applications/science/biology/mosdepth { };
+
   ncbi_tools = callPackage ../applications/science/biology/ncbi-tools { };
 
   paml = callPackage ../applications/science/biology/paml { };
@@ -20573,6 +20578,8 @@ with pkgs;
 
   minisat = callPackage ../applications/science/logic/minisat {};
   minisatUnstable = callPackage ../applications/science/logic/minisat/unstable.nix {};
+
+  monosat = callPackage ../applications/science/logic/monosat {};
 
   opensmt = callPackage ../applications/science/logic/opensmt { };
 
@@ -21070,6 +21077,8 @@ with pkgs;
     cupsSupport = true;
     x11Support = true;
   });
+
+  glava = callPackage ../applications/misc/glava {};
 
   gnome-breeze = callPackage ../misc/themes/gnome-breeze { };
 
