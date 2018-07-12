@@ -2012,7 +2012,9 @@ with pkgs;
 
   djbdns = callPackage ../tools/networking/djbdns { };
 
-  dnscrypt-proxy = callPackage ../tools/networking/dnscrypt-proxy { };
+  dnscrypt-proxy = callPackage ../tools/networking/dnscrypt-proxy/1.x { };
+
+  dnscrypt-proxy2 = callPackage ../tools/networking/dnscrypt-proxy/2.x { };
 
   dnscrypt-wrapper = callPackage ../tools/networking/dnscrypt-wrapper { };
 
@@ -2109,6 +2111,8 @@ with pkgs;
   driftnet = callPackage ../tools/networking/driftnet {};
 
   drone = callPackage ../development/tools/continuous-integration/drone { };
+
+  drone-cli = callPackage ../development/tools/continuous-integration/drone-cli { };
 
   dropbear = callPackage ../tools/networking/dropbear { };
 
@@ -3021,6 +3025,8 @@ with pkgs;
     # doesn't build with clang_37
     inherit (llvmPackages_38) stdenv;
   });
+
+  holochain-go = callPackage ../servers/holochain-go { };
 
   homesick = callPackage ../tools/misc/homesick { };
 
@@ -5440,6 +5446,8 @@ with pkgs;
 
   trickle = callPackage ../tools/networking/trickle {};
 
+  triggerhappy = callPackage ../tools/inputmethods/triggerhappy {};
+
   trousers = callPackage ../tools/security/trousers { };
 
   tryton = callPackage ../applications/office/tryton { };
@@ -5937,6 +5945,8 @@ with pkgs;
   xpf = callPackage ../tools/text/xml/xpf {
     libxml2 = libxml2Python;
   };
+
+  xsecurelock = callPackage ../tools/X11/xsecurelock { };
 
   xsel = callPackage ../tools/misc/xsel { };
 
@@ -6530,7 +6540,7 @@ with pkgs;
 
   haskell = callPackage ./haskell-packages.nix { };
 
-  haskellPackages = haskell.packages.ghc822.override {
+  haskellPackages = haskell.packages.ghc843.override {
     overrides = config.haskellPackageOverrides or haskell.packageOverrides;
   };
 
@@ -6572,6 +6582,10 @@ with pkgs;
   };
 
   fstar = callPackage ../development/compilers/fstar {
+    ocamlPackages = ocaml-ng.ocamlPackages_4_06;
+  };
+
+  pyre = callPackage ../development/tools/pyre {
     ocamlPackages = ocaml-ng.ocamlPackages_4_06;
   };
 
@@ -8515,6 +8529,10 @@ with pkgs;
     flex = flex_2_5_35;
   };
 
+  spoofer = callPackage ../tools/networking/spoofer { };
+
+  spoofer-gui = callPackage ../tools/networking/spoofer { withGUI = true; };
+
   sqlitebrowser = libsForQt5.callPackage ../development/tools/database/sqlitebrowser { };
 
   sselp = callPackage ../tools/X11/sselp{ };
@@ -8806,6 +8824,8 @@ with pkgs;
   };
 
   c-blosc = callPackage ../development/libraries/c-blosc { };
+
+  cachix = haskell.lib.justStaticExecutables haskellPackages.cachix;
 
   capnproto = callPackage ../development/libraries/capnproto { };
 
@@ -13082,6 +13102,7 @@ with pkgs;
   prometheus-surfboard-exporter = callPackage ../servers/monitoring/prometheus/surfboard-exporter.nix { };
   prometheus-unifi-exporter = callPackage ../servers/monitoring/prometheus/unifi-exporter { };
   prometheus-varnish-exporter = callPackage ../servers/monitoring/prometheus/varnish-exporter.nix { };
+  prometheus-jmx-httpserver = callPackage ../servers/monitoring/prometheus/jmx-httpserver.nix {  };
 
   psqlodbc = callPackage ../servers/sql/postgresql/psqlodbc { };
 
@@ -14280,6 +14301,8 @@ with pkgs;
   radeontop = callPackage ../os-specific/linux/radeontop { };
 
   raspberrypifw = callPackage ../os-specific/linux/firmware/raspberrypi {};
+  raspberrypiWirelessFirmware = callPackage ../os-specific/linux/firmware/raspberrypi-wireless { };
+
   raspberrypi-tools = callPackage ../os-specific/linux/firmware/raspberrypi/tools.nix {};
 
   regionset = callPackage ../os-specific/linux/regionset { };
@@ -14690,6 +14713,8 @@ with pkgs;
   hack-font = callPackage ../data/fonts/hack { };
 
   helvetica-neue-lt-std = callPackage ../data/fonts/helvetica-neue-lt-std { };
+
+  hetzner-kube = callPackage ../applications/networking/cluster/hetzner-kube { };
 
   hicolor-icon-theme = callPackage ../data/icons/hicolor-icon-theme { };
 
@@ -16813,6 +16838,8 @@ with pkgs;
 
   k9copy = libsForQt5.callPackage ../applications/video/k9copy {};
 
+  kail = callPackage ../tools/networking/kail {  };
+
   kanboard = callPackage ../applications/misc/kanboard { };
 
   kdeApplications =
@@ -18859,6 +18886,10 @@ with pkgs;
     freerdp = freerdp_legacy;
   };
 
+  whitebox-tools = callPackage ../applications/gis/whitebox-tools {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
+
   windowlab = callPackage ../applications/window-managers/windowlab { };
 
   windowmaker = callPackage ../applications/window-managers/windowmaker { };
@@ -19574,6 +19605,8 @@ with pkgs;
   hexen = callPackage ../games/hexen { };
 
   holdingnuts = callPackage ../games/holdingnuts { };
+
+  hyperrogue = callPackage ../games/hyperrogue { };
 
   icbm3d = callPackage ../games/icbm3d { };
 
