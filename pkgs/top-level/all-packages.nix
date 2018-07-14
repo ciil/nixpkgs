@@ -848,6 +848,8 @@ with pkgs;
 
   bluemix-cli = callPackage ../tools/admin/bluemix-cli { };
 
+  charles = callPackage ../applications/networking/charles { };
+
   libqmatrixclient = libsForQt5.callPackage ../development/libraries/libqmatrixclient { };
 
   quaternion = libsForQt5.callPackage ../applications/networking/instant-messengers/quaternion { };
@@ -1680,6 +1682,8 @@ with pkgs;
 
   ciopfs = callPackage ../tools/filesystems/ciopfs { };
 
+  circleci-cli = callPackage ../development/tools/misc/circleci-cli { };
+
   citrix_receiver = callPackage ../applications/networking/remote/citrix-receiver { };
   citrix_receiver_13_10_0 = citrix_receiver.override { version = "13.10.0"; };
   citrix_receiver_13_9_1  = citrix_receiver.override { version = "13.9.1";  };
@@ -1946,7 +1950,7 @@ with pkgs;
 
   daq = callPackage ../applications/networking/ids/daq { };
 
-  dar = callPackage ../tools/archivers/dar { };
+  dar = callPackage ../tools/backup/dar { };
 
   darkhttpd = callPackage ../servers/http/darkhttpd { };
 
@@ -4045,7 +4049,7 @@ with pkgs;
 
   networkmanager-iodine = callPackage ../tools/networking/network-manager/iodine.nix { };
 
-  networkmanager-openvpn = callPackage ../tools/networking/network-manager/openvpn.nix { };
+  networkmanager-openvpn = callPackage ../tools/networking/network-manager/openvpn { };
 
   networkmanager-l2tp = callPackage ../tools/networking/network-manager/l2tp.nix { };
 
@@ -7800,9 +7804,7 @@ with pkgs;
 
   bazel_0_4 = callPackage ../development/tools/build-managers/bazel/0.4.nix { };
   bazel = callPackage ../development/tools/build-managers/bazel {
-    inherit (darwin) cctools;
     inherit (darwin.apple_sdk.frameworks) CoreFoundation CoreServices Foundation;
-    binutils = binutils-unwrapped;
   };
 
   bazel-buildtools = callPackage ../development/tools/build-managers/bazel/buildtools { };
@@ -8100,8 +8102,6 @@ with pkgs;
   flow = callPackage ../development/tools/analysis/flow {
     inherit (darwin.apple_sdk.frameworks) CoreServices;
     inherit (darwin) cf-private;
-    inherit (ocamlPackages) ocaml findlib camlp4 sedlex ocamlbuild lwt_ppx
-      wtf8 dtoa;
   };
 
   foreman = callPackage ../tools/system/foreman { };
@@ -15400,8 +15400,6 @@ with pkgs;
 
   cava = callPackage ../applications/audio/cava { };
 
-  cask = callPackage ../development/tools/build-managers/cask { };
-
   cb2bib = libsForQt5.callPackage ../applications/office/cb2bib { };
 
   cbatticon = callPackage ../applications/misc/cbatticon { };
@@ -19732,7 +19730,7 @@ with pkgs;
 
   openxcom = callPackage ../games/openxcom { };
 
-  orthorobot = callPackage ../games/orthorobot { love = love_0_7; };
+  orthorobot = callPackage ../games/orthorobot { };
 
   pacvim = callPackage ../games/pacvim { };
 
