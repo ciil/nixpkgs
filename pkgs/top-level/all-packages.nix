@@ -429,6 +429,8 @@ with pkgs;
     portaudioSupport  = config.aegisub.portaudioSupport or false;
   };
 
+  aerospike = callPackage ../servers/nosql/aerospike { };
+
   aespipe = callPackage ../tools/security/aespipe { };
 
   aescrypt = callPackage ../tools/misc/aescrypt { };
@@ -4916,6 +4918,8 @@ with pkgs;
 
   s3cmd = callPackage ../tools/networking/s3cmd { };
 
+  s4cmd = callPackage ../tools/networking/s4cmd { };
+
   s3gof3r = callPackage ../tools/networking/s3gof3r { };
 
   s6Dns = callPackage ../tools/networking/s6-dns { };
@@ -5243,6 +5247,8 @@ with pkgs;
   su = shadow.su;
 
   subsonic = callPackage ../servers/misc/subsonic { };
+
+  subfinder = callPackage ../tools/networking/subfinder { };
 
   surfraw = callPackage ../tools/networking/surfraw { };
 
@@ -5902,6 +5908,8 @@ with pkgs;
     # load into the Ben Nanonote
     gccCross = pkgsCross.ben-nanonote.buildPackages.gccCrossStageStatic;
   };
+
+  clipnotify = callPackage ../tools/misc/clipnotify { };
 
   xclip = callPackage ../tools/misc/xclip { };
 
@@ -7985,7 +7993,7 @@ with pkgs;
   creduce = callPackage ../development/tools/misc/creduce {
     inherit (perlPackages) perl
       ExporterLite FileWhich GetoptTabular RegexpCommon TermReadKey;
-    inherit (llvmPackages_4) llvm clang-unwrapped;
+    inherit (llvmPackages_6) llvm clang-unwrapped;
   };
 
   cscope = callPackage ../development/tools/misc/cscope { };
@@ -10915,6 +10923,8 @@ with pkgs;
 
   mergerfs = callPackage ../tools/filesystems/mergerfs { };
 
+  mergerfs-tools = callPackage ../tools/filesystems/mergerfs/tools.nix { };
+
   ## libGL/libGLU/Mesa stuff
 
   # Default libGL implementation, should provide headers and libGL.so/libEGL.so/... to link agains them
@@ -11875,6 +11885,8 @@ with pkgs;
   srtp = callPackage ../development/libraries/srtp {
     libpcap = if stdenv.isLinux then libpcap else null;
   };
+
+  stb = callPackage ../development/libraries/stb { };
 
   stxxl = callPackage ../development/libraries/stxxl { parallel = true; };
 
@@ -15467,6 +15479,8 @@ with pkgs;
 
   clipgrab = callPackage ../applications/video/clipgrab { };
 
+  clipmenu = callPackage ../applications/misc/clipmenu { };
+
   clipit = callPackage ../applications/misc/clipit { };
 
   cloud-print-connector = callPackage ../servers/cloud-print-connector { };
@@ -16481,6 +16495,8 @@ with pkgs;
   gmpc = callPackage ../applications/audio/gmpc {};
 
   gmtp = callPackage ../applications/misc/gmtp {};
+
+  gnomecast = callPackage ../applications/video/gnomecast { };
 
   gnome-mpv = callPackage ../applications/video/gnome-mpv { };
 
@@ -19140,11 +19156,7 @@ with pkgs;
 
   xmind = callPackage ../applications/misc/xmind { };
 
-  xneur_0_13 = callPackage ../applications/misc/xneur { };
-
-  xneur_0_8 = callPackage ../applications/misc/xneur/0.8.nix { };
-
-  xneur = xneur_0_13;
+  xneur = callPackage ../applications/misc/xneur { };
 
   gxneur = callPackage ../applications/misc/gxneur  {
     inherit (gnome2) libglade GConf;
@@ -20400,6 +20412,8 @@ with pkgs;
 
   flintqs = callPackage ../development/libraries/science/math/flintqs { };
 
+  gurobi = callPackage ../applications/science/math/gurobi { };
+
   jags = callPackage ../applications/science/math/jags { };
 
 
@@ -21211,6 +21225,9 @@ with pkgs;
   lilypond-with-fonts = callPackage ../misc/lilypond/with-fonts.nix {
     lilypond = lilypond-unstable;
   };
+
+  lollypop-portal = callPackages ../misc/lollypop-portal { };
+
   openlilylib-fonts = callPackage ../misc/lilypond/fonts.nix { };
 
   mailcore2 = callPackage ../development/libraries/mailcore2 {
@@ -21873,7 +21890,7 @@ with pkgs;
 
   xrq = callPackage ../applications/misc/xrq { };
 
-  nitrokey-app = callPackage ../tools/security/nitrokey-app { };
+  nitrokey-app = libsForQt5.callPackage ../tools/security/nitrokey-app { };
   nitrokey-udev-rules = callPackage ../tools/security/nitrokey-app/udev-rules.nix { };
 
   fpm2 = callPackage ../tools/security/fpm2 { };

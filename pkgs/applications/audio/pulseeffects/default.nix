@@ -23,6 +23,7 @@
 , boost
 , fftwFloat
 , calf
+, zita-convolver
 , zam-plugins
 , rubberband
 , mda_lv2
@@ -39,13 +40,13 @@ let
   ];
 in stdenv.mkDerivation rec {
   name = "pulseeffects-${version}";
-  version = "4.1.5";
+  version = "4.1.7";
 
   src = fetchFromGitHub {
     owner = "wwmm";
     repo = "pulseeffects";
     rev = "v${version}";
-    sha256 = "1k5ibn4ilzhps91insvw07jd9x9yxhxl8pvfzgcm9ndvb8anifv4";
+    sha256 = "13yj1958jsz76zxi3ag133i4337cicvm5b58l22g2xvbqa5vraq9";
   };
 
   nativeBuildInputs = [
@@ -73,6 +74,7 @@ in stdenv.mkDerivation rec {
     libsndfile
     boost
     fftwFloat
+    zita-convolver
   ];
 
   postPatch = ''
