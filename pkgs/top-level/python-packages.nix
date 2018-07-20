@@ -3131,6 +3131,8 @@ in {
 
   };
 
+  image-match = callPackage ../development/python-modules/image-match { };
+
   imbalanced-learn = callPackage ../development/python-modules/imbalanced-learn { };
 
   immutables = callPackage ../development/python-modules/immutables {};
@@ -4568,6 +4570,8 @@ in {
 
   };
 
+  pywavelets = callPackage ../development/python-modules/pywavelets { };
+
   zope_deprecation = buildPythonPackage rec {
     name = "zope.deprecation-4.1.2";
 
@@ -5498,23 +5502,6 @@ in {
   flask-autoindex = callPackage ../development/python-modules/flask-autoindex { };
 
   flask-babel = callPackage ../development/python-modules/flask-babel { };
-
-  flask_cache = buildPythonPackage rec {
-    name = "Flask-Cache-0.13.1";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/F/Flask-Cache/${name}.tar.gz";
-      sha256 = "90126ca9bc063854ef8ee276e95d38b2b4ec8e45fd77d5751d37971ee27c7ef4";
-    };
-
-    propagatedBuildInputs = with self; [ werkzeug flask ];
-
-    meta = {
-      homepage = https://github.com/thadeusb/flask-cache;
-      description = "Adds cache support to your Flask application";
-      license = "BSD";
-    };
-  };
 
   flask-caching = callPackage ../development/python-modules/flask-caching { };
 
@@ -7137,7 +7124,7 @@ in {
 
   locustio = callPackage ../development/python-modules/locustio { };
 
-  llvmlite = callPackage ../development/python-modules/llvmlite { llvm = pkgs.llvm; };
+  llvmlite = callPackage ../development/python-modules/llvmlite { llvm = pkgs.llvm_6; };
 
   lockfile = buildPythonPackage rec {
     pname = "lockfile";
@@ -12454,28 +12441,7 @@ in {
 
   scipy = callPackage ../development/python-modules/scipy { };
 
-  scikitimage = buildPythonPackage rec {
-    name = "scikit-image-${version}";
-    version = "0.12.3";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/s/scikit-image/${name}.tar.gz";
-      sha256 = "1iypjww5hk46i9vzg2zlfc9w4vdw029cfyakkkl02isj1qpiknl2";
-    };
-
-    buildInputs = with self; [ cython dask nose numpy scipy six ];
-
-    propagatedBuildInputs = with self; [ pillow matplotlib networkx scipy six numpy ];
-
-    # the test fails because the loader cannot create test objects!
-    doCheck = false;
-
-    meta = {
-      description = "Image processing routines for SciPy";
-      homepage = http://scikit-image.org;
-      license = licenses.bsd3;
-    };
-  };
+  scikitimage = callPackage ../development/python-modules/scikit-image { };
 
   scikitlearn = callPackage ../development/python-modules/scikitlearn {
     inherit (pkgs) gfortran glibcLocales;
@@ -12637,30 +12603,6 @@ in {
   };
 
   simplejson = callPackage ../development/python-modules/simplejson { };
-
-  simpleldap = buildPythonPackage rec {
-    version = "0.8";
-    name = "simpleldap-${version}";
-
-    propagatedBuildInputs = with self; [ ldap ];
-    buildInputs = with self; [ pep8 pytest tox ];
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/s/simpleldap/simpleldap-${version}.tar.gz";
-      sha256 = "a5916680a7fe1b2c5d74dc76351be2941d03b7b94a50d8520280e3f588a84e61";
-    };
-
-    meta = {
-      description = "A module that makes simple LDAP usage simple";
-      longDescription = ''
-        A small wrapper around the python-ldap library that provides a more
-        Pythonic interface for LDAP server connections, LDAP objects, and the
-        common get and search operations.
-      '';
-      license = licenses.mit;
-      maintainers = with maintainers; [ layus ];
-    };
-  };
 
   simpleparse = buildPythonPackage rec {
     version = "2.1.1";
@@ -15838,44 +15780,7 @@ EOF
     };
   };
 
-  graphite_api = buildPythonPackage rec {
-    name = "graphite-api-1.0.1";
-    disabled = isPyPy;
-
-    src = pkgs.fetchgit {
-      url = "https://github.com/brutasse/graphite-api.git";
-      rev = "b6f75e8a08fae695c094fece6de611b893fc65fb";
-      sha256 = "1n8h5krhv7hzmn336y9vjrmv6b6009lz5hj0d9wz7v1k2500ws5k";
-    };
-
-    checkPhase = "nosetests";
-
-    propagatedBuildInputs = with self; [
-      flask
-      flask_cache
-      cairocffi
-      pyparsing
-      pytz
-      pyyaml
-      raven
-      six
-      structlog
-      tzlocal
-    ];
-
-    buildInputs = with self; [
-      nose
-      mock
-    ];
-
-    LD_LIBRARY_PATH = "${pkgs.cairo.out}/lib";
-
-    meta = {
-      description = "Graphite-web, without the interface. Just the rendering HTTP API";
-      homepage = https://github.com/brutasse/graphite-api;
-      license = licenses.asl20;
-    };
-  };
+  graphite_api = callPackage ../development/python-modules/graphite-api { };
 
   graphite_beacon = buildPythonPackage rec {
     name = "graphite_beacon-0.27.0";
@@ -18036,6 +17941,8 @@ EOF
   qiskit = callPackage ../development/python-modules/qiskit { };
 
   qasm2image = callPackage ../development/python-modules/qasm2image { };
+
+  simpy = callPackage ../development/python-modules/simpy { };
 });
 
 in fix' (extends overrides packages)
