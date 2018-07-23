@@ -4910,6 +4910,8 @@ with pkgs;
 
   rubocop = callPackage ../development/tools/rubocop { };
 
+  runelite = callPackages ../games/runelite { };
+
   runningx = callPackage ../tools/X11/runningx { };
 
   runzip = callPackage ../tools/archivers/runzip { };
@@ -11839,6 +11841,8 @@ with pkgs;
 
   sofia_sip = callPackage ../development/libraries/sofia-sip { };
 
+  soil = callPackage ../development/libraries/soil { };
+  
   sonic = callPackage ../development/libraries/sonic { };
 
   soprano = callPackage ../development/libraries/soprano { };
@@ -15395,10 +15399,7 @@ with pkgs;
     openjpeg = openjpeg_1;
   };
 
-  perkeep = callPackage ../applications/misc/perkeep {
-    # Perkeep is very particular about which go version to build with.
-    go = go_1_9;
-  };
+  perkeep = callPackage ../applications/misc/perkeep { };
 
   canto-curses = callPackage ../applications/networking/feedreaders/canto-curses { };
 
@@ -20917,6 +20918,8 @@ with pkgs;
 
   spyder = pythonPackages.spyder;
 
+  openspace = callPackage ../applications/science/astronomy/openspace { };
+  
   stellarium = libsForQt5.callPackage ../applications/science/astronomy/stellarium { };
 
   tulip = callPackage ../applications/science/misc/tulip {
