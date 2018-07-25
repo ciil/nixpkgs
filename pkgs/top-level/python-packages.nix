@@ -569,6 +569,11 @@ in {
 
   appdirs = callPackage ../development/python-modules/appdirs { };
 
+  appleseed = disabledIf isPy3k
+    (toPythonModule (pkgs.appleseed.override {
+      inherit (self) python;
+    }));
+
   application = callPackage ../development/python-modules/application { };
 
   appnope = buildPythonPackage rec {
@@ -1925,11 +1930,8 @@ in {
   pytest = self.pytest_36;
 
   pytest_36 = callPackage ../development/python-modules/pytest {
-    hypothesis = self.hypothesis.override {
-      # hypothesis requires pytest that causes dependency cycle
-      doCheck = false;
-      pytest = null;
-    };
+    # hypothesis tests require pytest that causes dependency cycle
+    hypothesis = self.hypothesis.override { doCheck = false; };
   };
 
   # Needed for celery
