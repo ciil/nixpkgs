@@ -429,7 +429,7 @@ with pkgs;
 
   acpica-tools = callPackage ../tools/system/acpica-tools { };
 
-  actdiag = pythonPackages.actdiag;
+  actdiag = with python3.pkgs; toPythonApplication actdiag;
 
   actkbd = callPackage ../tools/system/actkbd { };
 
@@ -670,6 +670,8 @@ with pkgs;
 
   gitless = callPackage ../applications/version-management/gitless { };
 
+  gitter = callPackage  ../applications/networking/instant-messengers/gitter { };
+
   grc = callPackage ../tools/misc/grc { };
 
   green-pdfviewer = callPackage ../applications/misc/green-pdfviewer {
@@ -903,7 +905,7 @@ with pkgs;
 
   blobfuse = callPackage ../tools/filesystems/blobfuse { };
 
-  blockdiag = pythonPackages.blockdiag;
+  blockdiag = with python3Packages; toPythonApplication blockdiag;
 
   blsd = callPackage ../tools/misc/blsd {
     libgit2 = libgit2_0_27;
@@ -1322,6 +1324,8 @@ with pkgs;
 
   glide = callPackage ../development/tools/glide { };
 
+  globalarrays = callPackage ../development/libraries/globalarrays { };
+
   glock = callPackage ../development/tools/glock { };
 
   glslviewer = callPackage ../development/tools/glslviewer {
@@ -1441,6 +1445,8 @@ with pkgs;
   patdiff = callPackage ../tools/misc/patdiff { };
 
   pbzx = callPackage ../tools/compression/pbzx { };
+
+  photon = callPackage ../tools/networking/photon { };
 
   playerctl = callPackage ../tools/audio/playerctl { };
 
@@ -1689,6 +1695,8 @@ with pkgs;
   libceph = ceph.lib;
   ceph = callPackage ../tools/filesystems/ceph { boost = boost165; };
   ceph-dev = ceph;
+
+  certmgr = callPackage ../tools/security/certmgr { };
 
   cfdg = callPackage ../tools/graphics/cfdg {
     ffmpeg = ffmpeg_2;
@@ -2724,6 +2732,8 @@ with pkgs;
   gnome15 = callPackage ../applications/misc/gnome15 {
     inherit (gnome2) gnome_python gnome_python_desktop;
   };
+
+  gnome-builder = callPackage ../applications/editors/gnome-builder { };
 
   gnokii = callPackage ../tools/misc/gnokii { };
 
@@ -4234,7 +4244,7 @@ with pkgs;
 
   nssmdns = callPackage ../tools/networking/nss-mdns { };
 
-  nwdiag = pythonPackages.nwdiag;
+  nwdiag = with python3Packages; toPythonApplication nwdiag;
 
   nylon = callPackage ../tools/networking/nylon { };
 
@@ -4250,6 +4260,8 @@ with pkgs;
 
   ocproxy = callPackage ../tools/networking/ocproxy { };
 
+  ocserv = callPackage ../tools/networking/ocserv { };
+
   openfortivpn = callPackage ../tools/networking/openfortivpn { };
 
   obexfs = callPackage ../tools/bluetooth/obexfs { };
@@ -4257,8 +4269,6 @@ with pkgs;
   obexftp = callPackage ../tools/bluetooth/obexftp { };
 
   objconv = callPackage ../development/tools/misc/objconv {};
-
-  obnam = callPackage ../tools/backup/obnam { };
 
   odpdown = callPackage ../tools/typesetting/odpdown { };
 
@@ -5040,6 +5050,8 @@ with pkgs;
 
   scfbuild = python2.pkgs.callPackage ../tools/misc/scfbuild { };
 
+  scriptaculous = callPackage ../development/libraries/scriptaculous { };
+
   scrot = callPackage ../tools/graphics/scrot { };
 
   scrypt = callPackage ../tools/security/scrypt { };
@@ -5064,7 +5076,7 @@ with pkgs;
 
   setserial = callPackage ../tools/system/setserial { };
 
-  seqdiag = pythonPackages.seqdiag;
+  seqdiag = with python3Packages; toPythonApplication seqdiag;
 
   screenfetch = callPackage ../tools/misc/screenfetch { };
 
@@ -5160,6 +5172,8 @@ with pkgs;
   smartmontools = callPackage ../tools/system/smartmontools {
     inherit (darwin.apple_sdk.frameworks) IOKit ApplicationServices;
   };
+
+  smarty3 = callPackage ../development/libraries/smarty3 { };
 
   smbldaptools = callPackage ../tools/networking/smbldaptools {
     inherit (perlPackages) perlldap CryptSmbHash DigestSHA1;
@@ -5441,6 +5455,8 @@ with pkgs;
   tinc_pre = callPackage ../tools/networking/tinc/pre.nix { };
 
   tiny8086 = callPackage ../applications/virtualization/8086tiny { };
+
+  tinyproxy = callPackage ../tools/networking/tinyproxy {};
 
   tio = callPackage ../tools/misc/tio { };
 
@@ -7081,6 +7097,7 @@ with pkgs;
   cargo-edit = callPackage ../tools/package-management/cargo-edit { };
   cargo-release = callPackage ../tools/package-management/cargo-release { };
   cargo-tree = callPackage ../tools/package-management/cargo-tree { };
+  cargo-update = callPackage ../tools/package-management/cargo-update { };
 
   cargo-asm = callPackage ../development/tools/rust/cargo-asm { };
   cargo-fuzz = callPackage ../development/tools/rust/cargo-fuzz { };
@@ -7968,6 +7985,8 @@ with pkgs;
 
   corundum = callPackage ../development/tools/corundum { };
 
+  confluent = callPackage ../servers/confluent {};
+
   ctags = callPackage ../development/tools/misc/ctags { };
 
   ctagsWrapped = callPackage ../development/tools/misc/ctags/wrapped.nix {};
@@ -8613,6 +8632,8 @@ with pkgs;
   todolist = callPackage ../applications/misc/todolist { };
 
   travis = callPackage ../development/tools/misc/travis { };
+
+  trellis = callPackage ../development/tools/trellis { };
 
   tweak = callPackage ../applications/editors/tweak { };
 
@@ -11419,6 +11440,8 @@ with pkgs;
 
   pugixml = callPackage ../development/libraries/pugixml { };
 
+  pybind11 = callPackage ../development/libraries/pybind11 { };
+
   re2 = callPackage ../development/libraries/re2 { };
 
   qbs = callPackage ../development/tools/build-managers/qbs { };
@@ -12702,7 +12725,9 @@ with pkgs;
 
   clamsmtp = callPackage ../servers/mail/clamsmtp { };
 
-  clickhouse = callPackage ../servers/clickhouse { };
+  clickhouse = callPackage ../servers/clickhouse {
+    inherit (llvmPackages_6) clang-unwrapped lld llvm;
+  };
 
   couchdb = callPackage ../servers/http/couchdb {
     spidermonkey = spidermonkey_1_8_5;
@@ -15010,6 +15035,8 @@ with pkgs;
 
   hasklig = callPackage ../data/fonts/hasklig {};
 
+  inter-ui = callPackage ../data/fonts/inter-ui { };
+
   siji = callPackage ../data/fonts/siji { };
 
   sound-theme-freedesktop = callPackage ../data/misc/sound-theme-freedesktop { };
@@ -15182,7 +15209,8 @@ with pkgs;
 
   amsn = callPackage ../applications/networking/instant-messengers/amsn { };
 
-  androidStudioPackages = callPackage ../applications/editors/android-studio { };
+  androidStudioPackages = recurseIntoAttrs
+    (callPackage ../applications/editors/android-studio { });
   android-studio = androidStudioPackages.stable;
   android-studio-preview = androidStudioPackages.beta;
 
@@ -15272,6 +15300,7 @@ with pkgs;
   hevm = self.altcoins.hevm;
 
   parity = self.altcoins.parity;
+  parity-beta = self.altcoins.parity-beta;
   parity-ui = self.altcoins.parity-ui;
 
   stellar-core = self.altcoins.stellar-core;
@@ -17900,6 +17929,8 @@ with pkgs;
     python = python3;
   };
 
+  protonmail-bridge = libsForQt5.callPackage ../applications/networking/protonmail-bridge { };
+
   psi = callPackage ../applications/networking/instant-messengers/psi { };
 
   psi-plus = callPackage ../applications/networking/instant-messengers/psi-plus { };
@@ -18094,6 +18125,8 @@ with pkgs;
   realpine = callPackage ../applications/networking/mailreaders/realpine {
     tcl = tcl-8_5;
   };
+
+  reaper = callPackage ../applications/audio/reaper { };
 
   recode = callPackage ../tools/text/recode { };
 
@@ -18374,7 +18407,7 @@ with pkgs;
     inherit (pkgs.vamp) vampSDK;
   };
 
-  soulseekqt = callPackage ../applications/networking/p2p/soulseekqt { };
+  soulseekqt = libsForQt5.callPackage ../applications/networking/p2p/soulseekqt { };
 
   sox = callPackage ../applications/misc/audio/sox {
     enableLame = config.sox.enableLame or false;
@@ -20304,6 +20337,8 @@ with pkgs;
 
   octopus = callPackage ../applications/science/chemistry/octopus { openblas=openblasCompat; };
 
+  openmolcas = callPackage ../applications/science/chemistry/openmolcas { };
+
   pymol = callPackage ../applications/science/chemistry/pymol { };
 
   ### SCIENCE/GEOMETRY
@@ -20417,6 +20452,8 @@ with pkgs;
 
   snpeff = callPackage ../applications/science/biology/snpeff { };
 
+  somatic-sniper = callPackage ../applications/science/biology/somatic-sniper { };
+
   star = callPackage ../applications/science/biology/star { };
 
   varscan = callPackage ../applications/science/biology/varscan { };
@@ -20433,7 +20470,7 @@ with pkgs;
 
   ### SCIENCE/MATH
 
-  almonds = pythonPackages.callPackage ../applications/science/math/almonds { };
+  almonds = callPackage ../applications/science/math/almonds { };
 
   arpack = callPackage ../development/libraries/science/math/arpack { };
 
@@ -21527,6 +21564,8 @@ with pkgs;
 
   rss-glx = callPackage ../misc/screensavers/rss-glx { };
 
+  run-scaled = callPackage ../tools/X11/run-scaled { };
+
   runit = callPackage ../tools/system/runit { };
 
   refind = callPackage ../tools/bootloaders/refind { };
@@ -21561,6 +21600,9 @@ with pkgs;
 
   mfcl2740dwcupswrapper = callPackage ../misc/cups/drivers/mfcl2740dwcupswrapper { };
   mfcl2740dwlpr = callPackage ../misc/cups/drivers/mfcl2740dwlpr { };
+
+  mfcl8690cdwcupswrapper = callPackage ../misc/cups/drivers/mfcl8690cdwcupswrapper { };
+  mfcl8690cdwlpr = callPackage ../misc/cups/drivers/mfcl8690cdwlpr { };
 
   samsung-unified-linux-driver_1_00_37 = callPackage ../misc/cups/drivers/samsung { };
   samsung-unified-linux-driver_4_01_17 = callPackage ../misc/cups/drivers/samsung/4.01.17.nix { };
@@ -22025,4 +22067,5 @@ with pkgs;
 
   powershell = callPackage ../shells/powershell { };
 
+  doing = callPackage ../applications/misc/doing  { };
 }

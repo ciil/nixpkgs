@@ -936,6 +936,11 @@
     github = "demin-dmitriy";
     name = "Dmitriy Demin";
   };
+  demize = {
+    email = "johannes@kyriasis.com";
+    github = "kyrias";
+    name = "Johannes Löthberg";
+  };
   demyanrogozhin = {
     email = "demyan.rogozhin@gmail.com";
     github = "demyanrogozhin";
@@ -2174,6 +2179,11 @@
     github = "nathanielbaxter";
     name = "Nathaniel Baxter";
   };
+  lightdiscord = {
+    email = "arnaud@lightdiscord.me";
+    github = "lightdiscord";
+    name = "Arnaud Pascal";
+  };
   lihop = {
     email = "nixos@leroy.geek.nz";
     github = "lihop";
@@ -3197,6 +3207,11 @@
     email = "patrick.callahan@latitudeengineering.com";
     name = "Patrick Callahan";
   };
+  q3k = {
+    email = "q3k@q3k.org";
+    github = "q3k";
+    name = "Serge Bazanski";
+  };
   qknight = {
     email = "js@lastlog.de";
     github = "qknight";
@@ -3677,6 +3692,11 @@
     email = "abouzahra.9@wright.edu";
     github = "s-na";
     name = "S. Nordin Abouzahra";
+  };
+  snaar = {
+    email = "snaar@snaar.net";
+    github = "snaar";
+    name = "Serguei Narojnyi";
   };
   snyh = {
     email = "snyh@snyh.org";
