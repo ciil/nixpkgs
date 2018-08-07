@@ -278,6 +278,8 @@ in {
 
   fido2 = callPackage ../development/python-modules/fido2 {  };
 
+  fire = callPackage ../development/python-modules/fire { };
+
   globus-sdk = callPackage ../development/python-modules/globus-sdk { };
 
   goocalendar = callPackage ../development/python-modules/goocalendar { };
@@ -349,6 +351,8 @@ in {
   phonopy = callPackage ../development/python-modules/phonopy { };
 
   plantuml = callPackage ../tools/misc/plantuml { };
+
+  pymysql = callPackage ../development/python-modules/pymysql { };
 
   Pmw = callPackage ../development/python-modules/Pmw { };
 
@@ -1102,6 +1106,8 @@ in {
 
   cheroot = callPackage ../development/python-modules/cheroot {};
 
+  cli-helpers = callPackage ../development/python-modules/cli-helpers {};
+
   cmarkgfm = callPackage ../development/python-modules/cmarkgfm { };
 
   circus = callPackage ../development/python-modules/circus {};
@@ -1198,46 +1204,11 @@ in {
 
   blaze = callPackage ../development/python-modules/blaze { };
 
-  # Needed for bleach 1.5.0
-  html5lib_0_9999999 = self.html5lib.overridePythonAttrs rec {
-    name = "html5lib-${version}";
-    disabled = isPy3k && pythonAtLeast "3.6";
-    buildInputs = with self; [ nose flake8 ];
-    propagatedBuildInputs = with self; [ six ];
-    checkPhase = ''
-      nosetests
-    '';
-
-    version = "0.9999999";
-    src = pkgs.fetchurl {
-      url = "https://github.com/html5lib/html5lib-python/archive/0.9999999.tar.gz";
-      sha256 = "1s6wdbrjzw5jhyfbskf4nj1i5bjpjqq9f89a7r1rl59rhpwmfhhq";
-    };
-  };
-
   html5-parser = callPackage ../development/python-modules/html5-parser {};
 
   httpserver = callPackage ../development/python-modules/httpserver {};
 
   bleach = callPackage ../development/python-modules/bleach { };
-
-  # needed for tensorflow-tensorboard
-  bleach_1_5_0 = self.bleach.overridePythonAttrs rec {
-    version = "1.5.0";
-    pname = "bleach";
-    name = "${pname}-${version}";
-
-    propagatedBuildInputs = with self; [ six html5lib_0_9999999 ];
-
-    preCheck = ''
-      sed -i 's,pytest==[0-9.]*,pytest,' setup.py
-    '';
-
-    src = fetchPypi {
-      inherit pname version;
-      sha256 = "0rdwb3piwwl30wfqg4ywm07276w7090xfq71lb5d6k5mk62pb3lp";
-    };
-  };
 
   blinker = callPackage ../development/python-modules/blinker { };
 
@@ -3912,6 +3883,8 @@ in {
   };
 
   pydotplus = callPackage ../development/python-modules/pydotplus { };
+
+  pyfxa = callPackage ../development/python-modules/pyfxa { };
 
   pyhomematic = callPackage ../development/python-modules/pyhomematic { };
 
@@ -8091,25 +8064,6 @@ in {
       homepage = https://pythonhosted.org/Pympler/;
       license = licenses.asl20;
     };
-  };
-
-  pymysql = buildPythonPackage rec {
-    name = "pymysql-${version}";
-    version = "0.6.6";
-    src = pkgs.fetchgit {
-      url = https://github.com/PyMySQL/PyMySQL.git;
-      rev = "refs/tags/pymysql-${version}";
-      sha256 = "0kpw11rxpyyhs9b139hxhbnx9n5kzjjw10wgwvhnf9m3mv7j4n71";
-    };
-
-    buildInputs = with self; [ unittest2 ];
-
-    checkPhase = ''
-      ${python.interpreter} runtests.py
-    '';
-
-    # Wants to connect to MySQL
-    doCheck = false;
   };
 
   pymysqlsa = self.buildPythonPackage rec {
