@@ -250,6 +250,8 @@ in {
 
   diff_cover = callPackage ../development/python-modules/diff_cover { };
 
+  docrep = callPackage ../development/python-modules/docrep { };
+
   emcee = callPackage ../development/python-modules/emcee { };
 
   email_validator = callPackage ../development/python-modules/email-validator { };
@@ -499,7 +501,11 @@ in {
 
   simpleeval = callPackage ../development/python-modules/simpleeval { };
 
+  singledispatch = callPackage ../development/python-modules/singledispatch { };
+
   sip = callPackage ../development/python-modules/sip { };
+
+  sortedcontainers = callPackage ../development/python-modules/sortedcontainers { };
 
   sklearn-deap = callPackage ../development/python-modules/sklearn-deap { };
 
@@ -2545,21 +2551,6 @@ in {
     };
   };
 
-  singledispatch = buildPythonPackage rec {
-    name = "singledispatch-3.4.0.3";
-
-    propagatedBuildInputs = with self; [ six ];
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/s/singledispatch/${name}.tar.gz";
-      sha256 = "5b06af87df13818d14f08a028e42f566640aef80805c3b50c5056b086e3c2b9c";
-    };
-
-    meta = {
-      homepage = https://docs.python.org/3/library/functools.html;
-    };
-  };
-
   functools32 = if isPy3k then null else buildPythonPackage rec {
     name = "functools32-${version}";
     version = "3.2.3-2";
@@ -4111,6 +4102,8 @@ in {
   pyroute2 = callPackage ../development/python-modules/pyroute2 { };
 
   pyspf = callPackage ../development/python-modules/pyspf { };
+
+  pysrim = callPackage ../development/python-modules/pysrim { };
 
   pysrt = callPackage ../development/python-modules/pysrt { };
 
@@ -7558,26 +7551,6 @@ in {
   mistune = callPackage ../development/python-modules/mistune { };
 
   brotlipy = callPackage ../development/python-modules/brotlipy { };
-
-  sortedcontainers = buildPythonPackage rec {
-    name = "sortedcontainers-${version}";
-    version = "1.5.7";
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/s/sortedcontainers/${name}.tar.gz";
-      sha256 = "1sjh8lccbmvwna91mlhl5m3z4320p07h063b8x8br4p4cll49w0g";
-    };
-
-    # tries to run tests for all python versions and uses virtualenv weirdly
-    doCheck = false;
-    #buildInputs = with self; [ tox nose ];
-
-    meta = {
-      description = "Python Sorted Container Types: SortedList, SortedDict, and SortedSet";
-      homepage = "http://www.grantjenks.com/docs/sortedcontainers/";
-      license = licenses.asl20;
-    };
-  };
 
   sortedcollections = buildPythonPackage rec {
     name = "sortedcollections-${version}";
@@ -12624,37 +12597,7 @@ in {
 
   thespian = callPackage ../development/python-modules/thespian { };
 
-  tidylib = buildPythonPackage rec {
-    version = "0.2.4";
-    name = "pytidylib-${version}";
-
-    propagatedBuildInputs = [ pkgs.html-tidy ];
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/p/pytidylib/pytidylib-${version}.tar.gz";
-      sha256 = "0af07bd8ebd256af70ca925ada9337faf16d85b3072624f975136a5134150ab6";
-    };
-
-    # Judging from SyntaxError in tests
-    disabled = isPy3k;
-
-    checkPhase = ''
-      ${python.interpreter} -m unittest discover
-    '';
-
-    # Bunch of tests fail
-    # https://github.com/countergram/pytidylib/issues/13
-    doCheck = false;
-
-    patchPhase = ''
-      sed -i 's#load_library(name)#load_library("${pkgs.html-tidy}/lib/libtidy.so")#' tidylib/__init__.py
-    '';
-
-    meta = {
-      homepage = " http://countergram.com/open-source/pytidylib/";
-      maintainers = with maintainers; [ layus ];
-    };
-  };
+  tidylib = callPackage ../development/python-modules/pytidylib { };
 
   tilestache = self.buildPythonPackage rec {
     name = "tilestache-${version}";
@@ -17520,6 +17463,10 @@ EOF
   foundationdb60 = (toPythonModule (pkgs.fdbPackages.override {
     inherit python;
   }).foundationdb60).python;
+
+  libtorrentRasterbar = (toPythonModule (pkgs.libtorrentRasterbar.override {
+    inherit python;
+  })).python;
 });
 
 in fix' (extends overrides packages)
