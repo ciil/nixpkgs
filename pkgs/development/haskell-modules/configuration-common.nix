@@ -86,7 +86,7 @@ self: super: {
       name = "git-annex-${super.git-annex.version}-src";
       url = "git://git-annex.branchable.com/";
       rev = "refs/tags/" + super.git-annex.version;
-      sha256 = "1l6xgvn3l0kkly5jvg57msx09bf1jwdff7m61w8yf2pxsrh5ybxl";
+      sha256 = "0a7h21cwfvprj5xfyivjzg2hbs71xp85l9v6kyp58mlqvwy3zffl";
     };
   }).override {
     dbus = if pkgs.stdenv.isLinux then self.dbus else null;
@@ -1080,13 +1080,19 @@ self: super: {
   haddock-library = doJailbreak (dontCheck super.haddock-library);
   haddock-library_1_6_0 = doJailbreak (dontCheck super.haddock-library_1_6_0);
 
-  # The test suite does not know how to find the 'cabal2nix' binary.
-  cabal2nix = overrideCabal super.cabal2nix (drv: {
-    preCheck = ''
-      export PATH="$PWD/dist/build/cabal2nix:$PATH"
-      export HOME="$TMPDIR/home"
-    '';
-  });
+  cabal2nix =
+    let
+      # The test suite does not know how to find the 'cabal2nix' binary.
+      drv1 = overrideCabal super.cabal2nix (drv: {
+               preCheck = ''
+                 export PATH="$PWD/dist/build/cabal2nix:$PATH"
+                 export HOME="$TMPDIR/home"
+               '';
+             });
+       # cabal2nix requires hpack >= 0.29.6 but the LTS has hpack-0.28.2.
+       # Lets remove this once the LTS has upraded to 0.29.6.
+       drv2 = drv1.override { hpack = self.hpack_0_29_6; };
+    in drv2;
 
   # Break out of "aeson <1.3, temporary <1.3".
   stack = doJailbreak super.stack;
