@@ -951,12 +951,6 @@ self: super: {
   # https://github.com/yesodweb/Shelly.hs/issues/162
   shelly = dontCheck super.shelly;
 
-  # Support ansi-terminal 0.7.x.
-  cabal-plan = appendPatch super.cabal-plan (pkgs.fetchpatch {
-    url = "https://github.com/haskell-hvr/cabal-plan/pull/16.patch";
-    sha256 = "0i889zs46wn09d7iqdy99201zaqxb175cfs8jz2zi3mv4ywx3a0l";
-  });
-
   # https://github.com/simonmichael/hledger/issues/852
   hledger-lib = appendPatch super.hledger-lib (pkgs.fetchpatch {
     url = "https://github.com/simonmichael/hledger/commit/007b9f8caaf699852511634752a7d7c86f6adc67.patch";
@@ -1126,4 +1120,12 @@ self: super: {
   # Can be removed once yi-language >= 0.18 is in the LTS
   yi-core = super.yi-core.override { yi-language = self.yi-language_0_18_0; };
 
+  # https://github.com/MarcWeber/hasktags/issues/52
+  hasktags = dontCheck super.hasktags;
+
+  # https://github.com/haskell/hoopl/issues/50
+  hoopl = dontCheck super.hoopl;
+
+  # https://github.com/snapframework/xmlhtml/pull/37
+  xmlhtml = doJailbreak super.xmlhtml;
 } // import ./configuration-tensorflow.nix {inherit pkgs haskellLib;} self super
