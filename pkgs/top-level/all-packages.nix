@@ -8104,6 +8104,8 @@ with pkgs;
 
   ddd = callPackage ../development/tools/misc/ddd { };
 
+  lattice-diamond = callPackage ../development/tools/lattice-diamond { };
+
   distcc = callPackage ../development/tools/misc/distcc { };
 
   # distccWrapper: wrapper that works as gcc or g++
@@ -8500,6 +8502,8 @@ with pkgs;
   procodile = callPackage ../tools/system/procodile { };
 
   pup = callPackage ../development/tools/pup { };
+
+  puppet-lint = callPackage ../development/tools/puppet/puppet-lint { };
 
   pyrseas = callPackage ../development/tools/database/pyrseas { };
 
@@ -9191,7 +9195,12 @@ with pkgs;
 
   ffcast = callPackage ../tools/X11/ffcast { };
 
-  fflas-ffpack = callPackage ../development/libraries/fflas-ffpack {};
+  fflas-ffpack = callPackage ../development/libraries/fflas-ffpack {
+    # We need to use blas instead of openblas on darwin,
+    # see https://github.com/NixOS/nixpkgs/pull/45013.
+    blas = if stdenv.isDarwin then blas else openblas;
+  };
+
   fflas-ffpack_1 = callPackage ../development/libraries/fflas-ffpack/1.nix {};
   linbox = callPackage ../development/libraries/linbox {};
 
@@ -9964,6 +9973,8 @@ with pkgs;
 
   lmdb = callPackage ../development/libraries/lmdb { };
 
+  lmdbxx = callPackage ../development/libraries/lmdbxx { };
+
   levmar = callPackage ../development/libraries/levmar { };
 
   leptonica = callPackage ../development/libraries/leptonica { };
@@ -10436,8 +10447,6 @@ with pkgs;
   libmodbus = callPackage ../development/libraries/libmodbus {};
 
   libmtp = callPackage ../development/libraries/libmtp { };
-
-  libmsgpack = callPackage ../development/libraries/libmsgpack { };
 
   libmypaint = callPackage ../development/libraries/libmypaint { };
 
@@ -11117,6 +11126,8 @@ with pkgs;
   mpeg2dec = libmpeg2;
 
   mqtt-bench = callPackage ../applications/misc/mqtt-bench {};
+
+  msgpack = callPackage ../development/libraries/msgpack { };
 
   msilbc = callPackage ../development/libraries/msilbc { };
 
