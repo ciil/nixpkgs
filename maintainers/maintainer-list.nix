@@ -673,6 +673,11 @@
     github = "changlinli";
     name = "Changlin Li";
   };
+  CharlesHD = {
+    email = "charleshdespointes@gmail.com";
+    github = "CharlesHD";
+    name = "Charles Huyghues-Despointes";
+  };
   chaoflow = {
     email = "flo@chaoflow.net";
     github = "chaoflow";
@@ -1939,6 +1944,11 @@
     email = "jon@jonafato.com";
     github = "jonafato";
     name = "Jon Banafato";
+  };
+  jonathanreeve = {
+    email = "jon.reeve@gmail.com";
+    github = "JonathanReeve";
+    name = "Jonathan Reeve";
   };
   joncojonathan = {
     email = "joncojonathan@gmail.com";
