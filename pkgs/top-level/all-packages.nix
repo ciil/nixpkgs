@@ -3082,6 +3082,8 @@ with pkgs;
 
   hdapsd = callPackage ../os-specific/linux/hdapsd { };
 
+  hdaps-gl = callPackage ../tools/misc/hdaps-gl { };
+
   hddtemp = callPackage ../tools/misc/hddtemp { };
 
   hdf4 = callPackage ../tools/misc/hdf4 {
@@ -3309,6 +3311,7 @@ with pkgs;
 
   ipfs = callPackage ../applications/networking/ipfs { };
   ipfs-migrator = callPackage ../applications/networking/ipfs-migrator { };
+  ipfs-cluster = callPackage ../applications/networking/ipfs-cluster { };
 
   ipget = callPackage ../applications/networking/ipget {
     buildGoPackage = buildGo110Package;
@@ -7184,6 +7187,7 @@ with pkgs;
       };
     });
 
+  cargo-download = callPackage ../tools/package-management/cargo-download { };
   cargo-edit = callPackage ../tools/package-management/cargo-edit { };
   cargo-release = callPackage ../tools/package-management/cargo-release { };
   cargo-tree = callPackage ../tools/package-management/cargo-tree { };
@@ -8269,7 +8273,7 @@ with pkgs;
 
   funnelweb = callPackage ../development/tools/literate-programming/funnelweb { };
 
-  gede = libsForQt5.callPackage ../development/tools/misc/gede { };
+  gede = libsForQt59.callPackage ../development/tools/misc/gede { };
 
   gdbgui = callPackage ../development/tools/misc/gdbgui { };
 
@@ -8683,6 +8687,8 @@ with pkgs;
   };
 
   smc = callPackage ../tools/misc/smc { };
+
+  snakemake = callPackage ../applications/science/misc/snakemake { python = python3Packages; };
 
   snowman = qt5.callPackage ../development/tools/analysis/snowman { };
 
@@ -10382,6 +10388,8 @@ with pkgs;
   libsecret = callPackage ../development/libraries/libsecret { };
 
   libserialport = callPackage ../development/libraries/libserialport { };
+
+  libsignal-protocol-c = callPackage ../development/libraries/libsignal-protocol-c { };
 
   libsoundio = callPackage ../development/libraries/libsoundio {
     inherit (darwin.apple_sdk.frameworks) AudioUnit;
@@ -13921,14 +13929,6 @@ with pkgs;
       ];
   };
 
-  linux_copperhead_lts = (linux_4_14.override {
-    kernelPatches = linux_4_14.kernelPatches ++ [
-      kernelPatches.copperhead_4_14
-      kernelPatches.tag_hardened
-     ];
-    modDirVersionArg = linux_4_14.modDirVersion + "-hardened";
-  });
-
   # linux mptcp is based on the 4.4 kernel
   linux_mptcp = callPackage ../os-specific/linux/kernel/linux-mptcp.nix {
     kernelPatches =
@@ -14016,6 +14016,18 @@ with pkgs;
         # when adding a new linux version
         # kernelPatches.cpu-cgroup-v2."4.11"
         kernelPatches.modinst_arg_list_too_long
+
+        # https://github.com/NixOS/nixpkgs/issues/45165
+        # TODO: remove this patch once it is merged upstream and released.
+        (rec {
+          name = "hid-core-fix-grouping-by-application";
+          patch = fetchpatch {
+            name = name + ".patch";
+            # https://patchwork.kernel.org/patch/10587369/
+            url = https://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid.git/patch/?id=0d6c3011409135ea84e2a231b013a22017ff999a;
+            sha256 = "0bdrv0aqjh0rdjlaaaqpdgrnd9452fa4ggaa1nq2kmik3q00cq4m";
+          };
+        })
       ];
   };
 
@@ -14269,8 +14281,6 @@ with pkgs;
   linuxPackages_xen_dom0_hardened = recurseIntoAttrs (hardenedLinuxPackagesFor (pkgs.linux.override { features.xen_dom0=true; }));
 
   linuxPackages_latest_xen_dom0_hardened = recurseIntoAttrs (hardenedLinuxPackagesFor (pkgs.linux_latest.override { features.xen_dom0=true; }));
-
-  linuxPackages_copperhead_lts = recurseIntoAttrs (hardenedLinuxPackagesFor pkgs.linux_copperhead_lts);
 
   # Samus kernels
   linuxPackages_samus_4_12 = recurseIntoAttrs (linuxPackagesFor pkgs.linux_samus_4_12);
@@ -16266,7 +16276,9 @@ with pkgs;
 
   fbpanel = callPackage ../applications/window-managers/fbpanel { };
 
-  fbreader = callPackage ../applications/misc/fbreader { };
+  fbreader = callPackage ../applications/misc/fbreader {
+    inherit (darwin.apple_sdk.frameworks) AppKit Cocoa;
+  };
 
   fdr = libsForQt5.callPackage ../applications/science/programming/fdr { };
 
@@ -16327,7 +16339,7 @@ with pkgs;
 
   gksu = callPackage ../applications/misc/gksu { };
 
-  gnss-sdr = callPackage ../applications/misc/gnss-sdr { };
+  gnss-sdr = callPackage ../applications/misc/gnss-sdr { boost=boost166; };
 
   gnuradio = callPackage ../applications/misc/gnuradio {
     inherit (python2Packages) cheetah lxml Mako matplotlib numpy python pyopengl pyqt4 scipy wxPython pygtk;
@@ -17280,15 +17292,12 @@ with pkgs;
     harfbuzz = harfbuzz.override {
       withIcu = true; withGraphite2 = true;
     };
-    # checking whether g++ supports C++14 or C++11... configure: error: no
-    # Still relevant: 2018-04-13
-    stdenv = overrideCC stdenv gcc5;
   };
 
-  libreoffice-unwrapped =callPackage ../applications/office/libreoffice
+  libreoffice-unwrapped = callPackage ../applications/office/libreoffice
   (libreoffice-args // {
   });
-  libreoffice-still-unwrapped =callPackage ../applications/office/libreoffice/still.nix
+  libreoffice-still-unwrapped = callPackage ../applications/office/libreoffice/still.nix
   (libreoffice-args // {
       poppler = poppler_0_61;
   });
