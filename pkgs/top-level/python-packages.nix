@@ -298,6 +298,8 @@ in {
 
   fire = callPackage ../development/python-modules/fire { };
 
+  genanki = callPackage ../development/python-modules/genanki { };
+
   globus-sdk = callPackage ../development/python-modules/globus-sdk { };
 
   goocalendar = callPackage ../development/python-modules/goocalendar { };
@@ -535,6 +537,8 @@ in {
   salmon-mail = callPackage ../development/python-modules/salmon-mail { };
 
   seekpath = callPackage ../development/python-modules/seekpath { };
+
+  selectors2 = callPackage ../development/python-modules/selectors2 { };
 
   serversyncstorage = callPackage ../development/python-modules/serversyncstorage {};
 
@@ -1788,6 +1792,13 @@ in {
 
     doCheck = !isPy3k;
 
+    postPatch = ''
+      substituteInPlace python/setup.py \
+      --replace "graphviz<0.9.0" "graphviz<0.10.0" \
+      --replace "numpy<=1.15.0" "numpy<1.16.0" \
+      --replace "requests<2.19.0" "requests<2.20.0"
+    '';
+
     preConfigure = ''
       cd python
     '';
@@ -2617,48 +2628,9 @@ in {
 
   GeoIP = callPackage ../development/python-modules/GeoIP { };
 
-  gmpy = buildPythonPackage rec {
-    name = "gmpy-1.17";
-    disabled = isPyPy;
+  gmpy = callPackage ../development/python-modules/gmpy { };
 
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/g/gmpy/${name}.zip";
-      sha256 = "1a79118a5332b40aba6aa24b051ead3a31b9b3b9642288934da754515da8fa14";
-    };
-
-    buildInputs = [
-      pkgs.gcc
-      pkgs.gmp
-    ];
-
-    meta = {
-      description = "GMP or MPIR interface to Python 2.4+ and 3.x";
-      homepage = http://code.google.com/p/gmpy/;
-    };
-  };
-
-  gmpy2 = buildPythonPackage rec {
-    name = "gmpy2-2.0.6";
-    disabled = isPyPy;
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/g/gmpy2/${name}.zip";
-      sha256 = "5041d0ae24407c24487106099f5bcc4abb1a5f58d90e6712cc95321975eddbd4";
-    };
-
-    buildInputs = [
-      pkgs.gcc
-      pkgs.gmp
-      pkgs.mpfr
-      pkgs.libmpc
-    ];
-
-    meta = {
-      description = "GMP/MPIR, MPFR, and MPC interface to Python 2.6+ and 3.x";
-      homepage = http://code.google.com/p/gmpy/;
-      license = licenses.gpl3Plus;
-    };
-  };
+  gmpy2 = callPackage ../development/python-modules/gmpy2 { };
 
   gmusicapi = with pkgs; buildPythonPackage rec {
     name = "gmusicapi-10.1.0";
@@ -3724,6 +3696,8 @@ in {
       maintainers = with maintainers; [ copumpkin ];
     };
   };
+
+  phe = callPackage ../development/python-modules/phe { };
 
   phpserialize = callPackage ../development/python-modules/phpserialize { };
 
@@ -7937,11 +7911,11 @@ in {
 
   graphviz = buildPythonPackage rec {
     name = "graphviz-${version}";
-    version = "0.5.2";
+    version = "0.9";
 
     src = pkgs.fetchurl {
       url = "mirror://pypi/g/graphviz/${name}.zip";
-      sha256 = "0jh31nlm0qbxwylhdkwnb69pcjlc5z03fcfbs0gvgzp3hfrngsk0";
+      sha256 = "14r9brj4r31b3qy1nnn34v3l4h0n39bqxg9sn2fz4p3pp5mglnl6";
     };
 
     propagatedBuildInputs = [ pkgs.graphviz ];
@@ -16802,22 +16776,7 @@ EOF
     cudaSupport = true;
   };
 
-  tflearn = buildPythonPackage rec {
-    name = "tflearn-0.2.1";
-
-    meta = {
-      description = "Deep learning library featuring a higher-level API for TensorFlow";
-      homepage    = "https://github.com/tflearn/tflearn";
-      license     = licenses.mit;
-    };
-
-    propagatedBuildInputs = with self; [ scipy h5py pillow tensorflow ];
-
-    src = pkgs.fetchurl {
-      url = "mirror://pypi/t/tflearn/${name}.tar.gz";
-      sha256 = "1n884c4j35409id2bncyj5fvmmfpdqj3pk6wrv0s1znnvs0lkii0";
-    };
-  };
+  tflearn = callPackage ../development/python-modules/tflearn { };
 
   simpleai = buildPythonPackage rec {
      version = "0.7.11";
