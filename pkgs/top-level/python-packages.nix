@@ -336,6 +336,8 @@ in {
 
   mail-parser = callPackage ../development/python-modules/mail-parser { };
 
+  markerlib = callPackage ../development/python-modules/markerlib { };
+
   monty = callPackage ../development/python-modules/monty { };
 
   mpi4py = callPackage ../development/python-modules/mpi4py {
@@ -571,6 +573,8 @@ in {
   trustme = callPackage ../development/python-modules/trustme {};
 
   trio = callPackage ../development/python-modules/trio {};
+
+  sniffio = callPackage ../development/python-modules/sniffio { };
 
   tokenserver = callPackage ../development/python-modules/tokenserver {};
 
@@ -1451,6 +1455,8 @@ in {
     name = "CDDB-1.4";
 
     disabled = !isPy27;
+
+    buildInputs = optionals stdenv.isDarwin [ pkgs.darwin.apple_sdk.frameworks.IOKit ];
 
     src = pkgs.fetchurl {
       url = "http://cddb-py.sourceforge.net/${name}.tar.gz";
