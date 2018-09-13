@@ -151,6 +151,8 @@ with pkgs;
 
   ebook2cw = callPackage ../applications/misc/ebook2cw { };
 
+  etBook = callPackage ../data/fonts/et-book { };
+
   fetchbower = callPackage ../build-support/fetchbower {
     inherit (nodePackages) bower2nix;
   };
@@ -3200,6 +3202,8 @@ with pkgs;
 
   hwinfo = callPackage ../tools/system/hwinfo { };
 
+  hylafaxplus = callPackage ../servers/hylafaxplus { };
+
   i2c-tools = callPackage ../os-specific/linux/i2c-tools { };
 
   i2p = callPackage ../tools/networking/i2p {};
@@ -4591,6 +4595,8 @@ with pkgs;
   pdf-redact-tools = callPackage ../tools/graphics/pdfredacttools { };
 
   pdfcrack = callPackage ../tools/security/pdfcrack { };
+
+  pdftag = callPackage ../tools/graphics/pdftag { };
 
   pdf2svg = callPackage ../tools/graphics/pdf2svg { };
 
@@ -6206,6 +6212,8 @@ with pkgs;
   zsh-autoenv = callPackage ../tools/misc/zsh-autoenv { };
 
   zsh-git-prompt = callPackage ../shells/zsh/zsh-git-prompt { };
+
+  zsh-history-substring-search = callPackage ../shells/zsh/zsh-history-substring-search { };
 
   zsh-navigation-tools = callPackage ../tools/misc/zsh-navigation-tools { };
 
@@ -7960,6 +7968,11 @@ with pkgs;
   bazel = callPackage ../development/tools/build-managers/bazel {
     inherit (darwin) cctools;
     inherit (darwin.apple_sdk.frameworks) CoreFoundation CoreServices Foundation;
+  };
+  bazel_jdk10 = callPackage ../development/tools/build-managers/bazel {
+    inherit (darwin) cctools;
+    inherit (darwin.apple_sdk.frameworks) CoreFoundation CoreServices Foundation;
+    runJdk = jdk10;
   };
 
   bazel-buildtools = callPackage ../development/tools/build-managers/bazel/buildtools { };
@@ -13127,6 +13140,8 @@ with pkgs;
 
   nas = callPackage ../servers/nas { };
 
+  nats-streaming-server = callPackage ../servers/nats-streaming-server { };
+
   neard = callPackage ../servers/neard { };
 
   nginx = nginxStable;
@@ -13698,6 +13713,8 @@ with pkgs;
   blktrace = callPackage ../os-specific/linux/blktrace { };
 
   bluez5 = callPackage ../os-specific/linux/bluez { };
+
+  pulseaudio-modules-bt = callPackage ../applications/audio/pulseaudio-modules-bt { };
 
   bluez = bluez5;
 
@@ -14461,6 +14478,8 @@ with pkgs;
 
   govers = callPackage ../development/tools/govers { };
 
+  govendor = callPackage ../development/tools/govendor { };
+
   gotools = callPackage ../development/tools/gotools { };
 
   gotop = callPackage ../tools/system/gotop { };
@@ -14543,6 +14562,8 @@ with pkgs;
   pmtools = callPackage ../os-specific/linux/pmtools { };
 
   policycoreutils = callPackage ../os-specific/linux/policycoreutils { };
+
+  semodule-utils = callPackage ../os-specific/linux/semodule-utils { };
 
   powerdns = callPackage ../servers/dns/powerdns { };
 
@@ -18783,7 +18804,7 @@ with pkgs;
   teamspeak_client = libsForQt5.callPackage ../applications/networking/instant-messengers/teamspeak/client.nix { };
   teamspeak_server = callPackage ../applications/networking/instant-messengers/teamspeak/server.nix { };
 
-  uaskjuggler = callPackage ../applications/misc/taskjuggler { };
+  taskjuggler = callPackage ../applications/misc/taskjuggler { };
 
   tasknc = callPackage ../applications/misc/tasknc { };
 
@@ -18838,6 +18859,8 @@ with pkgs;
   thinkingRock = callPackage ../applications/misc/thinking-rock { };
 
   nylas-mail-bin = callPackage ../applications/networking/mailreaders/nylas-mail-bin { };
+
+  thonny = callPackage ../applications/editors/thonny { };
 
   thunderbird = callPackage ../applications/networking/mailreaders/thunderbird {
     inherit (gnome2) libIDL;
@@ -19590,6 +19613,8 @@ with pkgs;
   yarssr = callPackage ../applications/misc/yarssr { };
 
   yate = callPackage ../applications/misc/yate { };
+
+  ydiff = callPackage ../development/tools/ydiff { };
 
   yed = callPackage ../applications/graphics/yed {};
 
@@ -20625,6 +20650,8 @@ with pkgs;
   emboss = callPackage ../applications/science/biology/emboss { };
 
   ezminc = callPackage ../applications/science/biology/EZminc { };
+
+  hisat2 = callPackage ../applications/science/biology/hisat2 { };
 
   htslib = callPackage ../development/libraries/science/biology/htslib { };
 
@@ -22216,7 +22243,9 @@ with pkgs;
     inherit (gnome2) gtksourceview;
   };
 
-  bullet = callPackage ../development/libraries/bullet {};
+  bullet = callPackage ../development/libraries/bullet {
+    inherit (darwin.apple_sdk.frameworks) Cocoa OpenGL;
+  };
 
   inherit (callPackages ../development/libraries/spdlog { })
     spdlog_0 spdlog_1;

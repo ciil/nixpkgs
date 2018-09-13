@@ -111,7 +111,7 @@ self = generated // (with generated; {
     '';
   });
 
-  command-t = command-t.overrideAttrs(old: {
+  command_T = command_T.overrideAttrs(old: {
     buildInputs = [ ruby rake ];
     buildPhase = ''
       rake make
@@ -309,7 +309,7 @@ self = generated // (with generated; {
     '';
   });
 
-  YankRing-vim = YankRing-vim.overrideAttrs(old: {
+  yankring = yankring.overrideAttrs(old: {
     sourceRoot = ".";
   });
 
@@ -332,7 +332,7 @@ self = generated // (with generated; {
     };
   });
 }) // lib.optionalAttrs (config.allowAliases or true) (with self; {
-  # aliasess
+  # aliases
   airline             = vim-airline;
   alternative         = a-vim; # backwards compat, added 2014-10-21
   bats                = bats-vim;
