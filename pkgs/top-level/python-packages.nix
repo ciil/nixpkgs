@@ -216,6 +216,8 @@ in {
 
   backports_csv = callPackage ../development/python-modules/backports_csv {};
 
+  backports-shutil-which = callPackage ../development/python-modules/backports-shutil-which {};
+
   bap = callPackage ../development/python-modules/bap {
     bap = pkgs.ocamlPackages.bap;
   };
@@ -467,9 +469,13 @@ in {
 
   pykerberos = callPackage ../development/python-modules/pykerberos { };
 
+  pykeepass = callPackage ../development/python-modules/pykeepass { };
+
   pymatgen = callPackage ../development/python-modules/pymatgen { };
 
   pymatgen-lammps = callPackage ../development/python-modules/pymatgen-lammps { };
+
+  pymsgbox = callPackage ../development/python-modules/pymsgbox { };
 
   pynisher = callPackage ../development/python-modules/pynisher { };
 
@@ -1659,6 +1665,12 @@ in {
 
   envs = callPackage ../development/python-modules/envs { };
 
+  eth-hash = callPackage ../development/python-modules/eth-hash { };
+
+  eth-typing = callPackage ../development/python-modules/eth-typing { };
+
+  eth-utils = callPackage ../development/python-modules/eth-utils { };
+
   jsonrpc-async = callPackage ../development/python-modules/jsonrpc-async { };
 
   jsonrpc-base = callPackage ../development/python-modules/jsonrpc-base { };
@@ -1999,6 +2011,8 @@ in {
   datashape = callPackage ../development/python-modules/datashape { };
 
   requests-cache = callPackage ../development/python-modules/requests-cache { };
+
+  requests-file = callPackage ../development/python-modules/requests-file { };
 
   requests-kerberos = callPackage ../development/python-modules/requests-kerberos { };
 
@@ -11143,6 +11157,8 @@ in {
     };
   });
 
+  pyreadability = callPackage ../development/python-modules/pyreadability { };
+
   pyscss = buildPythonPackage rec {
     name = "pyScss-${version}";
     version = "1.3.5";
@@ -16220,6 +16236,8 @@ EOF
 
   potr = callPackage ../development/python-modules/potr {};
 
+  python-u2flib-host = callPackage ../development/python-modules/python-u2flib-host { };
+
   pluggy = callPackage ../development/python-modules/pluggy {};
 
   xcffib = callPackage ../development/python-modules/xcffib {};
@@ -17072,6 +17090,8 @@ EOF
   warrant = callPackage ../development/python-modules/warrant { };
 
   textacy = callPackage ../development/python-modules/textacy { };
+
+  tldextract = callPackage ../development/python-modules/tldextract { };
 
   pyemd  = callPackage ../development/python-modules/pyemd { };
 

@@ -844,7 +844,9 @@ with pkgs;
 
   bashmount = callPackage ../tools/filesystems/bashmount {};
 
-  bat = callPackage ../tools/misc/bat { };
+  bat = callPackage ../tools/misc/bat {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   bc = callPackage ../tools/misc/bc { };
 
@@ -3690,11 +3692,11 @@ with pkgs;
   nodejs-slim-8_x = callPackage ../development/web/nodejs/v8.nix { enableNpm = false; };
 
   nodejs-10_x = callPackage ../development/web/nodejs/v10.nix {
-    openssl = openssl_1_1_0;
+    openssl = openssl_1_1;
   };
   nodejs-slim-10_x = callPackage ../development/web/nodejs/v10.nix {
     enableNpm = false;
-    openssl = openssl_1_1_0;
+    openssl = openssl_1_1;
   };
 
   nodePackages_10_x = callPackage ../development/node-packages/default-v10.nix {
@@ -3730,7 +3732,7 @@ with pkgs;
   ldapvi = callPackage ../tools/misc/ldapvi { };
 
   ldns = callPackage ../development/libraries/ldns {
-    openssl = openssl_1_1_0;
+    openssl = openssl_1_1;
   };
 
   leafpad = callPackage ../applications/editors/leafpad { };
@@ -5576,7 +5578,7 @@ with pkgs;
   tokei = callPackage ../development/tools/misc/tokei { };
 
   tor = callPackage ../tools/security/tor {
-    openssl = openssl_1_1_0;
+    openssl = openssl_1_1;
     # remove this, when libevent's openssl is upgraded to 1_1_0 or newer.
     libevent = libevent.override {
       sslSupport = false;
@@ -5585,7 +5587,9 @@ with pkgs;
 
   tor-arm = callPackage ../tools/security/tor/tor-arm.nix { };
 
-  tor-browser-bundle-bin = callPackage ../applications/networking/browsers/tor-browser-bundle-bin { };
+  tor-browser-bundle-bin = callPackage ../applications/networking/browsers/tor-browser-bundle-bin {
+    inherit (gnome3) defaultIconTheme;
+  };
 
   tor-browser-bundle = callPackage ../applications/networking/browsers/tor-browser-bundle {
     stdenv = stdenvNoCC;
@@ -6319,10 +6323,6 @@ with pkgs;
   bigloo = callPackage ../development/compilers/bigloo { };
 
   binaryen = callPackage ../development/compilers/binaryen { };
-
-  boo = callPackage ../development/compilers/boo {
-    inherit (gnome2) gtksourceview;
-  };
 
   colm = callPackage ../development/compilers/colm { };
 
@@ -8511,8 +8511,6 @@ with pkgs;
 
   nailgun = callPackage ../development/tools/nailgun { };
 
-  nant = callPackage ../development/tools/build-managers/nant { };
-
   ninja = callPackage ../development/tools/build-managers/ninja { };
 
   gn = callPackage ../development/tools/build-managers/gn { };
@@ -10401,6 +10399,8 @@ with pkgs;
 
   libgrss = callPackage ../development/libraries/libgrss { };
 
+  libiio = callPackage ../development/libraries/libiio { };
+
   libseccomp = callPackage ../development/libraries/libseccomp { };
 
   libsecret = callPackage ../development/libraries/libsecret { };
@@ -11458,7 +11458,7 @@ with pkgs;
       };
     })
     openssl_1_0_2
-    openssl_1_1_0;
+    openssl_1_1;
 
   openssl-chacha = callPackage ../development/libraries/openssl/chacha.nix {
     cryptodevHeaders = linuxPackages.cryptodev.override {
@@ -11731,7 +11731,7 @@ with pkgs;
       kservice ktexteditor ktextwidgets kunitconversion kwallet kwayland
       kwidgetsaddons kwindowsystem kxmlgui kxmlrpcclient modemmanager-qt
       networkmanager-qt plasma-framework prison solid sonnet syntax-highlighting
-      threadweaver kirigami2 kholidays kpurpose;
+      syndication threadweaver kirigami2 kholidays kpurpose;
 
     ### KDE PLASMA 5
 
@@ -15168,6 +15168,7 @@ with pkgs;
 
   powerline-rs = callPackage ../tools/misc/powerline-rs {
     inherit (darwin.apple_sdk.frameworks) Security;
+    openssl = openssl_1_1;
   };
 
   profont = callPackage ../data/fonts/profont { };
@@ -15523,6 +15524,8 @@ with pkgs;
 
   autopanosiftc = callPackage ../applications/graphics/autopanosiftc { };
 
+  aesop = callPackage ../applications/office/aesop { };
+
   avidemux = libsForQt5.callPackage ../applications/video/avidemux { };
 
   avrdudess = callPackage ../applications/misc/avrdudess { };
@@ -15557,11 +15560,6 @@ with pkgs;
   };
 
   barrier = callPackage ../applications/misc/barrier {};
-
-  banshee = callPackage ../applications/audio/banshee {
-    gconf = pkgs.gnome2.GConf;
-    libgpod = pkgs.libgpod.override { monoSupport = true; };
-  };
 
   bashSnippets = callPackage ../applications/misc/bashSnippets { };
 
@@ -15726,6 +15724,8 @@ with pkgs;
 
   browsh = callPackage ../applications/networking/browsers/browsh { };
 
+  bookworm = callPackage ../applications/office/bookworm { };
+
   chromium = callPackage ../applications/networking/browsers/chromium {
     channel = "stable";
     pulseSupport = config.pulseaudio or true;
@@ -15861,6 +15861,7 @@ with pkgs;
   datadog-agent = callPackage ../tools/networking/dd-agent/6.nix {
     pythonPackages = datadog-integrations-core {};
   };
+  datadog-process-agent = callPackage ../tools/networking/dd-agent/datadog-process-agent.nix { };
   datadog-integrations-core = extras: callPackage ../tools/networking/dd-agent/integrations-core.nix {
     python = python27;
     extraIntegrations = extras;
@@ -16876,6 +16877,8 @@ with pkgs;
     inherit (gnome2) gnome_python;
   };
 
+  hashit = callPackage ../tools/misc/hashit { };
+
   hello = callPackage ../applications/misc/hello { };
   hello-unfree = callPackage ../applications/misc/hello-unfree { };
 
@@ -17249,7 +17252,6 @@ with pkgs;
 
   krita = libsForQt5.callPackage ../applications/graphics/krita {
     openjpeg = openjpeg_1;
-    poppler_qt5 = libsForQt5.poppler;
   };
 
   krusader = libsForQt5.callPackage ../applications/misc/krusader { };
@@ -17473,6 +17475,8 @@ with pkgs;
   mediainfo-gui = callPackage ../applications/misc/mediainfo-gui { };
 
   mediathekview = callPackage ../applications/video/mediathekview { };
+
+  meteo = callPackage ../applications/networking/weather/meteo { };
 
   meld = callPackage ../applications/version-management/meld { };
 
@@ -17816,6 +17820,8 @@ with pkgs;
 
   typora = callPackage ../applications/editors/typora { };
 
+  taxi = callPackage ../applications/networking/ftp/taxi { };
+
   librep = callPackage ../development/libraries/librep { };
 
   rep-gtk = callPackage ../development/libraries/rep-gtk { };
@@ -17897,6 +17903,8 @@ with pkgs;
   notmuch = callPackage ../applications/networking/mailreaders/notmuch {
     gmime = gmime3;
   };
+
+  notejot = callPackage ../applications/misc/notejot { };
 
   notmuch-mutt = callPackage ../applications/networking/mailreaders/notmuch/mutt.nix { };
 
@@ -18303,6 +18311,8 @@ with pkgs;
   quassel-webserver = nodePackages.quassel-webserver;
 
   quirc = callPackage ../tools/graphics/quirc {};
+
+  quilter = callPackage ../applications/editors/quilter { };
 
   quiterss = libsForQt5.callPackage ../applications/networking/newsreaders/quiterss {};
 
@@ -19162,6 +19172,8 @@ with pkgs;
   vmpk = callPackage ../applications/audio/vmpk { };
 
   vnstat = callPackage ../applications/networking/vnstat { };
+
+  vocal = callPackage ../applications/audio/vocal { };
 
   vogl = libsForQt5.callPackage ../development/tools/vogl { };
 
@@ -20623,6 +20635,10 @@ with pkgs;
   tetgen = callPackage ../applications/science/geometry/tetgen { }; # AGPL3+
   tetgen_1_4 = callPackage ../applications/science/geometry/tetgen/1.4.nix { }; # MIT
 
+  ### SCIENCE/BENCHMARK
+
+  papi = callPackage ../development/libraries/science/benchmark/papi { };
+
   ### SCIENCE/BIOLOGY
 
   alliance = callPackage ../applications/science/electronics/alliance { };
@@ -20734,6 +20750,8 @@ with pkgs;
 
   strelka = callPackage ../applications/science/biology/strelka { };
 
+  seaview = callPackage ../applications/science/biology/seaview { };
+
   varscan = callPackage ../applications/science/biology/varscan { };
 
   hmmer = callPackage ../applications/science/biology/hmmer { };
@@ -20812,6 +20830,10 @@ with pkgs;
 
   planarity = callPackage ../development/libraries/science/math/planarity { };
 
+  scalapack = callPackage ../development/libraries/science/math/scalapack {
+    mpi = openmpi;
+  };
+
   rankwidth = callPackage ../development/libraries/science/math/rankwidth { };
 
   fenics = callPackage ../development/libraries/science/math/fenics {
@@ -20840,6 +20862,10 @@ with pkgs;
   rubiks = callPackage ../development/libraries/science/math/rubiks { };
 
   petsc = callPackage ../development/libraries/science/math/petsc { };
+
+  parmetis = callPackage ../development/libraries/science/math/parmetis {
+    mpi = openmpi;
+  };
 
   scs = callPackage ../development/libraries/science/math/scs {
     liblapack = liblapackWithoutAtlas;
@@ -22054,9 +22080,7 @@ with pkgs;
 
   valauncher = callPackage ../applications/misc/valauncher { };
 
-  vault = callPackage ../tools/security/vault {
-    go = go_1_10;
-  };
+  vault = callPackage ../tools/security/vault { };
 
   vaultenv = haskellPackages.vaultenv;
 
