@@ -426,6 +426,8 @@ with pkgs;
 
   acct = callPackage ../tools/system/acct { };
 
+  accuraterip-checksum = callPackage ../tools/audio/accuraterip-checksum { };
+
   acme-sh = callPackage ../tools/admin/acme.sh { };
 
   acoustidFingerprinter = callPackage ../tools/audio/acoustid-fingerprinter {
@@ -1241,6 +1243,8 @@ with pkgs;
 
   dtrx = callPackage ../tools/compression/dtrx { };
 
+  dune = callPackage ../development/tools/ocaml/dune { };
+
   duperemove = callPackage ../tools/filesystems/duperemove { };
 
   dylibbundler = callPackage ../tools/misc/dylibbundler { };
@@ -1400,8 +1404,6 @@ with pkgs;
   icdiff = callPackage ../tools/text/icdiff {};
 
   interlock = callPackage ../servers/interlock {};
-
-  jbuilder = callPackage ../development/tools/ocaml/jbuilder { };
 
   kapacitor = callPackage ../servers/monitoring/kapacitor { };
 
@@ -3615,8 +3617,6 @@ with pkgs;
 
   mmv = callPackage ../tools/misc/mmv { };
 
-  morituri = callPackage ../applications/audio/morituri { };
-
   most = callPackage ../tools/misc/most { };
 
   motion = callPackage ../applications/video/motion { };
@@ -4917,6 +4917,8 @@ with pkgs;
 
   redsocks = callPackage ../tools/networking/redsocks { };
 
+  richgo = callPackage ../development/tools/richgo {  };
+
   rst2html5 = callPackage ../tools/text/rst2html5 { };
 
   rt = callPackage ../servers/rt { };
@@ -5835,6 +5837,8 @@ with pkgs;
   wbox = callPackage ../tools/networking/wbox {};
 
   welkin = callPackage ../tools/graphics/welkin {};
+
+  whipper = callPackage ../applications/audio/whipper { };
 
   whois = callPackage ../tools/networking/whois { };
 
@@ -7177,11 +7181,14 @@ with pkgs;
     });
   inherit (rust) cargo rustc;
 
-  buildRustCrate = callPackage ../build-support/rust/build-rust-crate.nix { };
+  buildRustCrate = callPackage ../build-support/rust/build-rust-crate { };
+  buildRustCrateTests = recurseIntoAttrs (callPackage ../build-support/rust/build-rust-crate/test { }).tests;
 
   cargo-vendor = callPackage ../build-support/rust/cargo-vendor { };
 
-  cargo-web = callPackage ../development/tools/cargo-web { };
+  cargo-web = callPackage ../development/tools/cargo-web {
+    inherit (darwin.apple_sdk.frameworks) CoreServices Security;
+  };
 
   carnix = (callPackage ../build-support/rust/carnix.nix { }).carnix { };
 
@@ -7916,12 +7923,13 @@ with pkgs;
   apacheAnt_1_9 = callPackage ../development/tools/build-managers/apache-ant/1.9.nix { };
   ant = apacheAnt;
 
-  apacheKafka = apacheKafka_1_1;
+  apacheKafka = apacheKafka_2_0;
   apacheKafka_0_9 = callPackage ../servers/apache-kafka { majorVersion = "0.9"; };
   apacheKafka_0_10 = callPackage ../servers/apache-kafka { majorVersion = "0.10"; };
   apacheKafka_0_11 = callPackage ../servers/apache-kafka { majorVersion = "0.11"; };
   apacheKafka_1_0 = callPackage ../servers/apache-kafka { majorVersion = "1.0"; };
   apacheKafka_1_1 = callPackage ../servers/apache-kafka { majorVersion = "1.1"; };
+  apacheKafka_2_0 = callPackage ../servers/apache-kafka { majorVersion = "2.0"; };
 
   kt = callPackage ../tools/misc/kt {};
 
@@ -9531,6 +9539,14 @@ with pkgs;
   glibc = callPackage ../development/libraries/glibc {
     installLocales = config.glibc.locales or false;
   };
+
+  # Provided by libc on Operating Systems that use the Extensible Linker Format.
+  elf-header =
+    if stdenv.hostPlatform.parsed.kernel.execFormat.name == "elf"
+    then null
+    else elf-header-real;
+
+  elf-header-real = callPackage ../development/libraries/elf-header { };
 
   glibc_memusage = callPackage ../development/libraries/glibc {
     installLocales = false;
@@ -15844,7 +15860,7 @@ with pkgs;
 
   cyclone = callPackage ../applications/audio/pd-plugins/cyclone  { };
 
-  darcs = haskell.lib.overrideCabal (haskell.lib.justStaticExecutables haskell.packages.ghc802.darcs) (drv: {
+  darcs = haskell.lib.overrideCabal (haskell.lib.justStaticExecutables haskellPackages.darcs) (drv: {
     configureFlags = (stdenv.lib.remove "-flibrary" drv.configureFlags or []) ++ ["-f-library"];
   });
 
@@ -16334,8 +16350,7 @@ with pkgs;
   fldigi = callPackage ../applications/audio/fldigi { };
 
   flink = callPackage ../applications/networking/cluster/flink { };
-  flink_1_3 = flink.override { version = "1.3"; };
-  flink_1_4 = flink.override { version = "1.4"; };
+  flink_1_5 = flink.override { version = "1.5"; };
 
   fluidsynth = callPackage ../applications/audio/fluidsynth {
      inherit (darwin.apple_sdk.frameworks) AudioUnit CoreAudio CoreMIDI CoreServices;
@@ -17651,6 +17666,8 @@ with pkgs;
   normalize = callPackage ../applications/audio/normalize { };
 
   mm = callPackage ../applications/networking/instant-messengers/mm { };
+
+  matrique = libsForQt5.callPackage ../applications/networking/instant-messengers/matrique { };
 
   mpc-qt = libsForQt5.callPackage ../applications/video/mpc-qt { };
 
@@ -19459,6 +19476,8 @@ with pkgs;
 
   xdaliclock = callPackage ../tools/misc/xdaliclock {};
 
+  xdg-dbus-proxy = callPackage ../development/libraries/xdg-dbus-proxy { };
+
   xdg-desktop-portal = callPackage ../development/libraries/xdg-desktop-portal { };
 
   xdg-desktop-portal-gtk = callPackage ../development/libraries/xdg-desktop-portal-gtk { };
@@ -20625,6 +20644,18 @@ with pkgs;
 
   pymol = callPackage ../applications/science/chemistry/pymol { };
 
+  quantum-espresso = callPackage ../applications/science/chemistry/quantum-espresso { };
+
+  quantum-espresso-mpi = callPackage ../applications/science/chemistry/quantum-espresso {
+     mpi = openmpi;
+  };
+
+  siesta = callPackage ../applications/science/chemistry/siesta { };
+
+  siesta-mpi = callPackage ../applications/science/chemistry/siesta {
+     mpi = openmpi;
+  };
+
   ### SCIENCE/GEOMETRY
 
   drgeo = callPackage ../applications/science/geometry/drgeo {
@@ -21652,6 +21683,8 @@ with pkgs;
   };
 
   martyr = callPackage ../development/libraries/martyr { };
+
+  matcha = callPackage ../misc/themes/matcha { };
 
   # previously known as flat-plat
   materia-theme = callPackage ../misc/themes/materia-theme { };
