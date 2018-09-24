@@ -376,6 +376,11 @@
     github = "auntie";
     name = "Jonathan Glines";
   };
+  avery = {
+    email = "averyl+nixos@protonmail.com";
+    github = "AveryLychee";
+    name = "Avery Lychee";
+  };
   avnik = {
     email = "avn@avnik.info";
     github = "avnik";
@@ -677,6 +682,11 @@
     email = "chaddai.fouche@gmail.com";
     github = "Chaddai";
     name = "Chaddaï Fouché";
+  };
+  chaduffy = {
+    email = "charles@dyfis.net";
+    github = "charles-dyfis-net";
+    name = "Charles Duffy";
   };
   changlinli = {
     email = "mail@changlinli.com";
@@ -1847,6 +1857,11 @@
     github = "jerith666";
     name = "Matt McHenry";
   };
+  jeschli = {
+    email = "jeschli@gmail.com";
+    github = "jeschli";
+    name = "Markus Hihn";
+  };
   jethro = {
     email = "jethrokuan95@gmail.com";
     github = "jethrokuan";
@@ -2812,6 +2827,11 @@
     email = "mail@muflax.com";
     github = "muflax";
     name = "Stefan Dorn";
+  };
+  mvnetbiz = {
+    email = "mvnetbiz@gmail.com";
+    github = "mvnetbiz";
+    name = "Matt Votava";
   };
   myrl = {
     email = "myrl.0xf@gmail.com";
