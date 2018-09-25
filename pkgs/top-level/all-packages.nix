@@ -81,8 +81,7 @@ with pkgs;
     { deps = [ autoconf264 automake111x gettext libtool ]; }
     ../build-support/setup-hooks/autoreconf.sh;
 
-  autoPatchelfHook = makeSetupHook
-    { name = "auto-patchelf-hook"; deps = [ file ]; }
+  autoPatchelfHook = makeSetupHook { name = "auto-patchelf-hook"; }
     ../build-support/setup-hooks/auto-patchelf.sh;
 
   ensureNewerSourcesHook = { year }: makeSetupHook {}
@@ -930,6 +929,8 @@ with pkgs;
     libgit2 = libgit2_0_27;
   };
 
+  bluez-alsa = callPackage ../tools/bluetooth/bluez-alsa { };
+
   bluez-tools = callPackage ../tools/bluetooth/bluez-tools { };
 
   bmon = callPackage ../tools/misc/bmon { };
@@ -1658,6 +1659,10 @@ with pkgs;
   bgs = callPackage ../tools/X11/bgs { };
 
   biber = callPackage ../tools/typesetting/biber { };
+
+  blastem = callPackage ../misc/emulators/blastem {
+    inherit (python27Packages) pillow;
+  };
 
   blueman = callPackage ../tools/bluetooth/blueman {
     withPulseAudio = config.pulseaudio or true;
@@ -2768,6 +2773,7 @@ with pkgs;
   gitkraken = callPackage ../applications/version-management/gitkraken { };
 
   gitlab = callPackage ../applications/version-management/gitlab { };
+  gitlab-ee = callPackage ../applications/version-management/gitlab { gitlabEnterprise = true; };
 
   gitlab-runner = callPackage ../development/tools/continuous-integration/gitlab-runner { };
   gitlab-runner_1_11 = callPackage ../development/tools/continuous-integration/gitlab-runner/v1.nix { };
@@ -11642,6 +11648,7 @@ with pkgs;
 
   protobuf = protobuf3_4;
 
+  protobuf3_6 = callPackage ../development/libraries/protobuf/3.6.nix { };
   protobuf3_5 = callPackage ../development/libraries/protobuf/3.5.nix { };
   protobuf3_4 = callPackage ../development/libraries/protobuf/3.4.nix { };
   protobuf3_1 = callPackage ../development/libraries/protobuf/3.1.nix { };
@@ -14733,6 +14740,8 @@ with pkgs;
 
   tunctl = callPackage ../os-specific/linux/tunctl { };
 
+  twa = callPackage ../tools/networking/twa { };
+
   # Upstream U-Boots:
   inherit (callPackage ../misc/uboot {})
     buildUBoot
@@ -15336,6 +15345,8 @@ with pkgs;
 
   ucs-fonts = callPackage ../data/fonts/ucs-fonts { };
 
+  ultimate-oldschool-pc-font-pack = callPackage ../data/fonts/ultimate-oldschool-pc-font-pack { };
+
   uni-vga = callPackage ../data/fonts/uni-vga { };
 
   unifont = callPackage ../data/fonts/unifont { };
@@ -15534,12 +15545,7 @@ with pkgs;
 
 
   go-ethereum = self.altcoins.go-ethereum;
-  ethsign = self.altcoins.ethsign;
   ethabi = self.altcoins.ethabi;
-  ethrun = self.altcoins.ethrun;
-  seth = self.altcoins.seth;
-  dapp = self.altcoins.dapp;
-  hevm = self.altcoins.hevm;
 
   parity = self.altcoins.parity;
   parity-beta = self.altcoins.parity-beta;
@@ -22027,6 +22033,8 @@ with pkgs;
     libselinux = libselinux.override { python = python3; };
     libsemanage = libsemanage.override { python = python3; };
   };
+
+  shades-of-gray-theme = callPackage ../misc/themes/shades-of-gray { };
 
   sierra-gtk-theme = callPackage ../misc/themes/sierra { };
 
