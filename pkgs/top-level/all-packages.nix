@@ -365,6 +365,8 @@ with pkgs;
 
   nukeReferences = callPackage ../build-support/nuke-references { };
 
+  referencesByPopularity = callPackage ../build-support/references-by-popularity { };
+
   removeReferencesTo = callPackage ../build-support/remove-references-to { };
 
   vmTools = callPackage ../build-support/vm { };
@@ -1458,6 +1460,10 @@ with pkgs;
 
   metabase = callPackage ../servers/metabase { };
 
+  mkspiffs = callPackage ../tools/filesystems/mkspiffs { };
+
+  mkspiffs-presets = recurseIntoAttrs (callPackages ../tools/filesystems/mkspiffs/presets.nix { });
+
   monetdb = callPackage ../servers/sql/monetdb { };
 
   mp3blaster = callPackage ../applications/audio/mp3blaster { };
@@ -1514,6 +1520,8 @@ with pkgs;
 
   simg2img = callPackage ../tools/filesystems/simg2img { };
 
+  snipes = callPackage ../games/snipes { };
+
   socklog = callPackage ../tools/system/socklog { };
 
   staccato = callPackage ../tools/text/staccato { };
@@ -1539,7 +1547,7 @@ with pkgs;
   riot-web = callPackage ../applications/networking/instant-messengers/riot/riot-web.nix {
     conf = config.riot-web.conf or null;
   };
-  
+
   roundcube = callPackage ../servers/roundcube { };
 
   rsbep = callPackage ../tools/backup/rsbep { };
@@ -2784,7 +2792,6 @@ with pkgs;
   gitlab-ee = callPackage ../applications/version-management/gitlab { gitlabEnterprise = true; };
 
   gitlab-runner = callPackage ../development/tools/continuous-integration/gitlab-runner { };
-  gitlab-runner_1_11 = callPackage ../development/tools/continuous-integration/gitlab-runner/v1.nix { };
 
   gitlab-shell = callPackage ../applications/version-management/gitlab-shell { };
 
@@ -3858,6 +3865,8 @@ with pkgs;
 
   libwebsockets = callPackage ../development/libraries/libwebsockets { };
 
+  lidarr = callPackage ../servers/lidarr { };
+
   limesuite = callPackage ../applications/misc/limesuite { };
 
   limesurvey = callPackage ../servers/limesurvey { };
@@ -4617,6 +4626,7 @@ with pkgs;
   pcsc-cyberjack = callPackage ../tools/security/pcsc-cyberjack { };
 
   pcsc-scm-scl011 = callPackage ../tools/security/pcsc-scm-scl011 { };
+  ifdnfc = callPackage ../tools/security/ifdnfc { };
 
   pdd = python3Packages.callPackage ../tools/misc/pdd { };
 
@@ -5727,6 +5737,8 @@ with pkgs;
     stdenv = overrideCC stdenv gcc6; # doesn't build with gcc7
   };
 
+  uftrace = callPackage ../development/tools/uftrace { };
+
   uget = callPackage ../tools/networking/uget { };
 
   uget-integrator = callPackage ../tools/networking/uget-integrator { };
@@ -6439,7 +6451,14 @@ with pkgs;
     '';
   });
 
-  crystal = callPackage ../development/compilers/crystal { };
+  inherit (callPackages ../development/compilers/crystal {})
+    crystal_0_25
+    crystal_0_26
+    crystal;
+
+  icr = callPackage ../development/tools/icr {};
+
+  scry = callPackage ../development/tools/scry {};
 
   devpi-client = callPackage ../development/tools/devpi-client {};
 
@@ -8581,6 +8600,11 @@ with pkgs;
     gconf = pkgs.gnome2.GConf;
   };
 
+  nwjs-sdk = callPackage ../development/tools/nwjs {
+    gconf = pkgs.gnome2.GConf;
+    sdk = true;
+  };
+
   # only kept for nixui, see https://github.com/matejc/nixui/issues/27
   nwjs_0_12 = callPackage ../development/tools/node-webkit/nw12.nix {
     gconf = pkgs.gnome2.GConf;
@@ -8853,7 +8877,6 @@ with pkgs;
 
   valgrind = callPackage ../development/tools/analysis/valgrind {
     inherit (darwin) xnu bootstrap_cmds cctools;
-    llvm = llvm_39;
   };
   valgrind-light = self.valgrind.override { gdb = null; };
 
@@ -10230,7 +10253,9 @@ with pkgs;
     inherit (xorg) libX11 libXext;
   };
 
-  libcanberra = callPackage ../development/libraries/libcanberra { };
+  libcanberra = callPackage ../development/libraries/libcanberra {
+    inherit (darwin.apple_sdk.frameworks) CoreServices;
+  };
   libcanberra-gtk3 = pkgs.libcanberra.override {
     gtk = gtk3;
   };
@@ -11220,37 +11245,32 @@ with pkgs;
   ## libGL/libGLU/Mesa stuff
 
   # Default libGL implementation, should provide headers and libGL.so/libEGL.so/... to link agains them
-  libGL = libGLDarwinOr mesa_noglu.stubs;
+  libGL = mesa_noglu.stubs;
 
   # Default libGLU
-  libGLU = libGLDarwinOr mesa_glu;
+  libGLU = mesa_glu;
 
   # Combined derivation, contains both libGL and libGLU
   # Please, avoid using this attribute.  It was meant as transitional hack
   # for packages that assume that libGLU and libGL live in the same prefix.
   # libGLU_combined propagates both libGL and libGLU
-  libGLU_combined = libGLDarwinOr (buildEnv {
+  libGLU_combined = buildEnv {
     name = "libGLU-combined";
     paths = [ libGL libGLU ];
     extraOutputsToInstall = [ "dev" ];
-  });
+  };
 
   # Default derivation with libGL.so.1 to link into /run/opengl-drivers (if need)
-  libGL_driver = libGLDarwinOr mesa_drivers;
+  libGL_driver = mesa_drivers;
 
   libGLSupported = lib.elem stdenv.hostPlatform.system lib.platforms.mesaPlatforms;
 
-  libGLDarwin = callPackage ../development/libraries/mesa-darwin {
-    inherit (darwin.apple_sdk.frameworks) OpenGL;
-    inherit (darwin.apple_sdk.libs) Xplugin;
-    inherit (darwin) apple_sdk;
-  };
-
-  libGLDarwinOr = alternative: if stdenv.isDarwin then libGLDarwin else alternative;
-
   mesa_noglu = callPackage ../development/libraries/mesa {
     llvmPackages = llvmPackages_6;
+    inherit (darwin.apple_sdk.frameworks) OpenGL;
+    inherit (darwin.apple_sdk.libs) Xplugin;
   };
+  mesa = mesa_noglu;
 
   mesa_glu =  callPackage ../development/libraries/mesa-glu { };
 
@@ -12679,7 +12699,7 @@ with pkgs;
   zmqpp = callPackage ../development/libraries/zmqpp { };
 
   zig = callPackage ../development/compilers/zig {
-    llvmPackages = llvmPackages_6;
+    llvmPackages = llvmPackages_7;
   };
 
   zimlib = callPackage ../development/libraries/zimlib { };
@@ -13586,6 +13606,12 @@ with pkgs;
       # see also openssl, which has/had this same trick
   };
 
+  sickbeard = callPackage ../servers/sickbeard { };
+
+  sickgear = callPackage ../servers/sickbeard/sickgear.nix { };
+
+  sickrage = callPackage ../servers/sickbeard/sickrage.nix { };
+
   sipcmd = callPackage ../applications/networking/sipcmd { };
 
   sipwitch = callPackage ../servers/sip/sipwitch { };
@@ -14298,6 +14324,8 @@ with pkgs;
      }) zfsStable zfsUnstable;
 
      zfs = zfsStable;
+
+     can-isotp = callPackage ../os-specific/linux/can-isotp { };
   });
 
   # The current default kernel / kernel modules.
@@ -14360,6 +14388,9 @@ with pkgs;
 
   linuxPackages_latest_hardened = recurseIntoAttrs (hardenedLinuxPackagesFor pkgs.linux_latest);
   linux_latest_hardened = linuxPackages_latest_hardened.kernel;
+
+  linuxPackages_testing_hardened = recurseIntoAttrs (hardenedLinuxPackagesFor pkgs.linux_testing);
+  linux_testing_hardened = linuxPackages_testing_hardened.kernel;
 
   linuxPackages_xen_dom0_hardened = recurseIntoAttrs (hardenedLinuxPackagesFor (pkgs.linux.override { features.xen_dom0=true; }));
 
@@ -15040,6 +15071,8 @@ with pkgs;
   hicolor-icon-theme = callPackage ../data/icons/hicolor-icon-theme { };
 
   hanazono = callPackage ../data/fonts/hanazono { };
+
+  hyperscrypt-font = callPackage ../data/fonts/hyperscrypt { };
 
   ia-writer-duospace = callPackage ../data/fonts/ia-writer-duospace { };
 
@@ -15845,6 +15878,8 @@ with pkgs;
   coriander = callPackage ../applications/video/coriander {
     inherit (gnome2) libgnomeui GConf;
   };
+
+  csa = callPackage ../applications/audio/csa { };
 
   csound = callPackage ../applications/audio/csound { };
 
@@ -17055,6 +17090,8 @@ with pkgs;
 
   i3-wk-switch = callPackage ../applications/window-managers/i3/wk-switch.nix { };
 
+  wmfocus = callPackage ../applications/window-managers/i3/wmfocus.nix { };
+
   i810switch = callPackage ../os-specific/linux/i810switch { };
 
   icewm = callPackage ../applications/window-managers/icewm {};
@@ -17547,6 +17584,8 @@ with pkgs;
   mendeley = libsForQt5.callPackage ../applications/office/mendeley {
     gconf = pkgs.gnome2.GConf;
   };
+
+  menumaker = callPackage ../applications/misc/menumaker { };
 
   mercurial = callPackage ../applications/version-management/mercurial {
     inherit (darwin.apple_sdk.frameworks) ApplicationServices;
@@ -20601,6 +20640,8 @@ with pkgs;
     pantheon-terminal = callPackage ../desktops/pantheon/apps/pantheon-terminal { };
   };
 
+  plasma-applet-volumewin7mixer = libsForQt5.callPackage ../applications/misc/plasma-applet-volumewin7mixer { };
+
   redshift = callPackage ../applications/misc/redshift {
     inherit (python3Packages) python pygobject3 pyxdg wrapPython;
     inherit (darwin.apple_sdk.frameworks) CoreLocation ApplicationServices Foundation Cocoa;
@@ -22089,6 +22130,8 @@ with pkgs;
 
   steamcontroller = callPackage ../misc/drivers/steamcontroller { };
 
+  stern = callPackage ../applications/networking/cluster/stern { };
+
   streamripper = callPackage ../applications/audio/streamripper { };
 
   sqsh = callPackage ../development/tools/sqsh { };
@@ -22106,15 +22149,18 @@ with pkgs;
   terraform = terraform_0_11;
   terraform-full = terraform_0_11-full;
 
+  terraform-providers = recurseIntoAttrs (
+    callPackage ../applications/networking/cluster/terraform-providers {}
+  );
+
+  terraform-provider-libvirt = callPackage ../applications/networking/cluster/terraform-provider-libvirt {};
+
   terraform-provider-ibm = callPackage ../applications/networking/cluster/terraform-provider-ibm {};
+
 
   terraform-inventory = callPackage ../applications/networking/cluster/terraform-inventory {};
 
-  terraform-provider-nixos = callPackage ../applications/networking/cluster/terraform-provider-nixos {};
-
   terraform-landscape = callPackage ../applications/networking/cluster/terraform-landscape {};
-
-  terraform-provider-libvirt = callPackage ../applications/networking/cluster/terraform-provider-libvirt {};
 
   terragrunt = callPackage ../applications/networking/cluster/terragrunt {};
 
@@ -22127,6 +22173,8 @@ with pkgs;
   };
 
   tetex = callPackage ../tools/typesetting/tex/tetex { libpng = libpng12; };
+
+  tetra-gtk-theme = callPackage ../misc/themes/tetra { };
 
   tewi-font = callPackage ../data/fonts/tewi  {};
 
@@ -22366,8 +22414,8 @@ with pkgs;
   spdlog = spdlog_1;
 
   dart = callPackage ../development/interpreters/dart { };
-  dart_stable = dart.override { version = "1.24.3"; };
-  dart_old = dart.override { version = "1.16.1"; };
+  dart_stable = dart.override { version = "2.0.0"; };
+  dart_old = dart.override { version = "1.24.3"; };
   dart_dev = dart.override { version = "2.0.0-dev.26.0"; };
 
   httrack = callPackage ../tools/backup/httrack { };

@@ -250,6 +250,8 @@ in {
 
   dependency-injector = callPackage ../development/python-modules/dependency-injector { };
 
+  btchip = callPackage ../development/python-modules/btchip { };
+
   dbf = callPackage ../development/python-modules/dbf { };
 
   dbfread = callPackage ../development/python-modules/dbfread { };
@@ -3351,19 +3353,43 @@ in {
 
   python-mapnik = buildPythonPackage rec {
     name = "python-mapnik-${version}";
-    version = "3.0.13";
+    version = "3.0.16";
 
     src = pkgs.fetchFromGitHub {
       owner = "mapnik";
       repo = "python-mapnik";
       rev = "v${version}";
-      sha256 = "0biw9bfkbsgfyjihyvkj4abx9s9r3h81rk6dc1y32022rypsqhkp";
+      sha256 = "1gqs4kvmjawdgl80j0ab5r8y0va9kw0rvwix3093xsv4hwd00lcc";
     };
 
     disabled = isPyPy;
     doCheck = false; # doesn't find needed test data files
-    buildInputs = with pkgs;
-      [ boost cairo harfbuzz icu libjpeg libpng libtiff libwebp mapnik proj zlib ];
+    preBuild = let
+      pythonVersion = with stdenv.lib.versions; "${major python.version}${minor python.version}";
+    in ''
+      export BOOST_PYTHON_LIB="boost_python${pythonVersion}"
+      export BOOST_THREAD_LIB="boost_thread"
+      export BOOST_SYSTEM_LIB="boost_system"
+    '';
+    buildInputs = with pkgs; [
+        (boost.override {
+          enablePython = true;
+          inherit python;
+        })
+        (mapnik.override {
+          inherit python;
+          boost = (boost.override { enablePython = true; inherit python; });
+        })
+        cairo
+        harfbuzz
+        icu
+        libjpeg
+        libpng
+        libtiff
+        libwebp
+        proj
+        zlib
+      ];
     propagatedBuildInputs = with self; [ pillow pycairo ];
 
     meta = with stdenv.lib; {
@@ -4270,6 +4296,8 @@ in {
   };
 
   schema = callPackage ../development/python-modules/schema {};
+
+  simple-websocket-server = callPackage ../development/python-modules/simple-websocket-server {};
 
   stem = callPackage ../development/python-modules/stem { };
 
@@ -9804,6 +9832,8 @@ in {
   };
 
   python-pushover = callPackage ../development/python-modules/pushover {};
+
+  pystemd = callPackage ../development/python-modules/pystemd { systemd = pkgs.systemd; };
 
   mongodict = buildPythonPackage rec {
     name = "mongodict-${version}";
