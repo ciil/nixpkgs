@@ -1135,6 +1135,11 @@
     github = "dtzWill";
     name = "Will Dietz";
   };
+  dysinger = {
+    email = "tim@dysinger.net";
+    github = "dysinger";
+    name = "Tim Dysinger";
+  };
   dywedir = {
     email = "dywedir@protonmail.ch";
     github = "dywedir";
@@ -2199,6 +2204,11 @@
     github = "krav";
     name = "Kristoffer Thømt Ravneberg";
   };
+  kroell = {
+    email = "nixosmainter@makroell.de";
+    github = "rokk4";
+    name = "Matthias Axel Kröll";
+  };
   kristoff3r = {
     email = "k.soeholm@gmail.com";
     github = "kristoff3r";
@@ -2441,6 +2451,11 @@
     email = "maximilian@mbosch.me";
     github = "ma27";
     name = "Maximilian Bosch";
+  };
+  ma9e = {
+    email = "sean@lfo.team";
+    github = "ma9e";
+    name = "Sean Haugh";
   };
   madjar = {
     email = "georges.dubus@compiletoi.net";
@@ -3313,6 +3328,11 @@
     email = "proglodyte23@gmail.com";
     github = "proglodyte";
     name = "Proglodyte";
+  };
+  prusnak = {
+    email = "stick@gk2.sk";
+    github = "prusnak";
+    name = "Pavol Rusnak";
   };
   pshendry = {
     email = "paul@pshendry.com";
@@ -4311,6 +4331,11 @@
     email = "uri@canva.com";
     github = "uri-canva";
     name = "Uri Baghin";
+  };
+  uskudnik = {
+    email = "urban.skudnik@gmail.com";
+    github = "uskudnik";
+    name = "Urban Skudnik";
   };
   utdemir = {
     email = "me@utdemir.com";

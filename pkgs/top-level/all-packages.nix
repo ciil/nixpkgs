@@ -1284,6 +1284,8 @@ with pkgs;
 
   envconsul = callPackage ../tools/system/envconsul { };
 
+  envsubst = callPackage ../tools/misc/envsubst { };
+
   eschalot = callPackage ../tools/security/eschalot { };
 
   esptool = callPackage ../tools/misc/esptool { };
@@ -1431,6 +1433,8 @@ with pkgs;
   libndtypes = callPackage ../development/libraries/libndtypes { };
 
   libxnd = callPackage ../development/libraries/libxnd { };
+
+  link-grammar = callPackage ../tools/text/link-grammar { };
 
   loadwatch = callPackage ../tools/system/loadwatch { };
 
@@ -2341,6 +2345,8 @@ with pkgs;
   ### DEVELOPMENT / EMSCRIPTEN
 
   buildEmscriptenPackage = callPackage ../development/em-modules/generic { };
+
+  carp = callPackage ../development/compilers/carp { };
 
   emscriptenVersion = "1.37.36";
 
@@ -5430,6 +5436,8 @@ with pkgs;
     tlsSupport = true;
   };
 
+  ssocr = callPackage ../applications/misc/ssocr { };
+
   ssss = callPackage ../tools/security/ssss { };
 
   stabber = callPackage ../misc/stabber { };
@@ -5535,7 +5543,9 @@ with pkgs;
 
   teleport = callPackage ../servers/teleport {};
 
-  telepresence = callPackage ../tools/networking/telepresence { };
+  telepresence = callPackage ../tools/networking/telepresence {
+    pythonPackages = python3Packages;
+  };
 
   termplay = callPackage ../tools/misc/termplay { };
 
@@ -6761,7 +6771,8 @@ with pkgs;
     ncurses = pkgsi686Linux.ncurses5;
   };
   gcc-arm-embedded-6 = callPackage ../development/compilers/gcc-arm-embedded/6 {};
-  gcc-arm-embedded = gcc-arm-embedded-6;
+  gcc-arm-embedded-7 = callPackage ../development/compilers/gcc-arm-embedded/7 {};
+  gcc-arm-embedded = gcc-arm-embedded-7;
 
   gforth = callPackage ../development/compilers/gforth {};
 
@@ -8056,6 +8067,8 @@ with pkgs;
   bazel-deps = callPackage ../development/tools/build-managers/bazel/bazel-deps {
     buildBazelPackage = buildBazelPackage.override { enableNixHacks = false; };
   };
+
+  bazel-watcher = callPackage ../development/tools/bazel-watcher { };
 
   buildBazelPackage = callPackage ../build-support/build-bazel-package { };
 
@@ -10747,6 +10760,8 @@ with pkgs;
   idnkit = callPackage ../development/libraries/idnkit { };
 
   libiec61883 = callPackage ../development/libraries/libiec61883 { };
+
+  libimagequant = callPackage ../development/libraries/libimagequant {};
 
   libinfinity = callPackage ../development/libraries/libinfinity { };
 
@@ -13683,6 +13698,8 @@ with pkgs;
 
   webmetro = callPackage ../servers/webmetro { };
 
+  webhook = callPackage ../servers/http/webhook { };
+
   winstone = callPackage ../servers/http/winstone { };
 
   xinetd = callPackage ../servers/xinetd { };
@@ -16428,6 +16445,14 @@ with pkgs;
   flink = callPackage ../applications/networking/cluster/flink { };
   flink_1_5 = flink.override { version = "1.5"; };
 
+  fllog = callPackage ../applications/misc/fllog { };
+
+  flmsg = callPackage ../applications/misc/flmsg { };
+
+  flrig = callPackage ../applications/misc/flrig { };
+
+  flwrap = callPackage ../applications/misc/flwrap { };
+
   fluidsynth = callPackage ../applications/audio/fluidsynth {
      inherit (darwin.apple_sdk.frameworks) AudioUnit CoreAudio CoreMIDI CoreServices;
   };
@@ -17361,6 +17386,8 @@ with pkgs;
 
   kubecfg = callPackage ../applications/networking/cluster/kubecfg { };
 
+  kubeval = callPackage ../applications/networking/cluster/kubeval { };
+
   kubernetes = callPackage ../applications/networking/cluster/kubernetes {  };
 
   kubectl = (kubernetes.override { components = [ "cmd/kubectl" ]; }).overrideAttrs(oldAttrs: {
@@ -17495,6 +17522,8 @@ with pkgs;
   loxodo = callPackage ../applications/misc/loxodo { };
 
   lrzsz = callPackage ../tools/misc/lrzsz { };
+
+  lsp-plugins = callPackage ../applications/audio/lsp-plugins { };
 
   luminanceHDR = libsForQt5.callPackage ../applications/graphics/luminance-hdr { };
 
@@ -19780,6 +19809,8 @@ with pkgs;
 
   zim = callPackage ../applications/office/zim { };
 
+  zita-njbridge = callPackage ../applications/audio/zita-njbridge { };
+
   zoom-us = libsForQt59.callPackage ../applications/networking/instant-messengers/zoom-us { };
 
   zotero = callPackage ../applications/office/zotero { };
@@ -21066,6 +21097,8 @@ with pkgs;
 
   sherpa = callPackage ../applications/science/physics/sherpa {};
 
+  xfitter = callPackage ../applications/science/physics/xfitter {};
+
   ### SCIENCE/PROGRAMMING
 
   dafny = dotnetPackages.Dafny;
@@ -21458,6 +21491,10 @@ with pkgs;
     inherit (darwin.apple_sdk.frameworks) Cocoa OpenGL;
   };
 
+  root5 = lowPrio (callPackage ../applications/science/misc/root/5.nix {
+    inherit (darwin.apple_sdk.frameworks) Cocoa OpenGL;
+  });
+
   simgrid = callPackage ../applications/science/misc/simgrid { };
 
   spyder = callPackage ../applications/science/spyder { };
@@ -21479,6 +21516,14 @@ with pkgs;
 
   ### SCIENCE / PHYSICS
 
+  apfelgrid = callPackage ../development/libraries/physics/apfelgrid { };
+
+  apfel = callPackage ../development/libraries/physics/apfel { };
+
+  applgrid = callPackage ../development/libraries/physics/applgrid { };
+
+  hoppet = callPackage ../development/libraries/physics/hoppet { };
+
   fastjet = callPackage ../development/libraries/physics/fastjet { };
 
   fastnlo = callPackage ../development/libraries/physics/fastnlo { };
@@ -21497,6 +21542,8 @@ with pkgs;
 
   mcgrid = callPackage ../development/libraries/physics/mcgrid { };
 
+  mela = callPackage ../development/libraries/physics/mela { };
+
   nlojet = callPackage ../development/libraries/physics/nlojet { };
 
   pythia = callPackage ../development/libraries/physics/pythia { };
@@ -21511,6 +21558,8 @@ with pkgs;
   yoda-with-root = lowPrio (yoda.override {
     withRootSupport = true;
   });
+
+  qcdnum = callPackage ../development/libraries/physics/qcdnum { };
 
   ### SCIENCE/ROBOTICS
 
@@ -21734,7 +21783,9 @@ with pkgs;
 
   hplipWithPlugin_3_16_11 = hplip_3_16_11.override { withPlugin = true; };
 
-  hyperfine = callPackage ../tools/misc/hyperfine { };
+  hyperfine = callPackage ../tools/misc/hyperfine {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   epkowa = callPackage ../misc/drivers/epkowa { };
 
@@ -22064,9 +22115,10 @@ with pkgs;
   mfcl8690cdwcupswrapper = callPackage ../misc/cups/drivers/mfcl8690cdwcupswrapper { };
   mfcl8690cdwlpr = callPackage ../misc/cups/drivers/mfcl8690cdwlpr { };
 
-  samsung-unified-linux-driver_1_00_37 = callPackage ../misc/cups/drivers/samsung { };
+  samsung-unified-linux-driver_1_00_37 = callPackage ../misc/cups/drivers/samsung/1.00.37.nix { };
+  samsung-unified-linux-driver_4_00_39 = callPackage ../misc/cups/drivers/samsung/4.00.39 { };
   samsung-unified-linux-driver_4_01_17 = callPackage ../misc/cups/drivers/samsung/4.01.17.nix { };
-  samsung-unified-linux-driver = callPackage ../misc/cups/drivers/samsung/4.00.39 { };
+  samsung-unified-linux-driver = self.samsung-unified-linux-driver_4_01_17;
 
   sane-backends = callPackage ../applications/graphics/sane/backends {
     gt68xxFirmware = config.sane.gt68xxFirmware or null;
@@ -22144,6 +22196,7 @@ with pkgs;
     terraform_0_10-full
     terraform_0_11
     terraform_0_11-full
+    terraform_plugins_test
     ;
 
   terraform = terraform_0_11;
@@ -22152,11 +22205,6 @@ with pkgs;
   terraform-providers = recurseIntoAttrs (
     callPackage ../applications/networking/cluster/terraform-providers {}
   );
-
-  terraform-provider-libvirt = callPackage ../applications/networking/cluster/terraform-provider-libvirt {};
-
-  terraform-provider-ibm = callPackage ../applications/networking/cluster/terraform-provider-ibm {};
-
 
   terraform-inventory = callPackage ../applications/networking/cluster/terraform-inventory {};
 
@@ -22549,4 +22597,6 @@ with pkgs;
   alibuild = callPackage ../development/tools/build-managers/alibuild {
     python = python27;
   };
+
+  tsung = callPackage ../applications/networking/tsung {};
 }
