@@ -585,6 +585,8 @@ with pkgs;
 
   awslogs = callPackage ../tools/admin/awslogs { };
 
+  aws-env = callPackage ../tools/admin/aws-env { };
+
   aws-okta = callPackage ../tools/security/aws-okta { };
 
   aws-rotate-key = callPackage ../tools/admin/aws-rotate-key { };
@@ -2334,6 +2336,8 @@ with pkgs;
 
   tealdeer = callPackage ../tools/misc/tealdeer { };
 
+  teamocil = callPackage ../tools/misc/teamocil { };
+
   uudeview = callPackage ../tools/misc/uudeview { };
 
   uutils-coreutils = callPackage ../tools/misc/uutils-coreutils {
@@ -2593,6 +2597,8 @@ with pkgs;
   fdk_aac = callPackage ../development/libraries/fdk-aac { };
 
   feedgnuplot = callPackage ../tools/graphics/feedgnuplot { };
+
+  fbv = callPackage ../tools/graphics/fbv { };
 
   fim = callPackage ../tools/graphics/fim { };
 
@@ -3406,8 +3412,6 @@ with pkgs;
   isync = callPackage ../tools/networking/isync { };
   isyncUnstable = callPackage ../tools/networking/isync/unstable.nix { };
 
-  ivan = callPackage ../games/ivan { };
-
   jaaa = callPackage ../applications/audio/jaaa { };
 
   jackett = callPackage ../servers/jackett {
@@ -4053,6 +4057,8 @@ with pkgs;
   mfoc = callPackage ../tools/security/mfoc { };
 
   mgba = libsForQt5.callPackage ../misc/emulators/mgba { };
+
+  midisheetmusic = callPackage ../applications/audio/midisheetmusic { };
 
   mikutter = callPackage ../applications/networking/instant-messengers/mikutter { };
 
@@ -5214,6 +5220,8 @@ with pkgs;
 
   seqdiag = with python3Packages; toPythonApplication seqdiag;
 
+  sewer = callPackage ../tools/admin/sewer { };
+
   screenfetch = callPackage ../tools/misc/screenfetch { };
 
   sg3_utils = callPackage ../tools/system/sg3_utils { };
@@ -5497,6 +5505,8 @@ with pkgs;
 
   staruml = callPackage ../tools/misc/staruml { inherit (gnome2) GConf; libgcrypt = libgcrypt_1_5; };
 
+  systrayhelper = callPackage ../tools/misc/systrayhelper {};
+
   otter-browser = qt5.callPackage ../applications/networking/browsers/otter {};
 
   privoxy = callPackage ../tools/networking/privoxy {
@@ -5598,6 +5608,8 @@ with pkgs;
   tinc_pre = callPackage ../tools/networking/tinc/pre.nix { };
 
   tiny8086 = callPackage ../applications/virtualization/8086tiny { };
+
+  tinyemu = callPackage ../applications/virtualization/tinyemu { };
 
   tinyproxy = callPackage ../tools/networking/tinyproxy {};
 
@@ -5792,6 +5804,8 @@ with pkgs;
   vacuum = callPackage ../applications/networking/instant-messengers/vacuum {};
 
   vampire = callPackage ../applications/science/logic/vampire {};
+
+  vk-messenger = callPackage ../applications/networking/instant-messengers/vk-messenger {};
 
   volatility = callPackage ../tools/security/volatility { };
 
@@ -6301,6 +6315,8 @@ with pkgs;
   runtimeShell = "${runtimeShellPackage}${runtimeShellPackage.shellPath}";
   runtimeShellPackage = bash;
 
+  any-nix-shell = callPackage ../shells/any-nix-shell { };
+
   bash = lowPrio (callPackage ../shells/bash/4.4.nix { });
 
   # WARNING: this attribute is used by nix-shell so it shouldn't be removed/renamed
@@ -6469,6 +6485,8 @@ with pkgs;
   icr = callPackage ../development/tools/icr {};
 
   scry = callPackage ../development/tools/scry {};
+
+  dbmate = callPackage ../development/tools/database/dbmate { };
 
   devpi-client = callPackage ../development/tools/devpi-client {};
 
@@ -9074,6 +9092,7 @@ with pkgs;
   bobcat = callPackage ../development/libraries/bobcat { };
 
   boehmgc = callPackage ../development/libraries/boehm-gc { };
+  boehmgc_766 = callPackage ../development/libraries/boehm-gc/7.6.6.nix { };
 
   boolstuff = callPackage ../development/libraries/boolstuff { };
 
@@ -10110,9 +10129,7 @@ with pkgs;
 
   jsoncpp = callPackage ../development/libraries/jsoncpp { };
 
-  jsonnet = callPackage ../development/compilers/jsonnet {
-    emscripten = emscripten.override {python=python2;};
-  };
+  jsonnet = callPackage ../development/compilers/jsonnet { };
 
   jsonrpc-glib = callPackage ../development/libraries/jsonrpc-glib { };
 
@@ -11953,6 +11970,8 @@ with pkgs;
   range-v3 = callPackage ../development/libraries/range-v3 {};
 
   rabbitmq-java-client = callPackage ../development/libraries/rabbitmq-java-client {};
+
+  rapidcheck = callPackage ../development/libraries/rapidcheck {};
 
   rapidjson = callPackage ../development/libraries/rapidjson {};
 
@@ -14784,6 +14803,8 @@ with pkgs;
       '';
   }));
 
+  systemd-wait = callPackage ../os-specific/linux/systemd-wait { };
+
   sysvinit = callPackage ../os-specific/linux/sysvinit { };
 
   sysvtools = sysvinit.override {
@@ -16387,6 +16408,8 @@ with pkgs;
 
   eterm = callPackage ../applications/misc/eterm { };
 
+  eteroj.lv2 = libsForQt5.callPackage ../applications/audio/eteroj.lv2 { };
+
   etherape = callPackage ../applications/networking/sniffers/etherape { };
 
   evilvte = callPackage ../applications/misc/evilvte {
@@ -16435,6 +16458,8 @@ with pkgs;
   fetchmail = callPackage ../applications/misc/fetchmail { };
 
   fig2dev = callPackage ../applications/graphics/fig2dev { };
+
+  FIL-plugins = callPackage ../applications/audio/FIL-plugins { };
 
   flacon = callPackage ../applications/audio/flacon { };
 
@@ -17023,6 +17048,8 @@ with pkgs;
   homebank = callPackage ../applications/office/homebank {
     gtk = gtk3;
   };
+
+  howl = callPackage ../applications/editors/howl { };
 
   ht = callPackage ../applications/editors/ht { };
 
@@ -18754,6 +18781,11 @@ with pkgs;
 
   lightdm_qt = lightdm.override { withQt5 = true; };
 
+  lightdm-enso-os-greeter = callPackage ../applications/display-managers/lightdm-enso-os-greeter {
+    inherit (gnome3) libgee;
+    inherit (xorg) libX11 libXdmcp libpthreadstubs;
+  };
+
   lightdm_gtk_greeter = callPackage ../applications/display-managers/lightdm/gtk-greeter.nix {
     inherit (xfce) exo;
   };
@@ -18944,6 +18976,8 @@ with pkgs;
   tangogps = callPackage ../applications/misc/tangogps {
     gconf = gnome2.GConf;
   };
+
+  tambura = callPackage ../applications/audio/tambura { };
 
   teamspeak_client = libsForQt5.callPackage ../applications/networking/instant-messengers/teamspeak/client.nix { };
   teamspeak_server = callPackage ../applications/networking/instant-messengers/teamspeak/server.nix { };
@@ -20126,6 +20160,8 @@ with pkgs;
   };
 
   instead-launcher = callPackage ../games/instead-launcher { };
+
+  ivan = callPackage ../games/ivan { };
 
   ja2-stracciatella = callPackage ../games/ja2-stracciatella { };
 
