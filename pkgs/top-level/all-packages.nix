@@ -5923,6 +5923,12 @@ with pkgs;
 
   wbox = callPackage ../tools/networking/wbox {};
 
+  webassemblyjs-cli = nodePackages."@webassemblyjs/cli";
+  webassemblyjs-repl = nodePackages."@webassemblyjs/repl";
+  wasm-strip = nodePackages."@webassemblyjs/wasm-strip";
+  wasm-text-gen = nodePackages."@webassemblyjs/wasm-text-gen";
+  wast-refmt = nodePackages."@webassemblyjs/wast-refmt";
+
   welkin = callPackage ../tools/graphics/welkin {};
 
   whipper = callPackage ../applications/audio/whipper { };
@@ -6964,14 +6970,12 @@ with pkgs;
         (lib.addMetaAttrs { outputsToInstall = [ "jre" ]; }
           ((openjdk8.override { minimal = true; }).jre // { outputs = [ "jre" ]; }));
 
-  jdk10 = if stdenv.isAarch32 || stdenv.isAarch64 then oraclejdk10 else openjdk10 // { outputs = [ "out" ]; };
-  jre10 = if stdenv.isAarch32 || stdenv.isAarch64 then oraclejre10 else lib.setName "openjre-${lib.getVersion pkgs.openjdk10.jre}"
+  jdk10 = openjdk10 // { outputs = [ "out" ]; };
+  jre10 = lib.setName "openjre-${lib.getVersion pkgs.openjdk10.jre}"
     (lib.addMetaAttrs { outputsToInstall = [ "jre" ]; }
       (openjdk10.jre // { outputs = [ "jre" ]; }));
   jre10_headless =
-    if stdenv.isAarch32 || stdenv.isAarch64 then
-      oraclejre10
-    else if stdenv.isDarwin then
+    if stdenv.isDarwin then
       jre10
     else
       lib.setName "openjre-${lib.getVersion pkgs.openjdk10.jre}-headless"
@@ -6985,6 +6989,8 @@ with pkgs;
   inherit (callPackages ../development/compilers/graalvm { }) mx jvmci8 graalvm8;
 
   openshot-qt = libsForQt5.callPackage ../applications/video/openshot-qt { };
+
+  openspin = callPackage ../development/compilers/openspin { };
 
   oraclejdk = pkgs.jdkdistro true false;
 
@@ -8003,6 +8009,10 @@ with pkgs;
 
   ### DEVELOPMENT / TOOLS
 
+  abi-compliance-checker = callPackage ../development/tools/misc/abi-compliance-checker { };
+
+  abi-dumper = callPackage ../development/tools/misc/abi-dumper { };
+
   activator = throw ''
     Typesafe Activator was removed in 2017-05-08 as the actual package reaches end of life.
 
@@ -8011,12 +8021,12 @@ with pkgs;
     for more information.
   '';
 
+  adtool = callPackage ../tools/admin/adtool { };
+
   inherit (callPackage ../development/tools/alloy { })
     alloy4
     alloy5
     alloy;
-
-  adtool = callPackage ../tools/admin/adtool { };
 
   augeas = callPackage ../tools/system/augeas { };
 
@@ -8839,7 +8849,7 @@ with pkgs;
 
   sparse = callPackage ../development/tools/analysis/sparse { };
 
-  speedtest-cli = callPackage ../tools/networking/speedtest-cli { };
+  speedtest-cli = with python3Packages; toPythonApplication speedtest-cli;
 
   spin = callPackage ../development/tools/analysis/spin { };
 
@@ -8940,6 +8950,8 @@ with pkgs;
   vulnix = callPackage ../tools/security/vulnix {
     pythonPackages = python3Packages;
   };
+
+  vtable-dumper = callPackage ../development/tools/misc/vtable-dumper { };
 
   watson-ruby = callPackage ../development/tools/misc/watson-ruby {};
 
@@ -9500,6 +9512,8 @@ with pkgs;
   fltk = self.fltk13;
 
   flyway = callPackage ../development/tools/flyway { };
+
+  fmt = callPackage ../development/libraries/fmt/default.nix { };
 
   fplll = callPackage ../development/libraries/fplll {};
   fplll_20160331 = callPackage ../development/libraries/fplll/20160331.nix {};
@@ -10296,6 +10310,8 @@ with pkgs;
   libcaca = callPackage ../development/libraries/libcaca {
     inherit (xorg) libX11 libXext;
   };
+
+  libcacard = callPackage ../development/libraries/libcacard { };
 
   libcanberra = callPackage ../development/libraries/libcanberra {
     inherit (darwin.apple_sdk.frameworks) CoreServices;
@@ -14122,8 +14138,8 @@ with pkgs;
       ];
   };
 
-  # linux mptcp is based on the 4.4 kernel
-  linux_mptcp = callPackage ../os-specific/linux/kernel/linux-mptcp.nix {
+  linux_mptcp = linux_mptcp_94;
+  linux_mptcp_94 = callPackage ../os-specific/linux/kernel/linux-mptcp.nix {
     kernelPatches =
       [ kernelPatches.bridge_stp_helper
         kernelPatches.cpu-cgroup-v2."4.11"
@@ -15808,9 +15824,7 @@ with pkgs;
 
   bristol = callPackage ../applications/audio/bristol { };
 
-  bs1770gain = callPackage ../applications/audio/bs1770gain {
-    ffmpeg = ffmpeg_2;
-  };
+  bs1770gain = callPackage ../applications/audio/bs1770gain { };
 
   bspwm = callPackage ../applications/window-managers/bspwm { };
 
@@ -17124,6 +17138,8 @@ with pkgs;
 
   singularity = callPackage ../applications/virtualization/singularity { };
 
+  spectmorph = callPackage ../applications/audio/spectmorph { };
+
   spectrwm = callPackage ../applications/window-managers/spectrwm { };
 
   spectral = qt5.callPackage ../applications/networking/instant-messengers/spectral { };
@@ -18138,6 +18154,8 @@ with pkgs;
   offrss = callPackage ../applications/networking/offrss { };
 
   ogmtools = callPackage ../applications/video/ogmtools { };
+
+  omegat = callPackage ../applications/misc/omegat.nix { };
 
   omxplayer = callPackage ../applications/video/omxplayer { };
 
@@ -19771,8 +19789,6 @@ with pkgs;
 
   xpra = callPackage ../tools/X11/xpra { };
   libfakeXinerama = callPackage ../tools/X11/xpra/libfakeXinerama.nix { };
-  #TODO: 'pil' is not available for python3, yet
-  xpraGtk3 = callPackage ../tools/X11/xpra/gtk3.nix { inherit (texFunctions) fontsConf; inherit (python3Packages) buildPythonApplication python cython pygobject3 pycairo; };
 
   xrectsel = callPackage ../tools/X11/xrectsel { };
 
@@ -21055,6 +21071,8 @@ with pkgs;
   m4ri = callPackage ../development/libraries/science/math/m4ri { };
 
   m4rie = callPackage ../development/libraries/science/math/m4rie { };
+
+  mkl = callPackage ../development/libraries/science/math/mkl { };
 
   nasc = callPackage ../applications/science/math/nasc { };
 
