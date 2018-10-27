@@ -108,7 +108,6 @@
   ./programs/oblogout.nix
   ./programs/plotinus.nix
   ./programs/qt5ct.nix
-  ./programs/rootston.nix
   ./programs/screen.nix
   ./programs/sedutil.nix
   ./programs/slock.nix
@@ -121,6 +120,7 @@
   ./programs/sysdig.nix
   ./programs/systemtap.nix
   ./programs/sway.nix
+  ./programs/sway-beta.nix
   ./programs/thefuck.nix
   ./programs/tmux.nix
   ./programs/udevil.nix
@@ -234,6 +234,7 @@
   ./services/desktops/dleyna-server.nix
   ./services/desktops/flatpak.nix
   ./services/desktops/geoclue2.nix
+  ./services/desktops/gsignond.nix
   ./services/desktops/pipewire.nix
   ./services/desktops/gnome3/at-spi2-core.nix
   ./services/desktops/gnome3/chrome-gnome-shell.nix
@@ -504,6 +505,7 @@
   ./services/networking/dnsmasq.nix
   ./services/networking/ejabberd.nix
   ./services/networking/epmd.nix
+  ./services/networking/eternal-terminal.nix
   ./services/networking/fakeroute.nix
   ./services/networking/ferm.nix
   ./services/networking/firefox/sync-server.nix
