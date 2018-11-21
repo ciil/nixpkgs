@@ -196,6 +196,8 @@ in {
 
   astropy = callPackage ../development/python-modules/astropy { };
 
+  astroquery = callPackage ../development/python-modules/astroquery { }; 
+
   atom = callPackage ../development/python-modules/atom { };
 
   augeas = callPackage ../development/python-modules/augeas {
@@ -2963,6 +2965,8 @@ in {
   nodeenv = callPackage ../development/python-modules/nodeenv { };
 
   nose = callPackage ../development/python-modules/nose { };
+
+  nose-cov = callPackage ../development/python-modules/nose-cov { };
 
   nose-exclude = callPackage ../development/python-modules/nose-exclude { };
 
@@ -11050,17 +11054,9 @@ EOF
 
   rfc7464 = callPackage ../development/python-modules/rfc7464 { };
 
-  foundationdb51 = (toPythonModule (pkgs.fdbPackages.override {
-    inherit python;
-  }).foundationdb51).python;
-
-  foundationdb52 = (toPythonModule (pkgs.fdbPackages.override {
-    inherit python;
-  }).foundationdb52).python;
-
-  foundationdb60 = (toPythonModule (pkgs.fdbPackages.override {
-    inherit python;
-  }).foundationdb60).python;
+  foundationdb51 = callPackage ../servers/foundationdb/python.nix { foundationdb = pkgs.foundationdb51; };
+  foundationdb52 = callPackage ../servers/foundationdb/python.nix { foundationdb = pkgs.foundationdb52; };
+  foundationdb60 = callPackage ../servers/foundationdb/python.nix { foundationdb = pkgs.foundationdb60; };
 
   libtorrentRasterbar = (toPythonModule (pkgs.libtorrentRasterbar.override {
     inherit python;

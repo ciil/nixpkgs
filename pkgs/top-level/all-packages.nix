@@ -2078,7 +2078,7 @@ with pkgs;
 
   crackxls = callPackage ../tools/security/crackxls { };
 
-  create-cycle-app = nodePackages_8_x.create-cycle-app;
+  create-cycle-app = nodePackages.create-cycle-app;
 
   createrepo_c = callPackage ../tools/package-management/createrepo_c { };
 
@@ -2412,6 +2412,8 @@ with pkgs;
   uutils-coreutils = callPackage ../tools/misc/uutils-coreutils {
     inherit (pythonPackages) sphinx;
   };
+
+  wl-clipboard = callPackage ../tools/misc/wl-clipboard { };
 
   zabbix-cli = callPackage ../tools/misc/zabbix-cli { };
 
@@ -2764,7 +2766,7 @@ with pkgs;
     foundationdb52
     foundationdb60;
 
-  foundationdb = foundationdb52;
+  foundationdb = foundationdb60;
 
   fuse-7z-ng = callPackage ../tools/filesystems/fuse-7z-ng { };
 
@@ -2895,6 +2897,8 @@ with pkgs;
   glusterfs = callPackage ../tools/filesystems/glusterfs { };
 
   glmark2 = callPackage ../tools/graphics/glmark2 { };
+
+  glogg = libsForQt5.callPackage ../tools/text/glogg { };
 
   glxinfo = callPackage ../tools/graphics/glxinfo { };
 
@@ -3764,7 +3768,9 @@ with pkgs;
     pythonPackages = python3Packages;
   };
 
-  netdata = callPackage ../tools/system/netdata { };
+  netdata = callPackage ../tools/system/netdata {
+    inherit (darwin.apple_sdk.frameworks) CoreFoundation IOKit;
+  };
 
   netsurf = recurseIntoAttrs (let callPackage = newScope pkgs.netsurf; in rec {
     # ui could be gtk, sixel or framebuffer. Note that console display (sixel)
@@ -3844,7 +3850,7 @@ with pkgs;
     nodejs = pkgs.nodejs-6_x;
   };
 
-  nodePackages = nodePackages_8_x;
+  nodePackages = nodePackages_10_x;
 
   npm2nix = nodePackages.npm2nix;
 
@@ -5970,6 +5976,10 @@ with pkgs;
     # it requires `sixel` enabled terminals such as mlterm
     # or xterm -ti 340
     SDL = SDL_sixel;
+  };
+
+  openconnect_pa = callPackage ../tools/networking/openconnect_pa {
+    openssl = null;    
   };
 
   openconnect = openconnect_gnutls;
@@ -8535,8 +8545,6 @@ with pkgs;
   gnum4 = callPackage ../development/tools/misc/gnum4 { };
   m4 = gnum4;
 
-  gnumake382 = callPackage ../development/tools/build-managers/gnumake/3.82 { };
-  gnumake3 = gnumake382;
   gnumake42 = callPackage ../development/tools/build-managers/gnumake/4.2 { };
   gnumake = gnumake42;
 
@@ -11401,8 +11409,6 @@ with pkgs;
   mbedtls_1_3 = callPackage ../development/libraries/mbedtls/1.3.nix { };
   polarssl = mbedtls; # TODO: add to aliases.nix
 
-  mdds_0_7_1 = callPackage ../development/libraries/mdds/0.7.1.nix { };
-  mdds_0_12_1 = callPackage ../development/libraries/mdds/0.12.1.nix { };
   mdds = callPackage ../development/libraries/mdds { };
 
   mediastreamer = callPackage ../development/libraries/mediastreamer { };
@@ -14882,6 +14888,8 @@ with pkgs;
   procps = if stdenv.isLinux then callPackage ../os-specific/linux/procps-ng { }
            else unixtools.procps;
 
+  procdump = callPackage ../os-specific/linux/procdump { };
+
   qemu_kvm = lowPrio (qemu.override { hostCpuOnly = true; });
 
   # See `xenPackages` source for explanations.
@@ -14958,6 +14966,8 @@ with pkgs;
   skopeo = callPackage ../development/tools/skopeo { };
 
   smem = callPackage ../os-specific/linux/smem { };
+
+  speedometer = callPackage ../os-specific/linux/speedometer { };
 
   statifier = callPackage ../os-specific/linux/statifier { };
 
@@ -20142,7 +20152,7 @@ with pkgs;
 
   angband = callPackage ../games/angband { };
 
-  anki = python2Packages.callPackage ../games/anki { };
+  anki = python3Packages.callPackage ../games/anki { };
 
   armagetronad = callPackage ../games/armagetronad { };
 
@@ -21194,6 +21204,10 @@ with pkgs;
 
   ncbi_tools = callPackage ../applications/science/biology/ncbi-tools { };
 
+  niftyreg = callPackage ../applications/science/biology/niftyreg { };
+
+  niftyseg = callPackage ../applications/science/biology/niftyseg { };
+
   paml = callPackage ../applications/science/biology/paml { };
 
   picard-tools = callPackage ../applications/science/biology/picard-tools { };
@@ -21445,9 +21459,7 @@ with pkgs;
     coqPackages      coq
   ;
 
-  coq2html = callPackage ../applications/science/logic/coq2html {
-    make = pkgs.gnumake3;
-  };
+  coq2html = callPackage ../applications/science/logic/coq2html { };
 
   cryptoverif = callPackage ../applications/science/logic/cryptoverif { };
 
@@ -22637,8 +22649,6 @@ with pkgs;
   unicode-paracode = callPackage ../tools/misc/unicode { };
 
   unixcw = callPackage ../applications/misc/unixcw { };
-
-  valauncher = callPackage ../applications/misc/valauncher { };
 
   vault = callPackage ../tools/security/vault { };
 
