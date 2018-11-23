@@ -103,6 +103,7 @@
   ./programs/less.nix
   ./programs/light.nix
   ./programs/mosh.nix
+  ./programs/mininet.nix
   ./programs/mtr.nix
   ./programs/nano.nix
   ./programs/npm.nix
@@ -620,6 +621,7 @@
   ./services/networking/supplicant.nix
   ./services/networking/supybot.nix
   ./services/networking/syncthing.nix
+  ./services/networking/syncthing-relay.nix
   ./services/networking/tcpcrypt.nix
   ./services/networking/teamspeak3.nix
   ./services/networking/tinc.nix
