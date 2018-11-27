@@ -314,8 +314,8 @@ with pkgs;
     ... # For hash agility
   }@args: fetchzip ({
     inherit name;
-    url = "http://repo.or.cz/${repo}.git/snapshot/${rev}.tar.gz";
-    meta.homepage = "http://repo.or.cz/${repo}.git/";
+    url = "https://repo.or.cz/${repo}.git/snapshot/${rev}.tar.gz";
+    meta.homepage = "https://repo.or.cz/${repo}.git/";
   } // removeAttrs args [ "repo" "rev" ]) // { inherit rev; };
 
   fetchNuGet = callPackage ../build-support/fetchnuget { };
@@ -420,6 +420,8 @@ with pkgs;
 
   iconConvTools = callPackage ../build-support/icon-conv-tools {};
 
+  #package writers
+  writers = callPackage ../build-support/writers {};
 
   ### TOOLS
 
@@ -681,6 +683,8 @@ with pkgs;
 
   cozy = callPackage ../applications/audio/cozy-audiobooks { };
 
+  deskew = callPackage ../applications/graphics/deskew { };
+
   diskus = callPackage ../tools/misc/diskus { };
 
   djmount = callPackage ../tools/filesystems/djmount { };
@@ -785,6 +789,8 @@ with pkgs;
   };
 
   xcodeenv = callPackage ../development/mobile/xcodeenv { };
+
+  ssh-agents = callPackage ../tools/networking/ssh-agents { };
 
   titaniumenv = callPackage ../development/mobile/titaniumenv { };
 
@@ -935,8 +941,6 @@ with pkgs;
   bindfs = callPackage ../tools/filesystems/bindfs { };
 
   bitbucket-cli = python2Packages.bitbucket-cli;
-
-  bittornado = callPackage ../tools/networking/p2p/bittornado { };
 
   blink = callPackage ../applications/networking/instant-messengers/blink { };
 
@@ -1578,6 +1582,8 @@ with pkgs;
   psstop = callPackage ../tools/system/psstop { };
 
   parallel-rust = callPackage ../tools/misc/parallel-rust { };
+
+  pyCA = python3Packages.callPackage ../applications/video/pyca {};
 
   scour = with python3Packages; toPythonApplication scour;
 
@@ -2774,6 +2780,8 @@ with pkgs;
 
   fuse-7z-ng = callPackage ../tools/filesystems/fuse-7z-ng { };
 
+  fusee-launcher = callPackage ../development/tools/fusee-launcher { };
+
   fwknop = callPackage ../tools/security/fwknop { };
 
   exfat = callPackage ../tools/filesystems/exfat { };
@@ -2884,11 +2892,11 @@ with pkgs;
 
   gitlab-runner = callPackage ../development/tools/continuous-integration/gitlab-runner { };
 
-  gitlab-shell = callPackage ../applications/version-management/gitlab-shell { };
+  gitlab-shell = callPackage ../applications/version-management/gitlab/gitlab-shell { };
 
-  gitlab-workhorse = callPackage ../applications/version-management/gitlab-workhorse { };
+  gitlab-workhorse = callPackage ../applications/version-management/gitlab/gitlab-workhorse { };
 
-  gitaly = callPackage ../applications/version-management/gitaly { };
+  gitaly = callPackage ../applications/version-management/gitlab/gitaly { };
 
   gitstats = callPackage ../applications/version-management/gitstats { };
 
@@ -3766,9 +3774,13 @@ with pkgs;
 
   mxt-app = callPackage ../misc/mxt-app { };
 
+  mxisd = callPackage ../servers/mxisd { };
+
   nagstamon = callPackage ../tools/misc/nagstamon {
     pythonPackages = python3Packages;
   };
+
+  nbench = callPackage ../tools/misc/nbench { };
 
   netdata = callPackage ../tools/system/netdata {
     inherit (darwin.apple_sdk.frameworks) CoreFoundation IOKit;
@@ -4784,6 +4796,8 @@ with pkgs;
 
   pg_top = callPackage ../tools/misc/pg_top { };
 
+  pgcenter = callPackage ../tools/misc/pgcenter { };
+
   pgmetrics = callPackage ../tools/misc/pgmetrics { };
 
   pdsh = callPackage ../tools/networking/pdsh {
@@ -5624,6 +5638,8 @@ with pkgs;
 
   znapzend = callPackage ../tools/backup/znapzend { };
 
+  targetcli = callPackage ../os-specific/linux/targetcli { };
+
   tarsnap = callPackage ../tools/backup/tarsnap { };
 
   tarsnapper = callPackage ../tools/backup/tarsnapper { };
@@ -6036,6 +6052,8 @@ with pkgs;
 
   woof = callPackage ../tools/misc/woof { };
 
+  wpscan = callPackage ../tools/security/wpscan { };
+
   wsmancli = callPackage ../tools/system/wsmancli {};
 
   wolfebin = callPackage ../tools/networking/wolfebin {
@@ -6326,7 +6344,9 @@ with pkgs;
 
   xiccd = callPackage ../tools/misc/xiccd { };
 
-  xidlehook = callPackage ../tools/X11/xidlehook {};
+  xidlehook = callPackage ../tools/X11/xidlehook {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
 
   xorriso = callPackage ../tools/cd-dvd/xorriso { };
 
@@ -8645,6 +8665,8 @@ with pkgs;
 
   kube-prompt = callPackage ../development/tools/kube-prompt { };
 
+  kubicorn = callPackage ../development/tools/kubicorn {  };
+
   kustomize = callPackage ../development/tools/kustomize { };
 
   kythe = callPackage ../development/tools/kythe { };
@@ -8947,6 +8969,8 @@ with pkgs;
   spoofer-gui = callPackage ../tools/networking/spoofer { withGUI = true; };
 
   sqlitebrowser = libsForQt5.callPackage ../development/tools/database/sqlitebrowser { };
+
+  sqlite-web = callPackage ../development/tools/database/sqlite-web { };
 
   sselp = callPackage ../tools/X11/sselp{ };
 
@@ -9331,8 +9355,6 @@ with pkgs;
   cointop = callPackage ../applications/misc/cointop { };
 
   commoncpp2 = callPackage ../development/libraries/commoncpp2 { };
-
-  confuse = callPackage ../development/libraries/confuse { };
 
   coredumper = callPackage ../development/libraries/coredumper { };
 
@@ -13140,7 +13162,7 @@ with pkgs;
     packages = [];
   };
 
-  rstudioWrapper = callPackage ../development/r-modules/wrapper-rstudio.nix {
+  rstudioWrapper = libsForQt5.callPackage ../development/r-modules/wrapper-rstudio.nix {
     recommendedPackages = with rPackages; [
       boot class cluster codetools foreign KernSmooth lattice MASS
       Matrix mgcv nlme nnet rpart spatial survival
@@ -13514,6 +13536,8 @@ with pkgs;
   postgrey = callPackage ../servers/mail/postgrey { };
 
   pshs = callPackage ../servers/http/pshs { };
+
+  system-sendmail = lowPrio (callPackage ../servers/mail/system-sendmail { });
 
   # PulseAudio daemons
 
@@ -15385,6 +15409,8 @@ with pkgs;
 
   maia-icon-theme = callPackage ../data/icons/maia-icon-theme { };
 
+  mailcap = callPackage ../data/misc/mailcap { };
+
   marathi-cursive = callPackage ../data/fonts/marathi-cursive { };
 
   man-pages = callPackage ../data/documentation/man-pages { };
@@ -16343,6 +16369,8 @@ with pkgs;
   dzen2 = callPackage ../applications/window-managers/dzen2 { };
 
   eaglemode = callPackage ../applications/misc/eaglemode { };
+
+  echoip = callPackage ../servers/echoip { };
 
   eclipses = recurseIntoAttrs (callPackage ../applications/editors/eclipse {
     jdk = jdk11;
@@ -18555,8 +18583,6 @@ with pkgs;
 
   poezio = python3Packages.poezio;
 
-  pommed = callPackage ../os-specific/linux/pommed {};
-
   pommed_light = callPackage ../os-specific/linux/pommed-light {};
 
   polymake = callPackage ../applications/science/math/polymake { };
@@ -18689,6 +18715,8 @@ with pkgs;
   qtractor = callPackage ../applications/audio/qtractor { };
 
   qtscrobbler = callPackage ../applications/audio/qtscrobbler { };
+
+  quantomatic = callPackage ../applications/science/physics/quantomatic { };
 
   quassel = libsForQt5.callPackage ../applications/networking/irc/quassel {
     monolithic = true;
@@ -20976,6 +21004,8 @@ with pkgs;
 
   hsetroot = callPackage ../tools/X11/hsetroot { };
 
+  imwheel = callPackage ../tools/X11/imwheel { };
+
   kakasi = callPackage ../tools/text/kakasi { };
 
   lumina = libsForQt5.callPackage ../desktops/lumina { };
@@ -21346,9 +21376,7 @@ with pkgs;
 
   scs = callPackage ../development/libraries/science/math/scs { };
 
-  sage = callPackage ../applications/science/math/sage {
-    nixpkgs = pkgs;
-  };
+  sage = callPackage ../applications/science/math/sage { };
   sageWithDoc = sage.override { withDoc = true; };
 
   suitesparse_4_2 = callPackage ../development/libraries/science/math/suitesparse/4.2.nix { };
@@ -22657,7 +22685,7 @@ with pkgs;
   vimUtils = callPackage ../misc/vim-plugins/vim-utils.nix { };
 
   vimPlugins = recurseIntoAttrs (callPackage ../misc/vim-plugins {
-    llvmPackages = llvmPackages_39;
+    llvmPackages = llvmPackages_6;
   });
 
   vimprobable2-unwrapped = callPackage ../applications/networking/browsers/vimprobable2 {

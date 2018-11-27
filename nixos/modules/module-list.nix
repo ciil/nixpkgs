@@ -330,6 +330,7 @@
   ./services/mail/postgrey.nix
   ./services/mail/spamassassin.nix
   ./services/mail/rspamd.nix
+  ./services/mail/rss2email.nix
   ./services/mail/rmilter.nix
   ./services/mail/nullmailer.nix
   ./services/misc/airsonic.nix
@@ -559,6 +560,7 @@
   ./services/networking/miredo.nix
   ./services/networking/mstpd.nix
   ./services/networking/murmur.nix
+  ./services/networking/mxisd.nix
   ./services/networking/namecoind.nix
   ./services/networking/nat.nix
   ./services/networking/ndppd.nix
