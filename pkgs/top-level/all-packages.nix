@@ -183,7 +183,7 @@ with pkgs;
   fetchfossil = callPackage ../build-support/fetchfossil { };
 
   fetchgit = callPackage ../build-support/fetchgit {
-    git = gitMinimal;
+    git = buildPackages.gitMinimal;
   };
 
   fetchgitPrivate = callPackage ../build-support/fetchgit/private.nix { };
@@ -594,6 +594,8 @@ with pkgs;
   };
 
   autoflake = callPackage ../development/tools/analysis/autoflake { };
+
+  autospotting = callPackage ../applications/misc/autospotting { };
 
   avfs = callPackage ../tools/filesystems/avfs { };
 
@@ -4680,6 +4682,10 @@ with pkgs;
   pandoc = haskell.lib.overrideCabal (haskell.lib.justStaticExecutables haskellPackages.pandoc) (drv: {
     configureFlags = drv.configureFlags or [] ++ ["-fembed_data_files"];
     buildDepends = drv.buildDepends or [] ++ [haskellPackages.file-embed];
+    postInstall = ''
+      mkdir -p $out/share/man/man1
+      cp man/pandoc.1 $out/share/man/man1/
+    '';
   });
 
   pamtester = callPackage ../tools/security/pamtester { };
@@ -4720,6 +4726,8 @@ with pkgs;
                   });
       };
   };
+
+  pulumi-bin = callPackage ../tools/admin/pulumi { };
 
   p0f = callPackage ../tools/security/p0f { };
 
@@ -8568,6 +8576,7 @@ with pkgs;
   gradle_2_14 = self.gradleGen.gradle_2_14;
   gradle_2_5 = self.gradleGen.gradle_2_5;
   gradle_3_5 = self.gradleGen.gradle_3_5;
+  gradle_4_10 = self.gradleGen.gradle_4_10;
 
   gperf = callPackage ../development/tools/misc/gperf { };
   # 3.1 changed some parameters from int to size_t, leading to mismatches.
@@ -8921,6 +8930,8 @@ with pkgs;
 
   sbt-extras = callPackage ../development/tools/build-managers/sbt-extras { };
 
+  scss-lint = callPackage ../development/tools/scss-lint { };
+
   shallot = callPackage ../tools/misc/shallot { };
 
   shards = callPackage ../development/tools/build-managers/shards { };
@@ -8967,6 +8978,8 @@ with pkgs;
   spoofer = callPackage ../tools/networking/spoofer { };
 
   spoofer-gui = callPackage ../tools/networking/spoofer { withGUI = true; };
+
+  sqlcheck = callPackage ../development/tools/database/sqlcheck { };
 
   sqlitebrowser = libsForQt5.callPackage ../development/tools/database/sqlitebrowser { };
 
@@ -9068,6 +9081,8 @@ with pkgs;
     deps = [ xcbuild ];
   } ../development/tools/xcbuild/setup-hook.sh  ;
 
+  xcpretty = callPackage ../development/tools/xcpretty { };
+
   xmlindent = callPackage ../development/web/xmlindent {};
 
   xpwn = callPackage ../development/mobile/xpwn {};
@@ -9145,6 +9160,10 @@ with pkgs;
     db = if stdenv.isFreeBSD then db4 else db;
     # XXX: only the db_185 interface was available through
     #      apr with db58 on freebsd (nov 2015), for unknown reasons
+  };
+
+  aravis = callPackage ../development/libraries/aravis {
+    inherit (gst_all_1) gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad;
   };
 
   arb = callPackage ../development/libraries/arb {};
@@ -14182,8 +14201,6 @@ with pkgs;
   fuse3 = fusePackages.fuse_3;
   fuse-common = hiPrio fusePackages.fuse_3.common;
 
-  fusionio-util = callPackage ../os-specific/linux/fusionio/util.nix { };
-
   fxload = callPackage ../os-specific/linux/fxload { };
 
   gfxtablet = callPackage ../os-specific/linux/gfxtablet {};
@@ -14465,8 +14482,6 @@ with pkgs;
     ena = callPackage ../os-specific/linux/ena {};
 
     v4l2loopback = callPackage ../os-specific/linux/v4l2loopback { };
-
-    fusionio-vsl = callPackage ../os-specific/linux/fusionio/vsl.nix { };
 
     lttng-modules = callPackage ../os-specific/linux/lttng-modules { };
 
@@ -19308,6 +19323,11 @@ with pkgs;
 
   lxterminal = callPackage ../applications/misc/lxterminal {
     vte = gnome3.vte;
+  };
+
+  aminal = callPackage ../applications/misc/aminal {
+    inherit (darwin.apple_sdk.frameworks) Carbon Cocoa Kernel;
+    inherit (darwin) cf-private;
   };
 
   termite-unwrapped = callPackage ../applications/misc/termite {
