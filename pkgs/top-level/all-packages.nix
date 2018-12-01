@@ -344,7 +344,7 @@ with pkgs;
       inherit contents compressor prepend;
     };
 
-  makeWrapper = makeSetupHook { deps = [ dieHook ]; }
+  makeWrapper = makeSetupHook { deps = [ dieHook ]; substitutions = { shell = pkgs.runtimeShell; }; }
                               ../build-support/setup-hooks/make-wrapper.sh;
 
   makeModulesClosure = { kernel, firmware, rootModules, allowMissing ? false }:
@@ -610,6 +610,8 @@ with pkgs;
   awslogs = callPackage ../tools/admin/awslogs { };
 
   aws-env = callPackage ../tools/admin/aws-env { };
+
+  aws-google-auth = pythonPackages.callPackage ../tools/admin/aws-google-auth { };
 
   aws-okta = callPackage ../tools/security/aws-okta { };
 
@@ -1684,9 +1686,7 @@ with pkgs;
 
   apparix = callPackage ../tools/misc/apparix { };
 
-  appleseed = callPackage ../tools/graphics/appleseed {
-    eigen = eigen3_3;
-  };
+  appleseed = callPackage ../tools/graphics/appleseed { };
 
   arping = callPackage ../tools/networking/arping { };
 
@@ -3227,9 +3227,7 @@ with pkgs;
 
   halibut = callPackage ../tools/typesetting/halibut { };
 
-  halide = callPackage ../development/compilers/halide {
-    eigen = eigen3_3;
-  };
+  halide = callPackage ../development/compilers/halide { };
 
   hardinfo = callPackage ../tools/system/hardinfo { };
 
@@ -4709,6 +4707,8 @@ with pkgs;
   pell = callPackage ../applications/misc/pell { };
 
   pepper = callPackage ../tools/admin/salt/pepper { };
+
+  perceptualdiff = callPackage ../tools/graphics/perceptualdiff { };
 
   percona-xtrabackup = callPackage ../tools/backup/percona-xtrabackup {
     boost = boost159;
@@ -7403,6 +7403,7 @@ with pkgs;
   # For beta and nightly releases use the nixpkgs-mozilla overlay
   rust = callPackage ../development/compilers/rust ({
     inherit (darwin.apple_sdk.frameworks) CoreFoundation Security;
+    llvm = llvm_7;
   } // stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
     stdenv = overrideCC stdenv gcc6; # with gcc-7: undefined reference to `__divmoddi4'
   });
@@ -9032,6 +9033,10 @@ with pkgs;
 
   tweak = callPackage ../applications/editors/tweak { };
 
+  tychus = callPackage ../development/tools/tychus {
+    inherit (darwin.apple_sdk.frameworks) CoreFoundation;
+  };
+
   uhd = callPackage ../development/tools/misc/uhd { };
 
   uisp = callPackage ../development/tools/misc/uisp { };
@@ -9500,7 +9505,6 @@ with pkgs;
   editline = callPackage ../development/libraries/editline { };
 
   eigen = callPackage ../development/libraries/eigen {};
-  eigen3_3 = callPackage ../development/libraries/eigen/3.3.nix {};
 
   eigen2 = callPackage ../development/libraries/eigen/2.0.nix {};
 
@@ -10653,6 +10657,7 @@ with pkgs;
   in
     (gap.override { keepAllPackages = false; }).overrideAttrs (oldAttrs: {
       name = "libgap-${oldAttrs.pname}-${version}";
+      inherit version;
       src = fetchurl {
         url = "https://www.gap-system.org/pub/gap/gap48/tar.bz2/gap${version}_${pkgVer}.tar.bz2";
         sha256 = "19n2p1mdg33s2x9rs51iak7rgndc1cwr56jyqnah0g1ydgg1yh6b";
@@ -10734,9 +10739,7 @@ with pkgs;
 
   libf2c = callPackage ../development/libraries/libf2c {};
 
-  libfive = callPackage ../development/libraries/libfive {
-    eigen = eigen3_3;
-  };
+  libfive = callPackage ../development/libraries/libfive { };
 
   libfixposix = callPackage ../development/libraries/libfixposix {};
 
@@ -11096,8 +11099,6 @@ with pkgs;
   };
 
   libosip = callPackage ../development/libraries/osip {};
-
-  libosip_3 = callPackage ../development/libraries/osip/3.nix {};
 
   libosmium = callPackage ../development/libraries/libosmium { };
 
@@ -11689,11 +11690,18 @@ with pkgs;
 
   opencv3 = callPackage ../development/libraries/opencv/3.x.nix {
     enableCuda = config.cudaSupport or false;
+    inherit (darwin) cf-private;
     inherit (darwin.apple_sdk.frameworks) AVFoundation Cocoa QTKit VideoDecodeAcceleration;
   };
 
   opencv3WithoutCuda = opencv3.override {
     enableCuda = false;
+  };
+
+  opencv4 = callPackage ../development/libraries/opencv/4.x.nix {
+    enableCuda = config.cudaSupport or false;
+    inherit (darwin) cf-private;
+    inherit (darwin.apple_sdk.frameworks) AVFoundation Cocoa QTKit VideoDecodeAcceleration;
   };
 
   openexr = callPackage ../development/libraries/openexr { };
@@ -12531,7 +12539,7 @@ with pkgs;
   taglib-sharp = callPackage ../development/libraries/taglib-sharp { };
 
   talloc = callPackage ../development/libraries/talloc {
-    python = python2;
+    python = buildPackages.python2;
   };
 
   tclap = callPackage ../development/libraries/tclap {};
@@ -17503,8 +17511,6 @@ with pkgs;
   # Impressive, formerly known as "KeyJNote".
   impressive = callPackage ../applications/office/impressive { };
 
-  inferno = pkgsi686Linux.callPackage ../applications/inferno { };
-
   inkscape = callPackage ../applications/graphics/inkscape {
     lcms = lcms2;
     poppler = poppler_0_61;
@@ -20089,8 +20095,6 @@ with pkgs;
 
   xmlcopyeditor = callPackage ../applications/editors/xmlcopyeditor { };
 
-  xmove = callPackage ../applications/misc/xmove { };
-
   xmp = callPackage ../applications/audio/xmp { };
 
   xnee = callPackage ../tools/X11/xnee { };
@@ -21719,7 +21723,6 @@ with pkgs;
   };
 
   caffe2 = callPackage ../development/libraries/science/math/caffe2 (rec {
-    eigen = eigen3_3;
     inherit (python3Packages) python future six numpy pydot;
     protobuf = protobuf3_1;
     python-protobuf = python3Packages.protobuf.override { inherit protobuf; };
