@@ -1655,8 +1655,6 @@ in {
     then callPackage ../development/python-modules/faulthandler {}
     else throw "faulthandler is built into ${python.executable}";
 
-  fedpkg = callPackage ../development/python-modules/fedpkg { };
-
   flit = callPackage ../development/python-modules/flit { };
 
   flowlogs_reader = callPackage ../development/python-modules/flowlogs_reader { };
@@ -3033,7 +3031,9 @@ in {
 
   graphviz = callPackage ../development/python-modules/graphviz { };
 
-  pygraphviz = callPackage ../development/python-modules/pygraphviz { };
+  pygraphviz = callPackage ../development/python-modules/pygraphviz {
+    graphviz = pkgs.graphviz; # not the python package
+  };
 
   pymc3 = callPackage ../development/python-modules/pymc3 { };
 
@@ -3122,8 +3122,6 @@ in {
   notmuch = callPackage ../development/python-modules/notmuch { };
 
   emoji = callPackage ../development/python-modules/emoji { };
-
-  ntfy = callPackage ../development/python-modules/ntfy { };
 
   ntplib = callPackage ../development/python-modules/ntplib { };
 
@@ -4866,8 +4864,7 @@ in {
   ROPGadget = callPackage ../development/python-modules/ROPGadget { };
 
   # We need "normal" libxml2 and not the python package by the same name.
-  pywbem = disabledIf isPy36
-    (callPackage ../development/python-modules/pywbem { libxml2 = pkgs.libxml2; });
+  pywbem = callPackage ../development/python-modules/pywbem { libxml2 = pkgs.libxml2; };
 
   unicorn = callPackage ../development/python-modules/unicorn { };
 
