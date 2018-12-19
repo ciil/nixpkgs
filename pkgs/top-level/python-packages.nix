@@ -1423,6 +1423,8 @@ in {
 
   pytest-datafiles = callPackage ../development/python-modules/pytest-datafiles { };
 
+  pytest-dependency = callPackage ../development/python-modules/pytest-dependency { };
+
   pytest-django = callPackage ../development/python-modules/pytest-django { };
 
   pytest-faulthandler = callPackage ../development/python-modules/pytest-faulthandler { };
@@ -1611,11 +1613,10 @@ in {
 
   easy-thumbnails = callPackage ../development/python-modules/easy-thumbnails { };
 
-  eccodes = disabledIf (!isPy27)
-    (toPythonModule (pkgs.eccodes.override {
-      enablePython = true;
-      pythonPackages = self;
-    }));
+  eccodes = toPythonModule (pkgs.eccodes.override {
+    enablePython = true;
+    pythonPackages = self;
+  });
 
   EditorConfig = callPackage ../development/python-modules/editorconfig { };
 
@@ -1668,6 +1669,8 @@ in {
   faulthandler = if ! isPy3k
     then callPackage ../development/python-modules/faulthandler {}
     else throw "faulthandler is built into ${python.executable}";
+
+  fb-re2 = callPackage ../development/python-modules/fb-re2 { };
 
   flit = callPackage ../development/python-modules/flit { };
 
@@ -1869,6 +1872,8 @@ in {
   logilab_astng = callPackage ../development/python-modules/logilab_astng { };
 
   lpod = callPackage ../development/python-modules/lpod { };
+
+  ludios_wpull = callPackage ../development/python-modules/ludios_wpull { };
 
   luftdaten = callPackage ../development/python-modules/luftdaten { };
 
@@ -2605,6 +2610,8 @@ in {
 
   gspread = callPackage ../development/python-modules/gspread { };
 
+  gym = callPackage ../development/python-modules/gym { };
+
   gyp = callPackage ../development/python-modules/gyp { };
 
   guessit = callPackage ../development/python-modules/guessit { };
@@ -3073,6 +3080,8 @@ in {
   mysql-connector = callPackage ../development/python-modules/mysql-connector { };
 
   namebench = callPackage ../development/python-modules/namebench { };
+
+  namedlist = callPackage ../development/python-modules/namedlist { };
 
   nameparser = callPackage ../development/python-modules/nameparser { };
 

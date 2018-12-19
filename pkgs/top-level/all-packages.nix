@@ -622,7 +622,7 @@ in
 
   aws-env = callPackage ../tools/admin/aws-env { };
 
-  aws-google-auth = pythonPackages.callPackage ../tools/admin/aws-google-auth { };
+  aws-google-auth = python3Packages.callPackage ../tools/admin/aws-google-auth { };
 
   aws-okta = callPackage ../tools/security/aws-okta { };
 
@@ -730,12 +730,16 @@ in
 
   genymotion = callPackage ../development/mobile/genymotion { };
 
+  gamecube-tools = callPackage ../development/tools/gamecube-tools { };
+
   gams = callPackage ../tools/misc/gams {
     licenseFile = config.gams.licenseFile or null;
     optgamsFile = config.gams.optgamsFile or null;
   };
 
   git-fire = callPackage ../tools/misc/git-fire { };
+
+  github-changelog-generator = callPackage ../development/tools/github-changelog-generator { };
 
   gitless = callPackage ../applications/version-management/gitless { };
 
@@ -804,6 +808,8 @@ in
   qes = callPackage ../os-specific/darwin/qes {
     inherit (darwin.apple_sdk.frameworks) Carbon;
   };
+
+  wiiload = callPackage ../development/tools/wiiload { };
 
   xcodeenv = callPackage ../development/mobile/xcodeenv { };
 
@@ -2750,8 +2756,6 @@ in
 
   fprintd = callPackage ../tools/security/fprintd { };
 
-  fprint_demo = callPackage ../tools/security/fprint_demo { };
-
   franz = callPackage ../applications/networking/instant-messengers/franz { };
 
   freedroidrpg = callPackage ../games/freedroidrpg { };
@@ -4412,11 +4416,7 @@ in
 
   nextcloud = callPackage ../servers/nextcloud { };
 
-  nextcloud-client-unwrapped = libsForQt5.callPackage ../applications/networking/nextcloud-client { };
-
-  nextcloud-client = callPackage ../applications/networking/nextcloud-client/wrapper.nix {
-    nextcloud-client = nextcloud-client-unwrapped;
-  };
+  nextcloud-client = libsForQt5.callPackage ../applications/networking/nextcloud-client { };
 
   nextcloud-news-updater = callPackage ../servers/nextcloud/news-updater.nix { };
 
@@ -4664,16 +4664,6 @@ in
   otpw = callPackage ../os-specific/linux/otpw { };
 
   overmind = callPackage ../applications/misc/overmind { };
-
-  owncloud = owncloud70;
-
-  inherit (callPackages ../servers/owncloud { })
-    owncloud70
-    owncloud80
-    owncloud81
-    owncloud82
-    owncloud90
-    owncloud91;
 
   owncloud-client = libsForQt5.callPackage ../applications/networking/owncloud-client { };
 
@@ -6613,7 +6603,7 @@ in
   };
 
   ccl = callPackage ../development/compilers/ccl {
-    inherit (darwin) bootstrap_cmds;
+    inherit (buildPackages.darwin) bootstrap_cmds;
   };
 
   cdb = callPackage ../development/tools/database/cdb { };
@@ -6963,6 +6953,36 @@ in
   };
 
   gcl_2_6_13_pre = callPackage ../development/compilers/gcl/2.6.13-pre.nix { };
+
+  gcc-arm-embedded-4_7 = pkgsi686Linux.callPackage ../development/compilers/gcc-arm-embedded {
+    version = "4.7-2013q3-20130916";
+    releaseType = "update";
+    sha256 = "1bd9bi9q80xn2rpy0rn1vvj70rh15kb7dmah0qs4q2rv78fqj40d";
+    ncurses = pkgsi686Linux.ncurses5;
+  };
+  gcc-arm-embedded-4_8 = pkgsi686Linux.callPackage ../development/compilers/gcc-arm-embedded {
+    version = "4.8-2014q1-20140314";
+    releaseType = "update";
+    sha256 = "ce92859550819d4a3d1a6e2672ea64882b30afa2c08cf67fa8e1d93788c2c577";
+    ncurses = pkgsi686Linux.ncurses5;
+  };
+  gcc-arm-embedded-4_9 = pkgsi686Linux.callPackage ../development/compilers/gcc-arm-embedded {
+    version = "4.9-2015q1-20150306";
+    releaseType = "update";
+    sha256 = "c5e0025b065750bbd76b5357b4fc8606d88afbac9ff55b8a82927b4b96178154";
+    ncurses = pkgsi686Linux.ncurses5;
+  };
+  gcc-arm-embedded-5 = pkgs.pkgsi686Linux.callPackage ../development/compilers/gcc-arm-embedded {
+    dirName = "5.0";
+    subdirName = "5-2016-q2-update";
+    version = "5.4-2016q2-20160622";
+    releaseType = "update";
+    sha256 = "1r0rqbnw7rf94f5bsa3gi8bick4xb7qnp1dkvdjfbvqjvysvc44r";
+    ncurses = pkgsi686Linux.ncurses5;
+  };
+  gcc-arm-embedded-6 = callPackage ../development/compilers/gcc-arm-embedded/6 {};
+  gcc-arm-embedded-7 = callPackage ../development/compilers/gcc-arm-embedded/7 {};
+  gcc-arm-embedded = gcc-arm-embedded-7;
 
   gforth = callPackage ../development/compilers/gforth {};
 
@@ -8071,11 +8091,6 @@ in
   spark_22 = callPackage ../applications/networking/cluster/spark { version = "2.2.1"; };
 
   spidermonkey_1_8_5 = callPackage ../development/interpreters/spidermonkey/1.8.5.nix { };
-  spidermonkey_17 = callPackage ../development/interpreters/spidermonkey/17.nix {
-    inherit (darwin) libobjc;
-    stdenv = gccStdenv;
-  };
-  spidermonkey_31 = callPackage ../development/interpreters/spidermonkey/31.nix { };
   spidermonkey_38 = callPackage ../development/interpreters/spidermonkey/38.nix ({
     inherit (darwin) libobjc;
   } // (stdenv.lib.optionalAttrs (stdenv.cc.isGNU && stdenv.hostPlatform.isi686) {
@@ -8083,7 +8098,7 @@ in
   }));
   spidermonkey_52 = callPackage ../development/interpreters/spidermonkey/52.nix { };
   spidermonkey_60 = callPackage ../development/interpreters/spidermonkey/60.nix { };
-  spidermonkey = spidermonkey_31;
+  spidermonkey = spidermonkey_38;
 
   ssm-agent = callPackage ../applications/networking/cluster/ssm-agent { };
 
@@ -9147,7 +9162,7 @@ in
   jhiccup = callPackage ../development/tools/java/jhiccup { };
 
   valgrind = callPackage ../development/tools/analysis/valgrind {
-    inherit (darwin) xnu bootstrap_cmds cctools;
+    inherit (buildPackages.darwin) xnu bootstrap_cmds cctools;
   };
   valgrind-light = res.valgrind.override { gdb = null; };
 
@@ -9354,6 +9369,7 @@ in
   boost166 = callPackage ../development/libraries/boost/1.66.nix { };
   boost167 = callPackage ../development/libraries/boost/1.67.nix { };
   boost168 = callPackage ../development/libraries/boost/1.68.nix { };
+  boost169 = callPackage ../development/libraries/boost/1.69.nix { };
   boost16x = boost167;
   boost = boost16x;
 
@@ -9805,8 +9821,8 @@ in
   gdbm = callPackage ../development/libraries/gdbm { };
 
   gecode_3 = callPackage ../development/libraries/gecode/3.nix { };
-  gecode_4 = callPackage ../development/libraries/gecode { };
-  gecode = gecode_4;
+  gecode_6 = qt5.callPackage ../development/libraries/gecode { };
+  gecode = gecode_6;
 
   gephi = callPackage ../applications/science/misc/gephi { };
 
@@ -10003,6 +10019,8 @@ in
   gflags = google-gflags; # TODO: move to aliases.nix
 
   gperftools = callPackage ../development/libraries/gperftools { };
+
+  grab-site = callPackage ../tools/backup/grab-site { };
 
   grib-api = callPackage ../development/libraries/grib-api { };
 
@@ -10205,6 +10223,8 @@ in
 
   gtksourceview4 = callPackage ../development/libraries/gtksourceview/4.x.nix { };
 
+  gtksourceviewmm = callPackage ../development/libraries/gtksourceviewmm { };
+
   gtkspell2 = callPackage ../development/libraries/gtkspell { };
 
   gtkspell3 = callPackage ../development/libraries/gtkspell/3.nix { };
@@ -10279,10 +10299,6 @@ in
   hunspellWithDicts = dicts: callPackage ../development/libraries/hunspell/wrapper.nix { inherit dicts; };
 
   hwloc = callPackage ../development/libraries/hwloc {};
-
-  hwloc-nox = hwloc.override {
-    x11Support = false;
-  };
 
   hydra = callPackage ../development/tools/misc/hydra { };
 
@@ -10430,7 +10446,7 @@ in
   kinetic-cpp-client = callPackage ../development/libraries/kinetic-cpp-client { };
 
   krb5 = callPackage ../development/libraries/kerberos/krb5.nix {
-    inherit (darwin) bootstrap_cmds;
+    inherit (buildPackages.darwin) bootstrap_cmds;
   };
   krb5Full = krb5;
   libkrb5 = krb5.override {
@@ -11194,6 +11210,8 @@ in
 
   liboop = callPackage ../development/libraries/liboop { };
 
+  libopenaptx = callPackage ../development/libraries/libopenaptx { };
+
   libopus = callPackage ../development/libraries/libopus { };
 
   libopusenc = callPackage ../development/libraries/libopusenc { };
@@ -11843,11 +11861,11 @@ in
   openvdb = callPackage ../development/libraries/openvdb {};
 
   inherit (callPackages ../development/libraries/libressl { })
-    libressl_2_6
     libressl_2_7
-    libressl_2_8;
+    libressl_2_8
+    libressl_2_9;
 
-  libressl = libressl_2_7;
+  libressl = libressl_2_8;
 
   boringssl = callPackage ../development/libraries/boringssl { };
 
@@ -12016,6 +12034,14 @@ in
   pugixml = callPackage ../development/libraries/pugixml { };
 
   pybind11 = callPackage ../development/libraries/pybind11 { };
+
+  python-qt = callPackage ../development/libraries/python-qt {
+    python = python27;
+    qmake = qt59.qmake;
+    qttools = qt59.qttools;
+    qtwebengine = qt59.qtwebengine;
+    qtxmlpatterns = qt59.qtxmlpatterns;
+  };
 
   re2 = callPackage ../development/libraries/re2 { };
 
@@ -13484,6 +13510,7 @@ in
 
   freeswitch = callPackage ../servers/sip/freeswitch {
     openssl = openssl_1_0_2;
+    inherit (darwin.apple_sdk.frameworks) SystemConfiguration;
   };
 
   fusionInventory = callPackage ../servers/monitoring/fusion-inventory { };
@@ -13839,10 +13866,10 @@ in
 
   inherit (callPackage ../servers/monitoring/prometheus {
     buildGoPackage = buildGo110Package;
-  })
-      prometheus_1
-      prometheus_2
-      ;
+  }) prometheus_1;
+
+  inherit (callPackage ../servers/monitoring/prometheus { })
+    prometheus_2;
 
   prom2json = callPackage ../servers/monitoring/prometheus/prom2json.nix { };
   prometheus = prometheus_1;
@@ -14097,7 +14124,7 @@ in
     inherit (darwin) cf-private;
     inherit (darwin.apple_sdk.frameworks) ApplicationServices Carbon Cocoa;
     inherit (darwin.apple_sdk.libs) Xplugin;
-    bootstrap_cmds = if stdenv.isDarwin then darwin.bootstrap_cmds else null;
+    inherit (buildPackages.darwin) bootstrap_cmds;
     udev = if stdenv.isLinux then udev else null;
     libdrm = if stdenv.isLinux then libdrm else null;
     abiCompat = config.xorg.abiCompat # `config` because we have no `xorg.override`
@@ -14192,6 +14219,12 @@ in
   pulseaudio-modules-bt = callPackage ../applications/audio/pulseaudio-modules-bt { };
 
   bluez = bluez5;
+
+  bluezFull = bluez.override {
+    enableWiimote = true;
+    enableMidi = true;
+    enableSixaxis = true;
+  };
 
   inherit (python3Packages) bedup;
 
@@ -14294,7 +14327,7 @@ in
   ffado = callPackage ../os-specific/linux/ffado {
     inherit (python2Packages) python pyqt4 dbus-python;
   };
-  libffado = ffado.override { prefix = "lib"; };
+  libffado = ffado;
 
   fbterm = callPackage ../os-specific/linux/fbterm { };
 
@@ -14613,6 +14646,8 @@ in
     rtl8812au = callPackage ../os-specific/linux/rtl8812au { };
 
     rtl8814au = callPackage ../os-specific/linux/rtl8814au { };
+
+    rtl8821au = callPackage ../os-specific/linux/rtl8821au { };
 
     rtlwifi_new = callPackage ../os-specific/linux/rtlwifi_new { };
 
@@ -15494,14 +15529,12 @@ in
   league-of-moveable-type = callPackage ../data/fonts/league-of-moveable-type {};
 
   inherit (callPackages ../data/fonts/redhat-liberation-fonts { })
-    liberation_ttf_v1_from_source
-    liberation_ttf_v1_binary
-    liberation_ttf_v2_from_source
-    liberation_ttf_v2_binary;
-  liberation_ttf = liberation_ttf_v2_binary;
+    liberation_ttf_v1
+    liberation_ttf_v2
+    ;
+  liberation_ttf = liberation_ttf_v2;
 
-  liberationsansnarrow = callPackage ../data/fonts/liberationsansnarrow { };
-  liberationsansnarrow_binary = callPackage ../data/fonts/liberationsansnarrow/binary.nix { };
+  liberation-sans-narrow = callPackage ../data/fonts/liberation-sans-narrow { };
 
   liberastika = callPackage ../data/fonts/liberastika { };
 
@@ -15631,6 +15664,8 @@ in
   pari-seadata-small = callPackage ../data/misc/pari-seadata-small {};
 
   penna = callPackage ../data/fonts/penna { };
+
+  plata-theme = callPackage ../data/themes/plata {};
 
   poly = callPackage ../data/fonts/poly { };
 
@@ -16288,7 +16323,15 @@ in
 
   csa = callPackage ../applications/audio/csa { };
 
-  csound = callPackage ../applications/audio/csound { };
+  csound = callPackage ../applications/audio/csound {
+    fluidsynth = fluidsynth_1;
+  };
+
+  csound-qt = callPackage ../applications/audio/csound/csound-qt {
+    python = python27;
+    qmake = qt59.qmake;
+    qtwebengine = qt59.qtwebengine;
+  };
 
   cinepaint = callPackage ../applications/graphics/cinepaint {
     fltk = fltk13;
@@ -16857,6 +16900,7 @@ in
   fluidsynth = callPackage ../applications/audio/fluidsynth {
      inherit (darwin.apple_sdk.frameworks) AudioUnit CoreAudio CoreMIDI CoreServices;
   };
+  fluidsynth_1 = fluidsynth.override { version = "1"; };
 
   fmit = libsForQt5.callPackage ../applications/audio/fmit { };
 
@@ -17865,8 +17909,8 @@ in
       fontDirectories = [
         carlito dejavu_fonts
         freefont_ttf xorg.fontmiscmisc
-        liberation_ttf_v1_binary
-        liberation_ttf_v2_binary
+        liberation_ttf_v1
+        liberation_ttf_v2
       ];
     };
     clucene_core = clucene_core_2;
@@ -18118,7 +18162,6 @@ in
 
   xmr-stak = callPackage ../applications/misc/xmr-stak {
     stdenvGcc6 = overrideCC stdenv gcc6;
-    hwloc = hwloc-nox;
   };
 
   xmrig = callPackage ../applications/misc/xmrig { };
@@ -22857,6 +22900,8 @@ in
   nip2 = callPackage ../tools/graphics/nip2 { };
 
   virglrenderer = callPackage ../development/libraries/virglrenderer { };
+
+  vivid = callPackage ../tools/misc/vivid { };
 
   vokoscreen = libsForQt5.callPackage ../applications/video/vokoscreen { };
 
