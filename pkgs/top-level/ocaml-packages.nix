@@ -202,6 +202,8 @@ let
       then callPackage ../development/ocaml-modules/csv { }
       else callPackage ../development/ocaml-modules/csv/1.5.nix { };
 
+    csv-lwt = callPackage ../development/ocaml-modules/csv/lwt.nix { };
+
     curses = callPackage ../development/ocaml-modules/curses { };
 
     custom_printf = callPackage ../development/ocaml-modules/custom_printf { };
@@ -577,6 +579,8 @@ let
 
     piqi = callPackage ../development/ocaml-modules/piqi { };
     piqi-ocaml = callPackage ../development/ocaml-modules/piqi-ocaml { };
+
+    ppxfind = callPackage ../development/ocaml-modules/ppxfind { };
 
     ppxlib = callPackage ../development/ocaml-modules/ppxlib { };
 
