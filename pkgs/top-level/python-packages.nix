@@ -270,6 +270,8 @@ in {
 
   blivet = callPackage ../development/python-modules/blivet { };
 
+  boltons = callPackage ../development/python-modules/boltons { };
+
   breathe = callPackage ../development/python-modules/breathe { };
 
   brotli = callPackage ../development/python-modules/brotli { };
@@ -286,9 +288,15 @@ in {
 
   cachecontrol = callPackage ../development/python-modules/cachecontrol { };
 
+  cachy = callPackage ../development/python-modules/cachy { };
+
   cdecimal = callPackage ../development/python-modules/cdecimal { };
 
   chalice = callPackage ../development/python-modules/chalice { };
+
+  cleo = callPackage ../development/python-modules/cleo { };
+
+  clikit = callPackage ../development/python-modules/clikit { };
 
   clustershell = callPackage ../development/python-modules/clustershell { };
 
@@ -352,6 +360,8 @@ in {
 
   eradicate = callPackage ../development/python-modules/eradicate {  };
 
+  face = callPackage ../development/python-modules/face { };
+
   fastpbkdf2 = callPackage ../development/python-modules/fastpbkdf2 {  };
 
   fido2 = callPackage ../development/python-modules/fido2 {  };
@@ -373,6 +383,8 @@ in {
   gin-config = callPackage ../development/python-modules/gin-config { };
 
   globus-sdk = callPackage ../development/python-modules/globus-sdk { };
+
+  glom = callPackage ../development/python-modules/glom { };
 
   goocalendar = callPackage ../development/python-modules/goocalendar { };
 
@@ -488,6 +500,8 @@ in {
 
   palettable = callPackage ../development/python-modules/palettable { };
 
+  pastel = callPackage ../development/python-modules/pastel { };
+
   pathlib = callPackage ../development/python-modules/pathlib { };
 
   pdf2image = callPackage ../development/python-modules/pdf2image { };
@@ -503,6 +517,8 @@ in {
   pims = callPackage ../development/python-modules/pims { };
 
   plantuml = callPackage ../tools/misc/plantuml { };
+
+  poetry = callPackage ../development/python-modules/poetry { };
 
   progress = callPackage ../development/python-modules/progress { };
 
@@ -594,6 +610,8 @@ in {
   pykerberos = callPackage ../development/python-modules/pykerberos { };
 
   pykeepass = callPackage ../development/python-modules/pykeepass { };
+
+  pylev = callPackage ../development/python-modules/pylev { };
 
   pymatgen = callPackage ../development/python-modules/pymatgen { };
 
@@ -763,6 +781,8 @@ in {
   tokenserver = callPackage ../development/python-modules/tokenserver {};
 
   toml = callPackage ../development/python-modules/toml { };
+
+  tomlkit = callPackage ../development/python-modules/tomlkit { };
 
   unifi = callPackage ../development/python-modules/unifi { };
 
@@ -2615,6 +2635,8 @@ in {
 
   google_cloud_websecurityscanner = callPackage ../development/python-modules/google_cloud_websecurityscanner { };
 
+  google-i18n-address = callPackage ../development/python-modules/google-i18n-address { };
+
   google_resumable_media = callPackage ../development/python-modules/google_resumable_media { };
 
   gpgme = toPythonModule (pkgs.gpgme.override {
@@ -3101,7 +3123,9 @@ in {
 
   pyte = callPackage ../development/python-modules/pyte { };
 
-  graphviz = callPackage ../development/python-modules/graphviz { };
+  graphviz = callPackage ../development/python-modules/graphviz {
+    inherit (pkgs) graphviz;
+  };
 
   pygraphviz = callPackage ../development/python-modules/pygraphviz {
     graphviz = pkgs.graphviz; # not the python package
@@ -3237,7 +3261,9 @@ in {
 
   obfsproxy = callPackage ../development/python-modules/obfsproxy { };
 
-  objgraph = callPackage ../development/python-modules/objgraph { };
+  objgraph = callPackage ../development/python-modules/objgraph {
+    graphvizPkg = pkgs.graphviz;
+  };
 
   odo = callPackage ../development/python-modules/odo { };
 
@@ -3387,6 +3413,8 @@ in {
   periodictable = callPackage ../development/python-modules/periodictable { };
 
   pg8000 = callPackage ../development/python-modules/pg8000 { };
+
+  pgsanity = callPackage ../development/python-modules/pgsanity { };
 
   pgspecial = callPackage ../development/python-modules/pgspecial { };
 
@@ -3544,7 +3572,9 @@ in {
 
   pydispatcher = callPackage ../development/python-modules/pydispatcher { };
 
-  pydot = callPackage ../development/python-modules/pydot { };
+  pydot = callPackage ../development/python-modules/pydot {
+    inherit (pkgs) graphviz;
+  };
 
   pydot_ng = callPackage ../development/python-modules/pydot_ng { };
 

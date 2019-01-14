@@ -685,6 +685,8 @@ in
 
   bunny = callPackage ../tools/package-management/bunny { };
 
+  clair = callPackage ../tools/admin/clair { };
+
   cloud-sql-proxy = callPackage ../tools/misc/cloud-sql-proxy { };
 
   container-linux-config-transpiler = callPackage ../development/tools/container-linux-config-transpiler { };
@@ -1005,7 +1007,9 @@ in
 
   blockdiag = with python3Packages; toPythonApplication blockdiag;
 
-  blsd = callPackage ../tools/misc/blsd { };
+  blsd = callPackage ../tools/misc/blsd {
+    libgit2 = libgit2_0_27;
+  };
 
   bluez-alsa = callPackage ../tools/bluetooth/bluez-alsa { };
 
@@ -1165,6 +1169,8 @@ in
                           };
 
   cfdyndns = callPackage ../applications/networking/dyndns/cfdyndns { };
+
+  cht-sh = callPackage ../tools/misc/cht.sh { };
 
   ckbcomp = callPackage ../tools/X11/ckbcomp { };
 
@@ -1482,7 +1488,7 @@ in
     pythonPackages = python3Packages;
   };
 
-  gringo = callPackage ../tools/misc/gringo { scons = scons_2_5_1; };
+  gringo = callPackage ../tools/misc/gringo { };
 
   grobi = callPackage ../tools/X11/grobi { };
 
@@ -1495,6 +1501,8 @@ in
   hebcal = callPackage ../tools/misc/hebcal {};
 
   hexio = callPackage ../development/tools/hexio { };
+
+  hexyl = callPackage ../tools/misc/hexyl { };
 
   hid-listen = callPackage ../tools/misc/hid-listen { };
 
@@ -2798,6 +2806,8 @@ in
 
   fuse-7z-ng = callPackage ../tools/filesystems/fuse-7z-ng { };
 
+  fuse-overlayfs = callPackage ../tools/filesystems/fuse-overlayfs {};
+
   fusee-launcher = callPackage ../development/tools/fusee-launcher { };
 
   fwknop = callPackage ../tools/security/fwknop { };
@@ -3238,6 +3248,8 @@ in
   habitat = callPackage ../applications/networking/cluster/habitat { };
 
   hardlink = callPackage ../tools/system/hardlink { };
+
+  hashcash = callPackage ../tools/security/hashcash { };
 
   hashcat = callPackage ../tools/security/hashcat { };
 
@@ -4572,6 +4584,8 @@ in
 
   ola = callPackage ../applications/misc/ola { };
 
+  omping = callPackage ../applications/networking/omping { };
+
   onioncircuits = callPackage ../tools/security/onioncircuits {
     inherit (gnome3) defaultIconTheme;
   };
@@ -5418,7 +5432,7 @@ in
   silc_server = callPackage ../servers/silc-server { };
 
   sile = callPackage ../tools/typesetting/sile {
-  inherit (lua52Packages) lua luaexpat luazlib luafilesystem lpeg;
+  inherit (lua52Packages) lua luaexpat luazlib luafilesystem lpeg luasocket luasec;
   };
 
   silver-searcher = callPackage ../tools/text/silver-searcher { };
@@ -5903,6 +5917,8 @@ in
 
   ua = callPackage ../tools/networking/ua { };
 
+  ubridge = callPackage ../tools/networking/ubridge { };
+
   ucl = callPackage ../development/libraries/ucl { };
 
   ucspi-tcp = callPackage ../tools/networking/ucspi-tcp { };
@@ -6011,6 +6027,8 @@ in
   vobcopy = callPackage ../tools/cd-dvd/vobcopy { };
 
   vobsub2srt = callPackage ../tools/cd-dvd/vobsub2srt { };
+
+  void = callPackage ../tools/misc/void { };
 
   volume_key = callPackage ../development/libraries/volume-key { };
 
@@ -6521,9 +6539,9 @@ in
   fish-foreign-env = callPackage ../shells/fish/fish-foreign-env { };
 
   ion = callPackage ../shells/ion { };
-  
+
   ksh = callPackage ../shells/ksh { };
-  
+
   mksh = callPackage ../shells/mksh { };
 
   oh = callPackage ../shells/oh { };
@@ -6654,7 +6672,10 @@ in
   clang-sierraHack-stdenv = overrideCC stdenv clang-sierraHack;
   libcxxStdenv = if stdenv.isDarwin then stdenv else lowPrio llvmPackages.libcxxStdenv;
 
-  clasp-common-lisp = callPackage ../development/compilers/clasp {};
+  clasp-common-lisp = callPackage ../development/compilers/clasp {
+    llvmPackages = llvmPackages_6;
+    stdenv = llvmPackages_6.stdenv;
+  };
 
   clean = callPackage ../development/compilers/clean { };
 
@@ -6704,7 +6725,7 @@ in
 
   eql = callPackage ../development/compilers/eql {};
 
-  elm2nix = haskell.lib.justStaticExecutables (haskellPackages.callPackage ../development/tools/elm2nix {});
+  elm2nix = haskell.lib.justStaticExecutables haskellPackages.elm2nix;
 
   elmPackages = recurseIntoAttrs (callPackage ../development/compilers/elm { });
 
@@ -6998,7 +7019,8 @@ in
   };
   gcc-arm-embedded-6 = callPackage ../development/compilers/gcc-arm-embedded/6 {};
   gcc-arm-embedded-7 = callPackage ../development/compilers/gcc-arm-embedded/7 {};
-  gcc-arm-embedded = gcc-arm-embedded-7;
+  gcc-arm-embedded-8 = callPackage ../development/compilers/gcc-arm-embedded/8 {};
+  gcc-arm-embedded = gcc-arm-embedded-8;
 
   gforth = callPackage ../development/compilers/gforth {};
 
@@ -7563,6 +7585,8 @@ in
   };
 
   tinycc = callPackage ../development/compilers/tinycc { };
+
+  tinyscheme = callPackage ../development/interpreters/tinyscheme { };
 
   inherit (ocaml-ng.ocamlPackages_4_02) trv;
 
@@ -8284,6 +8308,8 @@ in
 
   electron = callPackage ../development/tools/electron { };
 
+  electron_3 = callPackage ../development/tools/electron/3.x.nix { };
+
   autobuild = callPackage ../development/tools/misc/autobuild { };
 
   autoconf = callPackage ../development/tools/misc/autoconf { };
@@ -8921,6 +8947,8 @@ in
 
   patchelfUnstable = lowPrio (callPackage ../development/tools/misc/patchelf/unstable.nix { });
 
+  pax-rs = callPackage ../development/tools/pax-rs { };
+
   peg = callPackage ../development/tools/parsing/peg { };
 
   pgcli = callPackage ../development/tools/database/pgcli {};
@@ -9030,8 +9058,7 @@ in
   selendroid = callPackage ../development/tools/selenium/selendroid { };
 
   sconsPackages = callPackage ../development/tools/build-managers/scons { };
-  scons = sconsPackages.scons_3_0_1;
-  scons_2_5_1 = sconsPackages.scons_2_5_1;
+  scons = sconsPackages.scons_3_0_3;
 
   mill = callPackage ../development/tools/build-managers/mill { };
 
@@ -9895,6 +9922,10 @@ in
   icon-lang = callPackage ../development/interpreters/icon-lang { };
 
   libgit2 = callPackage ../development/libraries/git2 {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
+
+  libgit2_0_27 = callPackage ../development/libraries/git2/0.27.nix {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
 
@@ -11797,6 +11828,8 @@ in
 
   ntrack = callPackage ../development/libraries/ntrack { };
 
+  nv-codec-headers = callPackage ../development/libraries/nv-codec-headers { };
+
   nvidia-texture-tools = callPackage ../development/libraries/nvidia-texture-tools { };
 
   nvidia-video-sdk = callPackage ../development/libraries/nvidia-video-sdk { };
@@ -12193,8 +12226,9 @@ in
 
   libsForQt512 = recurseIntoAttrs (lib.makeScope qt512.newScope mkLibsForQt5);
 
-  qt5 = qt512;
-  libsForQt5 = libsForQt512;
+  # TODO bump to 5.12 on darwin once it's not broken
+  qt5 = if stdenv.isDarwin then qt511 else qt512;
+  libsForQt5 = if stdenv.isDarwin then libsForQt511 else libsForQt512;
 
   qt5ct = libsForQt5.callPackage ../tools/misc/qt5ct { };
 
@@ -14601,6 +14635,7 @@ in
       [ kernelPatches.bridge_stp_helper
         kernelPatches.modinst_arg_list_too_long
         kernelPatches.revert-vfs-dont-open-real
+        kernelPatches.raspberry_pi_wifi_fix
       ];
   };
 
@@ -16085,6 +16120,8 @@ in
 
   bitcoin-xt = altcoins.bitcoin-xt;
   cryptop = altcoins.cryptop;
+
+  jnetmap = callPackage ../applications/networking/jnetmap {};
 
   libbitcoin = callPackage ../tools/misc/libbitcoin/libbitcoin.nix {
     secp256k1 = secp256k1.override { enableECDH = true; };
@@ -20742,9 +20779,11 @@ in
 
   multimc = libsForQt5.callPackage ../games/multimc { };
 
-  minetest = callPackage ../games/minetest {
-    libpng = libpng12;
-  };
+  inherit (callPackages ../games/minetest { })
+    minetestclient_4 minetestserver_4
+    minetestclient_5 minetestserver_5;
+
+  minetest = minetestclient_4;
 
   mnemosyne = callPackage ../games/mnemosyne {
     python = python3;
@@ -20796,7 +20835,9 @@ in
 
   openmw-tes3mp = libsForQt5.callPackage ../games/openmw/tes3mp.nix { };
 
-  openra = callPackage ../games/openra { lua = lua5_1; };
+  openraPackages = import ../games/openra pkgs;
+
+  openra = openraPackages.engines.release;
 
   openrw = callPackage ../games/openrw { };
 
@@ -21402,6 +21443,8 @@ in
   bedtools = callPackage ../applications/science/biology/bedtools { };
 
   bcftools = callPackage ../applications/science/biology/bcftools { };
+
+  bftools = callPackage ../applications/science/biology/bftools { };
 
   conglomerate = callPackage ../applications/science/biology/conglomerate { };
 
@@ -22054,10 +22097,12 @@ in
   ns-3 = callPackage ../development/libraries/science/networking/ns3 { };
 
   root = callPackage ../applications/science/misc/root {
+    inherit (darwin) cf-private;
     inherit (darwin.apple_sdk.frameworks) Cocoa OpenGL;
   };
 
   root5 = lowPrio (callPackage ../applications/science/misc/root/5.nix {
+    inherit (darwin) cf-private;
     inherit (darwin.apple_sdk.frameworks) Cocoa OpenGL;
   });
 
