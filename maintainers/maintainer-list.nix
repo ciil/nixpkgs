@@ -752,6 +752,11 @@
     github = "calbrecht";
     name = "Christian Albrecht";
   };
+  callahad = {
+    email = "dan.callahan@gmail.com";
+    github = "callahad";
+    name = "Dan Callahan";
+  };
   calvertvl = {
     email = "calvertvl@gmail.com";
     github = "calvertvl";
@@ -811,6 +816,11 @@
     email = "cdep.illabout@gmail.com";
     github = "cdepillabout";
     name = "Dennis Gosnell";
+  };
+  ceedubs = {
+    email = "ceedubs@gmail.com";
+    github = "ceedubs";
+    name = "Cody Allen";
   };
   cfouche = {
     email = "chaddai.fouche@gmail.com";
@@ -1578,6 +1588,11 @@
     email = "flokli@flokli.de";
     github = "flokli";
     name = "Florian Klink";
+  };
+  FlorianFranzen = {
+    email = "Florian.Franzen@gmail.com";
+    github = "FlorianFranzen";
+    name = "Florian Franzen";
   };
   florianjacob = {
     email = "projects+nixos@florianjacob.de";

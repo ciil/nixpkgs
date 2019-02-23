@@ -268,7 +268,7 @@ in {
 
   bayespy = callPackage ../development/python-modules/bayespy { };
 
-  beanstalkc = disabledIf isPy3k (callPackage ../development/python-modules/beanstalkc {});
+  beanstalkc = callPackage ../development/python-modules/beanstalkc { };
 
   bitarray = callPackage ../development/python-modules/bitarray { };
 
@@ -305,7 +305,7 @@ in {
   cdecimal = callPackage ../development/python-modules/cdecimal { };
 
   cfn-flip = callPackage ../development/python-modules/cfn-flip { };
- 
+
   chalice = callPackage ../development/python-modules/chalice { };
 
   cleo = callPackage ../development/python-modules/cleo { };
@@ -491,6 +491,8 @@ in {
   mwoauth = callPackage ../development/python-modules/mwoauth { };
 
   nanomsg-python = callPackage ../development/python-modules/nanomsg-python { inherit (pkgs) nanomsg; };
+
+  nbsphinx = callPackage ../development/python-modules/nbsphinx { };
 
   nbval = callPackage ../development/python-modules/nbval { };
 
@@ -718,6 +720,8 @@ in {
 
   python-binance = callPackage ../development/python-modules/python-binance { };
 
+  python-dbusmock = callPackage ../development/python-modules/python-dbusmock { };
+
   python-engineio = callPackage ../development/python-modules/python-engineio { };
 
   python-hosts = callPackage ../development/python-modules/python-hosts { };
@@ -807,6 +811,8 @@ in {
   sly = callPackage ../development/python-modules/sly { };
 
   snapcast = callPackage ../development/python-modules/snapcast { };
+
+  sparse = callPackage ../development/python-modules/sparse { };
 
   spglib = callPackage ../development/python-modules/spglib { };
 
@@ -1606,6 +1612,8 @@ in {
   dask-jobqueue = callPackage ../development/python-modules/dask-jobqueue { };
 
   dask-ml = callPackage ../development/python-modules/dask-ml { };
+
+  dask-mpi = callPackage ../development/python-modules/dask-mpi { };
 
   dask-xgboost = callPackage ../development/python-modules/dask-xgboost { };
 
@@ -2789,6 +2797,8 @@ in {
   ifaddr = callPackage ../development/python-modules/ifaddr { };
 
   imageio = callPackage ../development/python-modules/imageio { };
+
+  imageio-ffmpeg = callPackage ../development/python-modules/imageio-ffmpeg { };
 
   imgaug = callPackage ../development/python-modules/imgaug { };
 
@@ -4063,6 +4073,8 @@ in {
   };
 
   scikit-bio = callPackage ../development/python-modules/scikit-bio { };
+
+  scikit-build = callPackage ../development/python-modules/scikit-build { };
 
   scp = callPackage ../development/python-modules/scp {};
 
