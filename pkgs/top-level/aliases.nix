@@ -99,7 +99,7 @@ mapAliases ({
   firefox-wrapper = firefox;          # 2016-01
   firefoxWrapper = firefox;           # 2015-09
   flameGraph = flamegraph; # added 2018-04-25
-  font-awesome-ttf = font-awesome_4; # 2018-02-25
+  font-awesome-ttf = font-awesome; # 2018-02-25
   foomatic_filters = foomatic-filters;  # 2016-08
   fuse_exfat = exfat;                   # 2015-09-11
   fuseki = apache-jena-fuseki; # added 2018-04-25
@@ -342,6 +342,7 @@ mapAliases ({
   vimprobable2Wrapper = vimprobable2; # added 2015-01
   virtviewer = virt-viewer; # added 2015-12-24
   vorbisTools = vorbis-tools; # added 2016-01-26
+  webkit = webkitgtk; # added 2019-03-05
   weechat-xmpp = weechatScripts.weechat-xmpp; # added 2018-09-06
   weechat-matrix-bridge = weechatScripts.weechat-matrix-bridge; # added 2018-09-06
   wineStaging = wine-staging; # added 2018-01-08
