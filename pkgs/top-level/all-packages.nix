@@ -6036,6 +6036,8 @@ in
 
   manix = callPackage ../tools/nix/manix {};
 
+  soveran-map = callPackage ../tools/misc/map {};
+
   marktext = callPackage ../applications/misc/marktext { };
 
   mawk = callPackage ../tools/text/mawk { };
