@@ -5209,6 +5209,8 @@ in
 
   mandoc = callPackage ../tools/misc/mandoc { };
 
+  soveran-map = callPackage ../tools/misc/map {};
+
   marktext = callPackage ../applications/misc/marktext { };
 
   mawk = callPackage ../tools/text/mawk { };
